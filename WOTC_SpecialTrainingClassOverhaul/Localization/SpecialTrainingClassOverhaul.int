@@ -1,0 +1,9 @@
+[UIFacility_STCO_AcademySlot]
+m_strTrainMulticlassDialogTitle=MULTICLASSING
+m_strTrainMulticlassDialogText=<XGParam:StrValue0/!UnitName/> can undergo specialized training at the Guerrilla Tactics School, studying some of the techniques of a second class, but they will be unavailable for combat during the training process. Do you want to proceed?
+m_strStopTrainMulticlassDialogTitle=STOP MULTICLASS TRAINING?
+m_strStopTrainMulticlassDialogText=Do you want to stop %UNITNAME from multiclass %CLASSNAME training?\n\nWARNING: All training progress will be lost.
+
+[UIAlert_STCO]
+m_strNewMulticlassTitle=TRAINING COMPLETED
+m_strNewMulticlassLabel=NEW MULTICLASS ABILITIES

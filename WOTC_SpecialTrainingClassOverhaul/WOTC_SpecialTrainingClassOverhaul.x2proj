@@ -16,7 +16,13 @@
     <Folder Include="Src\WOTC_SpecialTrainingClassOverhaul\Classes\" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Config\SpecialTrainingClassOverhaul.ini">
+      <SubType>Content</SubType>
+    </Content>
     <Content Include="Config\XComClassData.ini">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Localization\SpecialTrainingClassOverhaul.int">
       <SubType>Content</SubType>
     </Content>
     <Content Include="ReadMe.txt" />
@@ -25,8 +31,32 @@
     <Content Include="Config\XComEngine.ini" />
     <Content Include="Config\XComGame.ini" />
     <Content Include="Localization\XComGame.int" />
+    <Content Include="Src\WOTC_SpecialTrainingClassOverhaul\Classes\UIAlert_STCO.uc">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Src\WOTC_SpecialTrainingClassOverhaul\Classes\UIChooseClass_STCO.uc">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Src\WOTC_SpecialTrainingClassOverhaul\Classes\UIFacility_STCO_AcademySlot.uc">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Src\WOTC_SpecialTrainingClassOverhaul\Classes\UISL_SpecialTraining.uc">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Src\WOTC_SpecialTrainingClassOverhaul\Classes\X2Ability_STCO.uc">
+      <SubType>Content</SubType>
+    </Content>
     <Content Include="Src\WOTC_SpecialTrainingClassOverhaul\Classes\X2DownloadableContentInfo_WOTC_SpecialTrainingClassOverhaul.uc" />
+    <Content Include="Src\WOTC_SpecialTrainingClassOverhaul\Classes\X2StrategyElement_SpecialTrainingStaffSlots.uc">
+      <SubType>Content</SubType>
+    </Content>
     <Content Include="Src\WOTC_SpecialTrainingClassOverhaul\Classes\X2StrategyElement_STCO_EquipmentSlots.uc">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Src\WOTC_SpecialTrainingClassOverhaul\Classes\XComGameStateContext_HeadquartersOrder_STCO.uc">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Src\WOTC_SpecialTrainingClassOverhaul\Classes\XComGameState_HeadquartersProjectTrain_STCO.uc">
       <SubType>Content</SubType>
     </Content>
   </ItemGroup>
