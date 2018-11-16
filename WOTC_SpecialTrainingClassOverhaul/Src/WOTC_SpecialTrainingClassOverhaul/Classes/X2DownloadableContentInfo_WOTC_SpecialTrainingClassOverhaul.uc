@@ -26,23 +26,14 @@ static event InstallNewCampaign(XComGameState StartState)
 
 static event OnPostTemplatesCreated()
 {
-	local int n;
-	local X2FacilityTemplate Template;
-	local array<X2FacilityTemplate> FacilityTemplates;
-	
-	FindFacilityTemplateAllDifficulties('OfficerTrainingSchool', FacilityTemplates);
-	foreach FacilityTemplates(Template) {
-		for (n=0;n<Template.StaffSlotDefs.Length;n++) {
-			if (Template.StaffSlotDefs[n].StaffSlotTemplateName == 'OTSStaffSlot') {
-				Template.StaffSlotDefs[n].StaffSlotTemplateName = 'USSM_OTSStaffSlot';
-				
-				`log("Replaced OTS Staff slot " $ n);
+	SetDefaultSoldierClass();
 
-			}
-		}
-	}
-	
-/*
+	AddNewStaffSlots();
+
+}
+
+static function SetDefaultSoldierClass()
+{
 	local X2CharacterTemplateManager CharacterManager;
 	local X2CharacterTemplate Template;
 
@@ -51,54 +42,43 @@ static event OnPostTemplatesCreated()
 	Template = CharacterManager.FindCharacterTemplate('Soldier');
 
 	Template.DefaultSoldierClass = 'STCO_Soldier';
-	*/
-/*
-	local X2ItemTemplateManager ItemTemplateManager;
-	local array<X2DataTemplate> DifficultyVariants;
-	local array<name> TemplateNames;
-	local name TemplateName;
-	local X2DataTemplate ItemTemplate;
-	local X2WeaponTemplate WeaponTemplate;
-	
-	ItemTemplateManager = class'X2ItemTemplateManager'.static.GetItemTemplateManager();
+}
 
-	ItemTemplateManager.GetTemplateNames(TemplateNames);
+static function AddNewStaffSlots()
+{
+	local X2FacilityTemplate FacilityTemplate;
+	local array<X2FacilityTemplate> FacilityTemplates;
+	local StaffSlotDefinition StaffSlotDef;
 
-	foreach TemplateNames(TemplateName)
+	FindFacilityTemplateAllDifficulties('OfficerTrainingSchool', FacilityTemplates);
+	StaffSlotDef.StaffSlotTemplateName = 'STCO_SecondaryTrainingStaffSlot';
+	foreach FacilityTemplates(FacilityTemplate)
 	{
-		ItemTemplateManager.FindDataTemplateAllDifficulties(TemplateName, DifficultyVariants);
-		
-		foreach DifficultyVariants(ItemTemplate)
-		{
-			WeaponTemplate = X2WeaponTemplate(ItemTemplate);
+		FacilityTemplate.StaffSlotDefs.AddItem(StaffSlotDef);
+	}
+}
 
-			if (WeaponTemplate == none)
-				continue;
-			
-			switch (WeaponTemplate.WeaponCat)
-			{
-				case 'sword':
-					WeaponTemplate.InventorySlot = eInvSlot_AugmentationHead;
-					break;
-				case 'pistol':
-					WeaponTemplate.InventorySlot = eInvSlot_AugmentationTorso;
-					break;
-				case 'gremlin':
-					WeaponTemplate.InventorySlot = eInvSlot_AugmentationArms;
-					break;
-				case 'grenade_launcher':
-					WeaponTemplate.InventorySlot = eInvSlot_AugmentationLegs;
-					break;
-				default:
-					break;
+static function AddNewStuffSlots_Original()
+{
+	local int n;
+	local X2FacilityTemplate Template;
+	local array<X2FacilityTemplate> FacilityTemplates;
+	
+	FindFacilityTemplateAllDifficulties('OfficerTrainingSchool', FacilityTemplates);
+	foreach FacilityTemplates(Template) {
+		for (n=0;n<Template.StaffSlotDefs.Length;n++) {
+			if (Template.StaffSlotDefs[n].StaffSlotTemplateName == 'OTSStaffSlot') {
+				Template.StaffSlotDefs[n].StaffSlotTemplateName = 'STCO_SecondaryTrainingStaffSlot';
+				
+				`log("Replaced OTS Staff slot " $ n);
+
 			}
 		}
 	}
-	*/
 }
 
 
-
+//retrieves all difficulty variants of a given facility template
 static function FindFacilityTemplateAllDifficulties(name DataName, out array<X2FacilityTemplate> FacilityTemplates, optional X2StrategyElementTemplateManager StrategyTemplateMgr)
 {
 	local array<X2DataTemplate> DataTemplates;
@@ -110,9 +90,11 @@ static function FindFacilityTemplateAllDifficulties(name DataName, out array<X2F
 
 	StrategyTemplateMgr.FindDataTemplateAllDifficulties(DataName, DataTemplates);
 	FacilityTemplates.Length = 0;
-	foreach DataTemplates(DataTemplate) {
+	foreach DataTemplates(DataTemplate)
+	{
 		FacilityTemplate = X2FacilityTemplate(DataTemplate);
-		if( FacilityTemplate != none ) {
+		if( FacilityTemplate != none )
+		{
 			FacilityTemplates.AddItem(FacilityTemplate);
 		}
 	}

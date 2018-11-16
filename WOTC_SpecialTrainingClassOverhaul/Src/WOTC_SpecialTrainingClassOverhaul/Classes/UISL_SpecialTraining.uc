@@ -1,5 +1,5 @@
 class UISL_SpecialTraining extends UIScreenListener;
-
+/* DON'T KNOW WHAT THIS IS DOING YET, SO COMMENTED IT OUT
 event OnInit(UIScreen Screen) {
 	local XComGameState_Unit UnitState;
 	local X2SoldierClassTemplate ClassTemplate;
@@ -50,3 +50,4 @@ defaultproperties
 	// Leaving this assigned to none will cause every screen to trigger its signals on this class
 	ScreenClass = none;
 }
+*/

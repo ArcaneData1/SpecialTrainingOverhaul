@@ -1,5 +1,4 @@
-// regular rookie training does not use this class
-class XComGameState_HeadquartersProjectTrain_STCO extends XComGameState_HeadquartersProjectTrainRookie;
+class XComGameState_HeadquartersProjectSpecialTraining extends XComGameState_HeadquartersProjectTrainRookie;
 
 function int CalculatePointsToTrain()
 {
