@@ -17,7 +17,7 @@ static function X2DataTemplate CreateSpecialTrainingStaffSlotTemplate()
 	Template.bSoldierSlot = true;
 	Template.bRequireConfirmToEmpty = true;
 	Template.bPreventFilledPopup = true;
-	Template.UIStaffSlotClass = class'UIFacility_STCO_AcademySlot';
+	Template.UIStaffSlotClass = class'UIFacility_SpecialTrainingSlot';
 	Template.FillFn = STCO_FillOTSSlot;
 	Template.EmptyStopProjectFn = EmptyStopProjectOTSSoldierSlot;
 	Template.ShouldDisplayToDoWarningFn = ShouldDisplayOTSSoldierToDoWarning;

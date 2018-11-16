@@ -1,0 +1,22 @@
+[UIFacility_SpecialTrainingSlot]
+m_strSpecialTrainingDialogTitle=SPECIAL TRAINING
+m_strSpecialTrainingDialogText=<XGParam:StrValue0/!UnitName/> can undergo specialized training at the Guerrilla Tactics School but they will be unavailable for combat during the training process. Do you want to proceed?
+m_strStopSpecialTrainingDialogTitle=STOP SPECIAL TRAINING?
+m_strStopSpecialTrainingDialogText=Do you want to stop %UNITNAME from special %CLASSNAME training?\n\nWARNING: All training progress will be lost.
+m_strNoCandidatesTooltip=There are no soldiers available for Guerrilla Tactics School special training. 
+m_strCandidatesAvailableTooltip=Assign a soldier to special training.
+
+
+[UIAlert_STCO]
+m_strNewMulticlassTitle=TRAINING COMPLETED
+m_strNewMulticlassLabel=NEW MULTICLASS ABILITIES
+
+
+[UIChooseSpecialization]
+m_strTitle=Choose Specialization
+m_strInventoryLabel=Available Specializations:
+m_strBuy=BEGIN TRAINING
+
+[STCO_Medic X2SpecialTrainingTemplate]
+DisplayName="Medic"
+Summary="Support and heal squadmates with a GREMLIN."

@@ -25,7 +25,7 @@
     <Content Include="Config\XComSpecialTrainingClassOverhaul.ini">
       <SubType>Content</SubType>
     </Content>
-    <Content Include="Localization\SpecialTrainingClassOverhaul.int">
+    <Content Include="Localization\WOTC_SpecialTrainingClassOverhaul.int">
       <SubType>Content</SubType>
     </Content>
     <Content Include="ReadMe.txt" />
@@ -40,7 +40,7 @@
     <Content Include="Src\WOTC_SpecialTrainingClassOverhaul\Classes\UIChooseSpecialization.uc">
       <SubType>Content</SubType>
     </Content>
-    <Content Include="Src\WOTC_SpecialTrainingClassOverhaul\Classes\UIFacility_STCO_AcademySlot.uc">
+    <Content Include="Src\WOTC_SpecialTrainingClassOverhaul\Classes\UIFacility_SpecialTrainingSlot.uc">
       <SubType>Content</SubType>
     </Content>
     <Content Include="Src\WOTC_SpecialTrainingClassOverhaul\Classes\UISL_SpecialTraining.uc">
