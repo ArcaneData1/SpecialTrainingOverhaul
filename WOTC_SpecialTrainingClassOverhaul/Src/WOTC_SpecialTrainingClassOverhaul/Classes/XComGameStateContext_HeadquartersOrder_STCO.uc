@@ -1,6 +1,6 @@
 class XComGameStateContext_HeadquartersOrder_STCO extends XComGameStateContext_HeadquartersOrder;
-
-static function IssueHeadquartersOrder_USSM(const out HeadquartersOrderInputContext UseInputContext)
+/*
+static function IssueHeadquartersOrder_STCO(const out HeadquartersOrderInputContext UseInputContext)
 {
 	local XComGameStateContext_HeadquartersOrder NewOrderContext;
 
@@ -216,3 +216,4 @@ static function SoldierClassAbilityType RerollPerk(XComGameState_Unit UnitState,
 
 	return newPerk;
 }
+*/

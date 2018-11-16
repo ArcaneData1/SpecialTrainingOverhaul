@@ -16,6 +16,10 @@ m_strNewMulticlassLabel=NEW MULTICLASS ABILITIES
 
 
 [UIChooseSpecialization]
-m_strTitle=Choose Specialization
-m_strInventoryLabel=Available Specializations:
-m_strBuy=BEGIN TRAINING
++m_strTitle=Choose Specializationd
++m_strInventoryLabel=Available Specializationsd:
++m_strBuy=BEGIN TRAININGd
+
+[STCO_Medic X2SpecialTrainingTemplate]
+DisplayName="Medical"
+Summary="Do that, do this"
