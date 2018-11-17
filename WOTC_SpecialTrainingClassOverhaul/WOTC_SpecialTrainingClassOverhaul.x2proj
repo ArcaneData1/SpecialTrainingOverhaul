@@ -19,9 +19,6 @@
     <Content Include="Config\XComClassData.ini">
       <SubType>Content</SubType>
     </Content>
-    <Content Include="Config\XComGameData_CharacterStats.ini">
-      <SubType>Content</SubType>
-    </Content>
     <Content Include="Config\XComSpecialTrainingClassOverhaul.ini">
       <SubType>Content</SubType>
     </Content>
@@ -34,41 +31,14 @@
     <Content Include="Config\XComEngine.ini" />
     <Content Include="Config\XComGame.ini" />
     <Content Include="Localization\XComGame.int" />
-    <Content Include="Src\WOTC_SpecialTrainingClassOverhaul\Classes\UIAlert_STCO.uc">
-      <SubType>Content</SubType>
-    </Content>
-    <Content Include="Src\WOTC_SpecialTrainingClassOverhaul\Classes\UIChooseSpecialization.uc">
-      <SubType>Content</SubType>
-    </Content>
-    <Content Include="Src\WOTC_SpecialTrainingClassOverhaul\Classes\UIFacility_SpecialTrainingSlot.uc">
-      <SubType>Content</SubType>
-    </Content>
-    <Content Include="Src\WOTC_SpecialTrainingClassOverhaul\Classes\UISL_SpecialTraining.uc">
-      <SubType>Content</SubType>
-    </Content>
-    <Content Include="Src\WOTC_SpecialTrainingClassOverhaul\Classes\X2Ability_STCO.uc">
-      <SubType>Content</SubType>
-    </Content>
     <Content Include="Src\WOTC_SpecialTrainingClassOverhaul\Classes\X2DownloadableContentInfo_WOTC_SpecialTrainingClassOverhaul.uc" />
-    <Content Include="Src\WOTC_SpecialTrainingClassOverhaul\Classes\X2SpecialTraining.uc">
+    <Content Include="Src\WOTC_SpecialTrainingClassOverhaul\Classes\X2Specialization.uc">
       <SubType>Content</SubType>
     </Content>
-    <Content Include="Src\WOTC_SpecialTrainingClassOverhaul\Classes\X2SpecialTrainingTemplate.uc">
+    <Content Include="Src\WOTC_SpecialTrainingClassOverhaul\Classes\X2SpecializationTemplate.uc">
       <SubType>Content</SubType>
     </Content>
-    <Content Include="Src\WOTC_SpecialTrainingClassOverhaul\Classes\X2SpecialTrainingTemplateManager.uc">
-      <SubType>Content</SubType>
-    </Content>
-    <Content Include="Src\WOTC_SpecialTrainingClassOverhaul\Classes\X2StrategyElement_SpecialTrainingStaffSlots.uc">
-      <SubType>Content</SubType>
-    </Content>
-    <Content Include="Src\WOTC_SpecialTrainingClassOverhaul\Classes\X2StrategyElement_STCO_EquipmentSlots.uc">
-      <SubType>Content</SubType>
-    </Content>
-    <Content Include="Src\WOTC_SpecialTrainingClassOverhaul\Classes\XComGameStateContext_HeadquartersOrder_STCO.uc">
-      <SubType>Content</SubType>
-    </Content>
-    <Content Include="Src\WOTC_SpecialTrainingClassOverhaul\Classes\XComGameState_HeadquartersProjectSpecialTraining.uc">
+    <Content Include="Src\WOTC_SpecialTrainingClassOverhaul\Classes\X2SpecializationTemplateManager.uc">
       <SubType>Content</SubType>
     </Content>
   </ItemGroup>

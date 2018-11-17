@@ -27,9 +27,6 @@ static event InstallNewCampaign(XComGameState StartState)
 static event OnPostTemplatesCreated()
 {
 	SetDefaultSoldierClass();
-
-	AddNewStaffSlots();
-
 }
 
 static function SetDefaultSoldierClass()
@@ -42,77 +39,4 @@ static function SetDefaultSoldierClass()
 	Template = CharacterManager.FindCharacterTemplate('Soldier');
 
 	Template.DefaultSoldierClass = 'STCO_Soldier';
-}
-
-static function AddNewStaffSlots()
-{
-	local X2FacilityTemplate FacilityTemplate;
-	local array<X2FacilityTemplate> FacilityTemplates;
-	local StaffSlotDefinition StaffSlotDef;
-
-	FindFacilityTemplateAllDifficulties('OfficerTrainingSchool', FacilityTemplates);
-	StaffSlotDef.StaffSlotTemplateName = 'STCO_SecondaryTrainingStaffSlot';
-	foreach FacilityTemplates(FacilityTemplate)
-	{
-		FacilityTemplate.StaffSlotDefs.AddItem(StaffSlotDef);
-	}
-}
-
-static function AddNewStuffSlots_Original()
-{
-	local int n;
-	local X2FacilityTemplate Template;
-	local array<X2FacilityTemplate> FacilityTemplates;
-	
-	FindFacilityTemplateAllDifficulties('OfficerTrainingSchool', FacilityTemplates);
-	foreach FacilityTemplates(Template) {
-		for (n=0;n<Template.StaffSlotDefs.Length;n++) {
-			if (Template.StaffSlotDefs[n].StaffSlotTemplateName == 'OTSStaffSlot') {
-				Template.StaffSlotDefs[n].StaffSlotTemplateName = 'STCO_SecondaryTrainingStaffSlot';
-				
-				`log("Replaced OTS Staff slot " $ n);
-
-			}
-		}
-	}
-}
-
-
-//retrieves all difficulty variants of a given facility template
-static function FindFacilityTemplateAllDifficulties(name DataName, out array<X2FacilityTemplate> FacilityTemplates, optional X2StrategyElementTemplateManager StrategyTemplateMgr)
-{
-	local array<X2DataTemplate> DataTemplates;
-	local X2DataTemplate DataTemplate;
-	local X2FacilityTemplate FacilityTemplate;
-
-	if(StrategyTemplateMgr == none)
-		StrategyTemplateMgr = class'X2StrategyElementTemplateManager'.static.GetStrategyElementTemplateManager();
-
-	StrategyTemplateMgr.FindDataTemplateAllDifficulties(DataName, DataTemplates);
-	FacilityTemplates.Length = 0;
-	foreach DataTemplates(DataTemplate)
-	{
-		FacilityTemplate = X2FacilityTemplate(DataTemplate);
-		if( FacilityTemplate != none )
-		{
-			FacilityTemplates.AddItem(FacilityTemplate);
-		}
-	}
-}
-
-static function bool DisplayQueuedDynamicPopup(DynamicPropertySet PropertySet)
-{
-	local UIAlert_STCO Alert;
-	local XComHQPresentationLayer HQPresLayer;
-
-	HQPresLayer = `HQPRES();
-
-	if (PropertySet.PrimaryRoutingKey == 'USSM_Multiclass') {
-		Alert = HQPresLayer.Spawn(class'UIAlert_STCO', HQPresLayer);
-		Alert.DisplayPropertySet = PropertySet;
-		Alert.eAlertName = PropertySet.SecondaryRoutingKey;
-
-		HQPresLayer.ScreenStack.Push(Alert);
-		return true;
-	}
 }

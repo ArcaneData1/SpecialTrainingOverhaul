@@ -1,6 +1,4 @@
-
-class X2SpecialTrainingTemplate extends X2DataTemplate
-	config(SpecialTrainingClassOverhaul);
+class X2SpecializationTemplate extends X2DataTemplate config(SpecialTrainingClassOverhaul);
 
 var config array<name> AllowedWeapons;
 var config array<name> AllowedSlots;
