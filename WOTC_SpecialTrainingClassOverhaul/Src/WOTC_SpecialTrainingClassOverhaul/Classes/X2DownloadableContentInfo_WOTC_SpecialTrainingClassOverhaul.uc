@@ -26,7 +26,7 @@ static event InstallNewCampaign(XComGameState StartState)
 
 static event OnPostTemplatesCreated()
 {
-	//DisableAllOtherClasses();
+	DisableAllOtherClasses();
 
 	ModifyDefaultSoldierTemplate();
 }
@@ -64,7 +64,5 @@ static function ModifyDefaultSoldierTemplate()
 
 	Template = CharacterManager.FindCharacterTemplate('Soldier');
 
-	Template.DefaultSoldierClass = class'X2SoldierClassTemplateManager'.default.DefaultSoldierClass;
-	//Template.DefaultSoldierClass = 'STCO_Soldier';
-	Template.bIsResistanceHero = true; // hopefully will allow different style of ranking up
+	Template.bIsResistanceHero = true; // allows alternate style of ranking up
 }
