@@ -22,7 +22,9 @@ static event OnLoadedSavedGame()
 /// Called when the player starts a new campaign while this DLC / Mod is installed
 /// </summary>
 static event InstallNewCampaign(XComGameState StartState)
-{}
+{
+	ModifyAllSoldiersInBarracks();
+}
 
 static event OnPostTemplatesCreated()
 {
@@ -65,4 +67,26 @@ static function ModifyDefaultSoldierTemplate()
 	Template = CharacterManager.FindCharacterTemplate('Soldier');
 
 	Template.bIsResistanceHero = true; // allows alternate style of ranking up
+}
+
+static function ModifyAllSoldiersInBarracks()
+{
+	local XComGameStateHistory History;
+	local XComGameState_HeadquartersXCom XComHQ;
+	local array<XComGameState_Unit> Soldiers;
+	local XComGameState_Unit UnitState;
+
+	History = `XCOMHISTORY;
+
+	XComHQ = XComGameState_HeadquartersXCom(History.GetSingleGameStateObjectForClass(class'XComGameState_HeadquartersXCom'));
+
+	Soldiers = XComHQ.GetSoldiers();
+
+	foreach Soldiers(UnitState)
+	{
+		if (class'SpecialTrainingUtilities'.static.UnitRequiresSpecialTrainingComponent(UnitState))
+		{
+			class'SpecialTrainingUtilities'.static.AddNewSpecialTrainingComponentTo(UnitState);
+		}
+	}
 }

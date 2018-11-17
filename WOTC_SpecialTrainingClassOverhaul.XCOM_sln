@@ -3,15 +3,15 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # XCOM ModBuddy Solution File, Format Version 11.00
 VisualStudioVersion = 12.0.21005.1
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{5DAE07AF-E217-45C1-8DE7-FF99D6011E8A}") = "WOTC_SpecialTrainingClassOverhaul", "WOTC_SpecialTrainingClassOverhaul\WOTC_SpecialTrainingClassOverhaul.x2proj", "{763BC688-F80C-4204-A6D6-0171A530A466}"
+Project("{5DAE07AF-E217-45C1-8DE7-FF99D6011E8A}") = "WOTC_SpecialTrainingClassOverhaul", "WOTC_SpecialTrainingClassOverhaul\WOTC_SpecialTrainingClassOverhaul.x2proj", "{9D8D6B4B-018E-41B5-AB8D-45DDB6E4BDDD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Default|XCOM 2 = Default|XCOM 2
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{763BC688-F80C-4204-A6D6-0171A530A466}.Default|XCOM 2.ActiveCfg = Default|XCOM 2
-		{763BC688-F80C-4204-A6D6-0171A530A466}.Default|XCOM 2.Build.0 = Default|XCOM 2
+		{9D8D6B4B-018E-41B5-AB8D-45DDB6E4BDDD}.Default|XCOM 2.ActiveCfg = Default|XCOM 2
+		{9D8D6B4B-018E-41B5-AB8D-45DDB6E4BDDD}.Default|XCOM 2.Build.0 = Default|XCOM 2
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
