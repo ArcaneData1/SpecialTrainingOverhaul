@@ -23,7 +23,7 @@ static event OnLoadedSavedGame()
 /// </summary>
 static event InstallNewCampaign(XComGameState StartState)
 {
-	ModifyAllSoldiersInBarracks();
+	ModifyAllSoldiersInBarracks(StartState);
 }
 
 static event OnPostTemplatesCreated()
@@ -69,7 +69,7 @@ static function ModifyDefaultSoldierTemplate()
 	Template.bIsResistanceHero = true; // allows alternate style of ranking up
 }
 
-static function ModifyAllSoldiersInBarracks()
+static function ModifyAllSoldiersInBarracks(XComGameState StartState)
 {
 	local XComGameStateHistory History;
 	local XComGameState_HeadquartersXCom XComHQ;
@@ -86,7 +86,8 @@ static function ModifyAllSoldiersInBarracks()
 	{
 		if (class'SpecialTrainingUtilities'.static.UnitRequiresSpecialTrainingComponent(UnitState))
 		{
-			class'SpecialTrainingUtilities'.static.AddNewSpecialTrainingComponentTo(UnitState);
+			//class'SpecialTrainingUtilities'.static.AddNewSpecialTrainingComponentAtStartTo(UnitState, StartState);
+			class'SpecialTrainingUtilities'.static.AddNewSpecialTrainingComponentTo(UnitState, StartState);
 		}
 	}
 }
