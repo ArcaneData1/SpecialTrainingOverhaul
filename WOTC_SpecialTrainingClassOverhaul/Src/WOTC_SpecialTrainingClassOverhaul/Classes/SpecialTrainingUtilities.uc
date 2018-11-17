@@ -22,7 +22,9 @@ static function AddNewSpecialTrainingComponentTo(XComGameState_Unit UnitState, o
 	}
 
 	TrainingState = XComGameState_Unit_SpecialTraining(GameState.CreateStateObject(class'XComGameState_Unit_SpecialTraining'));
-	TrainingState.Initialize(UnitState);	
+	TrainingState.Initialize(UnitState);
+
+	TrainingState.AddSpecialization('STCO_Medic');
 	
 	GameState.AddStateObject(TrainingState);
 
@@ -32,68 +34,6 @@ static function AddNewSpecialTrainingComponentTo(XComGameState_Unit UnitState, o
 	`log("STCO: Added Special Training component to soldier.");
 }
 
-/*
-static function AddNewSpecialTrainingComponentAtStartTo(XComGameState_Unit UnitState, XComGameState StartState)
-{
-	local XComGameStateHistory History;
-	local XComGameState UpdateState;
-	local XComGameStateContext_ChangeContainer ChangeContainer;
-	local XComGameState_Unit_SpecialTraining TrainingState;
-
-	//History = `XCOMHISTORY;	
-	//ChangeContainer = class'XComGameStateContext_ChangeContainer'.static.CreateEmptyChangeContainer("Add Special Training Component");
-	//UpdateState = History.CreateNewGameState(true, ChangeContainer);
-
-	TrainingState = XComGameState_Unit_SpecialTraining(StartState.CreateStateObject(class'XComGameState_Unit_SpecialTraining'));
-	TrainingState.Initialize(UnitState);
-
-	//TrainingStates.Add(TrainingState);
-	
-	StartState.AddStateObject(TrainingState);
-
-	//if (`GAMERULES != None)
-	//{
-	//	`GAMERULES.SubmitGameState(UpdateState);
-	//}
-	//else
-	//{
-	//	`XCOMHISTORY.AddGameStateToHistory(UpdateState);
-	//}
-
-	`log("STCO: Added Special Training component to StartState.");
-}
-
-// adds a new training component to a soldier and gives them the initial perks
-static function AddNewSpecialTrainingComponentTo(XComGameState_Unit UnitState)
-{
-	local XComGameStateHistory History;
-	local XComGameState UpdateState;
-	local XComGameStateContext_ChangeContainer ChangeContainer;
-	local XComGameState_Unit_SpecialTraining TrainingState;
-
-	History = `XCOMHISTORY;	
-	ChangeContainer = class'XComGameStateContext_ChangeContainer'.static.CreateEmptyChangeContainer("Add Special Training Component");
-	UpdateState = History.CreateNewGameState(true, ChangeContainer);
-
-	TrainingState = XComGameState_Unit_SpecialTraining(UpdateState.CreateStateObject(class'XComGameState_Unit_SpecialTraining'));
-	TrainingState.Initialize(UnitState);
-
-	//TrainingStates.Add(TrainingState);
-	
-	UpdateState.AddStateObject(TrainingState);
-
-	//if (`GAMERULES != None)
-	//{
-		`GAMERULES.SubmitGameState(UpdateState);
-	//}
-	//else
-	//{
-	//	`XCOMHISTORY.AddGameStateToHistory(UpdateState);
-	//}
-		
-	`log("STCO: Added Special Training component to soldier and submitted UpdateState.");
-}
-*/
 // gets the special training component of a soldier
 static function XComGameState_Unit_SpecialTraining GetSpecialTrainingComponentOf(XComGameState_Unit UnitState)
 {

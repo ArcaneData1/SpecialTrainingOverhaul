@@ -4,9 +4,9 @@ event OnInit(UIScreen Screen)
 {
 	local XComGameState_Unit UnitState;
 	local XComGameState_Unit_SpecialTraining TrainingState;
-	//local X2SoldierClassTemplate ClassTemplate;
-	//local X2SpecialTrainingTemplateManager TrainingTemplateManager;
-	//local X2SpecialTrainingTemplate TrainingTemplate;
+	local X2SoldierClassTemplate ClassTemplate;
+	local X2SpecializationTemplateManager SpecializationTemplateManager;
+	local X2SpecializationTemplate SpecializationTemplate;
 	local UIArmory_PromotionHero Screen_pr;
 
 	Screen_pr = UIArmory_PromotionHero(Screen);
@@ -25,19 +25,24 @@ event OnInit(UIScreen Screen)
 		return;
 
 	`redscreen("This unit has a Special Training component.");
-		/*
+		
 	ClassTemplate = UnitState.GetSoldierClassTemplate();
-	TrainingTemplateManager = class'X2SpecialTrainingTemplateManager'.static.GetSpecialTrainingTemplateManager();
-	TrainingTemplate = TrainingTemplateManager.FindSpecialTrainingTemplate(TrainingState.CurrentSpecializations[0]);
+	SpecializationTemplateManager = class'X2SpecializationTemplateManager'.static.GetSpecializationTemplateManager();
+
+	`redscreen(string(TrainingState.CurrentSpecializations[0]));
+
+	SpecializationTemplate = SpecializationTemplateManager.FindSpecializationTemplate(TrainingState.CurrentSpecializations[0]);
+		
+	`redscreen(SpecializationTemplate.DisplayName);
 
 	// if ability tree names don't match the soldier's specializations, then change them and repopulate the screen
-	if (ClassTemplate.AbilityTreeTitles[0] != TrainingTemplate.DisplayName)
-	{
-		ClassTemplate.AbilityTreeTitles[0] = TrainingTemplate.DisplayName;
-		Screen_pr.PopulateData();
-	}
+	if (ClassTemplate.AbilityTreeTitles[0] != SpecializationTemplate.DisplayName)
+	{	
+		`redscreen("They don't match, so changing screen.");
 
-	*/
+		ClassTemplate.AbilityTreeTitles[0] = SpecializationTemplate.DisplayName;
+		Screen_pr.PopulateData();
+	}	
 }
 /*
 	local XComGameState_Unit UnitState;

@@ -9,7 +9,7 @@ static function array<X2DataTemplate> CreateTemplates()
 	local name SpecializationName;
 	
 	foreach default.Specializations(SpecializationName)
-	{
+	{		
 		`CREATE_X2TEMPLATE(class'X2SpecializationTemplate', Template, SpecializationName);
 		Templates.AddItem(Template);
 	}
