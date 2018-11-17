@@ -26,10 +26,36 @@ static event InstallNewCampaign(XComGameState StartState)
 
 static event OnPostTemplatesCreated()
 {
-	SetDefaultSoldierClass();
+	//DisableAllOtherClasses();
+
+	ModifyDefaultSoldierTemplate();
 }
 
-static function SetDefaultSoldierClass()
+static function DisableAllOtherClasses()
+{
+	local X2SoldierClassTemplateManager SoldierClassManager;
+    local array<X2SoldierClassTemplate> Templates;
+	local X2SoldierClassTemplate Template;
+
+	SoldierClassManager = class'X2SoldierClassTemplateManager'.static.GetSoldierClassTemplateManager();
+
+	Templates = SoldierClassManager.GetAllSoldierClassTemplates(true); // true to not get multiplayer classes
+
+	foreach Templates(Template)
+	{
+		// don't disable STCO's soldier class
+		if (Template.DataName == 'STCO_Soldier')
+			continue;
+
+		if (Template.NumInForcedDeck > 0 || Template.NumInDeck > 0)
+		{
+			Template.NumInForcedDeck = 0;
+			Template.NumInDeck = 0;
+		}
+	}
+}
+
+static function ModifyDefaultSoldierTemplate()
 {
 	local X2CharacterTemplateManager CharacterManager;
 	local X2CharacterTemplate Template;
@@ -38,5 +64,7 @@ static function SetDefaultSoldierClass()
 
 	Template = CharacterManager.FindCharacterTemplate('Soldier');
 
-	Template.DefaultSoldierClass = 'STCO_Soldier';
+	Template.DefaultSoldierClass = class'X2SoldierClassTemplateManager'.default.DefaultSoldierClass;
+	//Template.DefaultSoldierClass = 'STCO_Soldier';
+	Template.bIsResistanceHero = true; // hopefully will allow different style of ranking up
 }

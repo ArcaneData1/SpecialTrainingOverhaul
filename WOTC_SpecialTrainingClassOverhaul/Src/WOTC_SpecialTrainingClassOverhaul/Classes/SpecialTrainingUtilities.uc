@@ -1,0 +1,1 @@
+class SpecialTrainingUtilities extends Object;

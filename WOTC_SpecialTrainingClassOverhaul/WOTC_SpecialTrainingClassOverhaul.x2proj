@@ -31,6 +31,9 @@
     <Content Include="Config\XComEngine.ini" />
     <Content Include="Config\XComGame.ini" />
     <Content Include="Localization\XComGame.int" />
+    <Content Include="Src\WOTC_SpecialTrainingClassOverhaul\Classes\SpecialTrainingUtilities.uc">
+      <SubType>Content</SubType>
+    </Content>
     <Content Include="Src\WOTC_SpecialTrainingClassOverhaul\Classes\X2DownloadableContentInfo_WOTC_SpecialTrainingClassOverhaul.uc" />
     <Content Include="Src\WOTC_SpecialTrainingClassOverhaul\Classes\X2Specialization.uc">
       <SubType>Content</SubType>
