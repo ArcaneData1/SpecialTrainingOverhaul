@@ -1,4 +1,6 @@
-class SpecialTrainingUtilities extends Object;
+class SpecialTrainingUtilities extends Object config (SpecialTrainingClassOverhaul);
+
+var config array<name> DefaultSpecializations;
 
 // adds a new training component to a soldier and gives them the initial perks
 static function AddNewSpecialTrainingComponentTo(XComGameState_Unit UnitState, optional XComGameState GameState = none)
@@ -24,7 +26,7 @@ static function AddNewSpecialTrainingComponentTo(XComGameState_Unit UnitState, o
 	TrainingState = XComGameState_Unit_SpecialTraining(GameState.CreateStateObject(class'XComGameState_Unit_SpecialTraining'));
 	TrainingState.Initialize(UnitState);
 
-	TrainingState.AddSpecialization('STCO_Medic');
+	TrainingState.AddSpecialization(default.DefaultSpecializations[0]);
 	
 	GameState.AddStateObject(TrainingState);
 
@@ -60,7 +62,6 @@ static function bool UnitRequiresSpecialTrainingComponent(XComGameState_Unit Uni
 static function bool DoesUnitHaveSpecialTrainingComponent(XComGameState_Unit UnitState)
 {
 	return GetSpecialTrainingComponentOf(UnitState) != none;
-	//return false; // TODO: a proper check here
 }
 
 // tests if unit is capable of special training; NOT if they can actually recieve some right now

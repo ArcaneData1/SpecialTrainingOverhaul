@@ -1,3 +1,6 @@
+[STCO_Trooper X2SpecializationTemplate]
+DisplayName="Trooper"
+
 [STCO_Medic X2SpecializationTemplate]
 DisplayName="Medic"
 Summary="Support and heal squadmates with a GREMLIN."
