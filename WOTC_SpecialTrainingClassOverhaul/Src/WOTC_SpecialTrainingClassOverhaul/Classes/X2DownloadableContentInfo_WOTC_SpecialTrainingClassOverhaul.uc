@@ -86,7 +86,6 @@ static function ModifyAllSoldiersInBarracks(XComGameState StartState)
 	{
 		if (class'SpecialTrainingUtilities'.static.UnitRequiresSpecialTrainingComponent(UnitState))
 		{
-			//class'SpecialTrainingUtilities'.static.AddNewSpecialTrainingComponentAtStartTo(UnitState, StartState);
 			class'SpecialTrainingUtilities'.static.AddNewSpecialTrainingComponentTo(UnitState, StartState);
 		}
 	}

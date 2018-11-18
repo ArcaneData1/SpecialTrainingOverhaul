@@ -38,18 +38,15 @@ static function AddNewSpecialTrainingComponentTo(XComGameState_Unit UnitState, o
 static function XComGameState_Unit_SpecialTraining GetSpecialTrainingComponentOf(XComGameState_Unit UnitState)
 {
 	local XComGameStateHistory History;
-	//local XComGameState_Unit StateObject;
 	local XComGameState_Unit_SpecialTraining TrainingState;
 
 	History = `XCOMHISTORY;
 
 	foreach History.IterateByClassType(class'XComGameState_Unit_SpecialTraining', TrainingState)
 	{
-		//TrainingState = XComGameState_Unit_SpecialTraining(StateObject);
-		if (TrainingState.UnitRef.ObjectID == UnitState.ObjectID)
+		if (TrainingState.ParentUnitIs(UnitState))
 			return TrainingState;
 	}
-
 	return none;
 }
 
@@ -62,7 +59,8 @@ static function bool UnitRequiresSpecialTrainingComponent(XComGameState_Unit Uni
 // checks if a soldier already has a training component attached
 static function bool DoesUnitHaveSpecialTrainingComponent(XComGameState_Unit UnitState)
 {
-	return false; // TODO: a proper check here
+	return GetSpecialTrainingComponentOf(UnitState) != none;
+	//return false; // TODO: a proper check here
 }
 
 // tests if unit is capable of special training; NOT if they can actually recieve some right now
