@@ -21,43 +21,35 @@ function bool ParentUnitIs(XComGameState_Unit UnitState)
 
 function AddSpecialization(name SpecializationName)
 {
-	AddSpecializationToRow(SpecializationName, 0);
+	AddSpecializationToRow(GetSpecializationTemplate(SpecializationName).Abilities, 0);
 
 	CurrentSpecializations.AddItem(SpecializationName);
 }
 
-function bool HasSpecialization(name SpecializationName)
-{
-	return CurrentSpecializations.Find(SpecializationName) != INDEX_NONE;
-}
-
 function X2SpecializationTemplate GetSpecializationAt(int index)
 {
-	local X2SpecializationTemplateManager SpecializationTemplateManager;
-
-	SpecializationTemplateManager = class'X2SpecializationTemplateManager'.static.GetSpecializationTemplateManager();
-
-	return SpecializationTemplateManager.FindSpecializationTemplate(CurrentSpecializations[index]);
+	return GetSpecializationTemplate(CurrentSpecializations[index]);
 }
 
-protected function AddSpecializationToRow(name SpecializationName, int row)
+protected function X2SpecializationTemplate GetSpecializationTemplate(name SpecializationName)
 {
-	local X2SpecializationTemplateManager SpecializationManager;
-	local X2SpecializationTemplate Specialization;
-	local XComGameState_Unit ParentUnit;
-	local SoldierRankAbilities RankAbilities;
-	local int i;
+	local X2SpecializationTemplateManager SpecializationTemplateManager;
+	SpecializationTemplateManager = class'X2SpecializationTemplateManager'.static.GetSpecializationTemplateManager();
+	return SpecializationTemplateManager.FindSpecializationTemplate(SpecializationName);
+}
 
-	SpecializationManager = class'X2SpecializationTemplateManager'.static.GetSpecializationTemplateManager();
-	Specialization = SpecializationManager.FindSpecializationTemplate(SpecializationName);
+protected function AddSpecializationToRow(array<SoldierClassAbilityType> Abilities, int row)
+{
+	local XComGameState_Unit ParentUnit;
+	local int i;
 
 	ParentUnit = GetParentUnit();
 
 	ParentUnit.AbilityTree.Length = 0;
-	ParentUnit.AbilityTree.Length = Specialization.Abilities.Length;
+	ParentUnit.AbilityTree.Length = Abilities.Length;
 
-	for (i = 0; i < Specialization.Abilities.Length; i++)
+	for (i = 0; i < Abilities.Length; i++)
 	{
-		ParentUnit.AbilityTree[i].Abilities[row] = Specialization.Abilities[i];
+		ParentUnit.AbilityTree[i].Abilities[row] = Abilities[i];
 	}
 }
