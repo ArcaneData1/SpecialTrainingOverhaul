@@ -9,6 +9,7 @@ static function AddNewSpecialTrainingComponentTo(XComGameState_Unit UnitState, o
 	local XComGameStateContext_ChangeContainer ChangeContainer;
 	local XComGameState_Unit_SpecialTraining TrainingState;
 	local bool ShouldAddStateToHistory;
+	local name SpecializationName;
 	
 	History = `XCOMHISTORY;	
 
@@ -26,7 +27,12 @@ static function AddNewSpecialTrainingComponentTo(XComGameState_Unit UnitState, o
 	TrainingState = XComGameState_Unit_SpecialTraining(GameState.CreateStateObject(class'XComGameState_Unit_SpecialTraining'));
 	TrainingState.Initialize(UnitState);
 
-	TrainingState.AddSpecialization(default.DefaultSpecializations[0]);
+	//TrainingState.AddSpecialization(default.DefaultSpecializations[0]);
+
+	foreach default.DefaultSpecializations(SpecializationName)
+	{
+		TrainingState.AddSpecialization(SpecializationName);
+	}
 	
 	GameState.AddStateObject(TrainingState);
 
@@ -67,5 +73,5 @@ static function bool DoesUnitHaveSpecialTrainingComponent(XComGameState_Unit Uni
 // tests if unit is capable of special training; NOT if they can actually recieve some right now
 static function bool IsUnitCapableOfSpecialTraining(XComGameState_Unit UnitState)
 {
-	return UnitState.GetSoldierClassTemplateName() == 'STCO_Soldier' || UnitState.GetSoldierClassTemplateName() == 'Rookie';
+	return UnitState.GetSoldierClassTemplateName() == 'STCO_Soldier';
 }

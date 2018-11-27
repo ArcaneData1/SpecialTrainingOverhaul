@@ -21,6 +21,8 @@ function bool ParentUnitIs(XComGameState_Unit UnitState)
 
 function AddSpecialization(name SpecializationName)
 {
+	AddSpecializationToRow(SpecializationName, 0);
+
 	CurrentSpecializations.AddItem(SpecializationName);
 }
 
@@ -36,4 +38,26 @@ function X2SpecializationTemplate GetSpecializationAt(int index)
 	SpecializationTemplateManager = class'X2SpecializationTemplateManager'.static.GetSpecializationTemplateManager();
 
 	return SpecializationTemplateManager.FindSpecializationTemplate(CurrentSpecializations[index]);
+}
+
+protected function AddSpecializationToRow(name SpecializationName, int row)
+{
+	local X2SpecializationTemplateManager SpecializationManager;
+	local X2SpecializationTemplate Specialization;
+	local XComGameState_Unit ParentUnit;
+	local SoldierRankAbilities RankAbilities;
+	local int i;
+
+	SpecializationManager = class'X2SpecializationTemplateManager'.static.GetSpecializationTemplateManager();
+	Specialization = SpecializationManager.FindSpecializationTemplate(SpecializationName);
+
+	ParentUnit = GetParentUnit();
+
+	ParentUnit.AbilityTree.Length = 0;
+	ParentUnit.AbilityTree.Length = Specialization.Abilities.Length;
+
+	for (i = 0; i < Specialization.Abilities.Length; i++)
+	{
+		ParentUnit.AbilityTree[i].Abilities[row] = Specialization.Abilities[i];
+	}
 }

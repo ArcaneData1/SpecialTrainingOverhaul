@@ -1,11 +1,11 @@
-class X2EventListener_NewCrewNotification extends X2EventListener;
+class X2EventListener_AddSpecialTrainingComponent extends X2EventListener;
 
 static function array<X2DataTemplate> CreateTemplates()
 {
     local array<X2DataTemplate> Templates;
 
     Templates.AddItem(CreateNewCrewNotificationTemplate());
-    //Templates.AddItem(CreateUnitRankUpTemplate());
+    Templates.AddItem(CreateUnitRankUpTemplate());
 
     return Templates;
 }
@@ -18,11 +18,10 @@ static function X2EventListenerTemplate CreateNewCrewNotificationTemplate()
 
     Template.RegisterInStrategy = true;
     Template.AddEvent('NewCrewNotification', OnNewCrew);
-    Template.AddEvent('UnitRankUp',	OnRankUp);
 
     return Template;
 }
-/*
+
 static function X2EventListenerTemplate CreateUnitRankUpTemplate()
 {
     local X2EventListenerTemplate Template;
@@ -34,7 +33,7 @@ static function X2EventListenerTemplate CreateUnitRankUpTemplate()
 
     return Template;
 }
-*/
+
 static protected function EventListenerReturn OnNewCrew(Object EventData, Object EventSource, XComGameState GameState, Name Event, Object CallbackData)
 {
     local XComGameState_Unit UnitState;
