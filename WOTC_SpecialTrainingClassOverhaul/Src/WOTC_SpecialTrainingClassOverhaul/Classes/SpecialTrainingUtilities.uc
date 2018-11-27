@@ -1,38 +1,22 @@
-class SpecialTrainingUtilities extends Object config (SpecialTrainingClassOverhaul);
-
-var config array<name> DefaultSpecializations;
+class SpecialTrainingUtilities extends Object;
 
 // adds a new training component to a soldier and gives them the initial perks
 static function AddNewSpecialTrainingComponentTo(XComGameState_Unit UnitState, optional XComGameState GameState = none)
 {
-	local XComGameStateHistory History;
 	local XComGameStateContext_ChangeContainer ChangeContainer;
 	local XComGameState_Unit_SpecialTraining TrainingState;
 	local bool ShouldAddStateToHistory;
-	local name SpecializationName;
-	
-	History = `XCOMHISTORY;	
+
+	ShouldAddStateToHistory = (GameState == none);
 
 	if (GameState == none)
 	{
-		ShouldAddStateToHistory = true;
 		ChangeContainer = class'XComGameStateContext_ChangeContainer'.static.CreateEmptyChangeContainer("Add Special Training Component");
-		GameState = History.CreateNewGameState(true, ChangeContainer);
-	}
-	else
-	{
-		ShouldAddStateToHistory = false;
+		GameState = `XCOMHISTORY.CreateNewGameState(true, ChangeContainer);
 	}
 
 	TrainingState = XComGameState_Unit_SpecialTraining(GameState.CreateStateObject(class'XComGameState_Unit_SpecialTraining'));
 	TrainingState.Initialize(UnitState);
-
-	//TrainingState.AddSpecialization(default.DefaultSpecializations[0]);
-
-	foreach default.DefaultSpecializations(SpecializationName)
-	{
-		TrainingState.AddSpecialization(SpecializationName);
-	}
 	
 	GameState.AddStateObject(TrainingState);
 
@@ -45,12 +29,9 @@ static function AddNewSpecialTrainingComponentTo(XComGameState_Unit UnitState, o
 // gets the special training component of a soldier
 static function XComGameState_Unit_SpecialTraining GetSpecialTrainingComponentOf(XComGameState_Unit UnitState)
 {
-	local XComGameStateHistory History;
 	local XComGameState_Unit_SpecialTraining TrainingState;
 
-	History = `XCOMHISTORY;
-
-	foreach History.IterateByClassType(class'XComGameState_Unit_SpecialTraining', TrainingState)
+	foreach `XCOMHISTORY.IterateByClassType(class'XComGameState_Unit_SpecialTraining', TrainingState)
 	{
 		if (TrainingState.ParentUnitIs(UnitState))
 			return TrainingState;

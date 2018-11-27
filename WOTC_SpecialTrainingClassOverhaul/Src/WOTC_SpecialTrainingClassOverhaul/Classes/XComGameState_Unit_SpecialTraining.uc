@@ -1,12 +1,22 @@
-class XComGameState_Unit_SpecialTraining extends XComGameState_BaseObject;
+class XComGameState_Unit_SpecialTraining extends XComGameState_BaseObject config (SpecialTrainingClassOverhaul);
+
+var config array<name> DefaultSpecializations;
 
 var protected StateObjectReference UnitRef;
-
 var protected array<name> CurrentSpecializations;
 
 function Initialize(XComGameState_Unit ParentUnit)
 {
+	local name SpecializationName;
+
 	UnitRef = ParentUnit.GetReference();
+	
+	ParentUnit.AbilityTree.Length = 0; // TODO: turn this into function and make sure to reset soldier properly, like removing any obtained perks
+
+	foreach default.DefaultSpecializations(SpecializationName)
+	{
+		AddSpecialization(SpecializationName);
+	}
 }
 
 function XComGameState_Unit GetParentUnit()
@@ -45,8 +55,8 @@ protected function AddSpecializationToRow(array<SoldierClassAbilityType> Abiliti
 
 	ParentUnit = GetParentUnit();
 
-	ParentUnit.AbilityTree.Length = 0;
-	ParentUnit.AbilityTree.Length = Abilities.Length;
+	if (Abilities.Length > ParentUnit.AbilityTree.Length)
+		ParentUnit.AbilityTree.Length = Abilities.Length;
 
 	for (i = 0; i < Abilities.Length; i++)
 	{
