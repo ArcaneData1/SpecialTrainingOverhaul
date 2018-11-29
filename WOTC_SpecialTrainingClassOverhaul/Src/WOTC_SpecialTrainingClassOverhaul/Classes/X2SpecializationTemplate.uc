@@ -4,6 +4,7 @@ var config array<name> AllowedWeapons;
 var config array<name> AllowedSlots;
 var config string IconImage;
 var config array<SoldierClassAbilityType> Abilities;
+var config bool CanBeTrained;
 
 var localized string DisplayName;
 var localized string Summary;

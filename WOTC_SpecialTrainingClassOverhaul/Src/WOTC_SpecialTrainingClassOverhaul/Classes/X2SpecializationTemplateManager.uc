@@ -20,7 +20,7 @@ function X2SpecializationTemplate FindSpecializationTemplate(name DataName)
 	return none;
 }
 
-function array<X2SpecializationTemplate> GetAllSpecializationTemplates()
+function array<X2SpecializationTemplate> GetAllSpecializationTemplates(optional bool TrainableOnly = false)
 {
 	local array<X2SpecializationTemplate> arrSpecializationTemplates;
 	local X2DataTemplate Template;
@@ -30,7 +30,7 @@ function array<X2SpecializationTemplate> GetAllSpecializationTemplates()
 	{
 		SpecializationTemplate = X2SpecializationTemplate(Template);
 
-		if (SpecializationTemplate != none)
+		if (SpecializationTemplate != none && (!TrainableOnly || SpecializationTemplate.CanBeTrained))
 		{
 			arrSpecializationTemplates.AddItem(SpecializationTemplate);
 		}
