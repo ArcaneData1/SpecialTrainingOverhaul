@@ -29,8 +29,8 @@ static event InstallNewCampaign(XComGameState StartState)
 static event OnPostTemplatesCreated()
 {
 	DisableAllOtherClasses();
-
 	ModifyDefaultSoldierTemplate();
+	AddNewStaffSlots();
 }
 
 static function DisableAllOtherClasses()
@@ -87,6 +87,42 @@ static function ModifyAllSoldiersInBarracks(XComGameState StartState)
 		if (class'SpecialTrainingUtilities'.static.UnitRequiresSpecialTrainingComponent(UnitState))
 		{
 			class'SpecialTrainingUtilities'.static.AddNewSpecialTrainingComponentTo(UnitState, StartState);
+		}
+	}
+}
+
+static function AddNewStaffSlots()
+{
+	local X2FacilityTemplate FacilityTemplate;
+	local array<X2FacilityTemplate> FacilityTemplates;
+	local StaffSlotDefinition StaffSlotDef;
+
+	FindFacilityTemplateAllDifficulties('OfficerTrainingSchool', FacilityTemplates);
+	StaffSlotDef.StaffSlotTemplateName = 'STCO_SpecialTrainingStaffSlot';
+	foreach FacilityTemplates(FacilityTemplate)
+	{
+		FacilityTemplate.StaffSlotDefs.AddItem(StaffSlotDef);
+	}
+}
+
+//retrieves all difficulty variants of a given facility template
+static function FindFacilityTemplateAllDifficulties(name DataName, out array<X2FacilityTemplate> FacilityTemplates, optional X2StrategyElementTemplateManager StrategyTemplateMgr)
+{
+	local array<X2DataTemplate> DataTemplates;
+	local X2DataTemplate DataTemplate;
+	local X2FacilityTemplate FacilityTemplate;
+
+	if(StrategyTemplateMgr == none)
+		StrategyTemplateMgr = class'X2StrategyElementTemplateManager'.static.GetStrategyElementTemplateManager();
+
+	StrategyTemplateMgr.FindDataTemplateAllDifficulties(DataName, DataTemplates);
+	FacilityTemplates.Length = 0;
+	foreach DataTemplates(DataTemplate)
+	{
+		FacilityTemplate = X2FacilityTemplate(DataTemplate);
+		if( FacilityTemplate != none )
+		{
+			FacilityTemplates.AddItem(FacilityTemplate);
 		}
 	}
 }

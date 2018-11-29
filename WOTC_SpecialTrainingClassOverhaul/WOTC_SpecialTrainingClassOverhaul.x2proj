@@ -34,6 +34,15 @@
     <Content Include="Src\WOTC_SpecialTrainingClassOverhaul\Classes\SpecialTrainingUtilities.uc">
       <SubType>Content</SubType>
     </Content>
+    <Content Include="Src\WOTC_SpecialTrainingClassOverhaul\Classes\UIAlert_SpecialTrainingComplete.uc">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Src\WOTC_SpecialTrainingClassOverhaul\Classes\UIChooseSpecialization.uc">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Src\WOTC_SpecialTrainingClassOverhaul\Classes\UIFacility_SpecialTrainingSlot.uc">
+      <SubType>Content</SubType>
+    </Content>
     <Content Include="Src\WOTC_SpecialTrainingClassOverhaul\Classes\UIScreenListener_PromotionScreen_STCO.uc">
       <SubType>Content</SubType>
     </Content>
@@ -48,6 +57,12 @@
       <SubType>Content</SubType>
     </Content>
     <Content Include="Src\WOTC_SpecialTrainingClassOverhaul\Classes\X2SpecializationTemplateManager.uc">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Src\WOTC_SpecialTrainingClassOverhaul\Classes\X2StrategyElement_SpecialTrainingStaffSlots.uc">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Src\WOTC_SpecialTrainingClassOverhaul\Classes\XComGameState_HeadquartersProjectSpecialTraining.uc">
       <SubType>Content</SubType>
     </Content>
     <Content Include="Src\WOTC_SpecialTrainingClassOverhaul\Classes\XComGameState_Unit_SpecialTraining.uc">

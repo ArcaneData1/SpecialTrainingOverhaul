@@ -4,6 +4,7 @@ var config array<name> DefaultSpecializations;
 
 var protected StateObjectReference UnitRef;
 var protected array<name> CurrentSpecializations;
+var protected X2SpecializationTemplate LastTrainedSpecialization;
 
 function Initialize(XComGameState_Unit ParentUnit)
 {
@@ -29,11 +30,23 @@ function bool ParentUnitIs(XComGameState_Unit UnitState)
 	return UnitRef.ObjectID == UnitState.ObjectID;
 }
 
+function X2SpecializationTemplate GetLastTrainedSpecialization()
+{
+	return LastTrainedSpecialization;
+}
+
 function AddSpecialization(name SpecializationName)
 {
+	`log("STCO: Adding specialization.");
+
 	AddSpecializationToRow(GetSpecializationTemplate(SpecializationName).Abilities, 0);
 
-	CurrentSpecializations.AddItem(SpecializationName);
+	//CurrentSpecializations.AddItem(SpecializationName);
+	CurrentSpecializations[0] = SpecializationName;
+
+	LastTrainedSpecialization = GetSpecializationTemplate(SpecializationName);
+
+	`log("STCO: Finished adding specialization. New count: " $ CurrentSpecializations.Length);
 }
 
 function X2SpecializationTemplate GetSpecializationAt(int index)
@@ -54,6 +67,8 @@ protected function AddSpecializationToRow(array<SoldierClassAbilityType> Abiliti
 	local int i;
 
 	ParentUnit = GetParentUnit();
+
+	ParentUnit.AbilityTree.Length = 0;
 
 	if (Abilities.Length > ParentUnit.AbilityTree.Length)
 		ParentUnit.AbilityTree.Length = Abilities.Length;
