@@ -20,9 +20,12 @@ function Initialize(XComGameState_Unit ParentUnit)
 	}
 }
 
-function XComGameState_Unit GetParentUnit()
+function XComGameState_Unit GetParentUnit(optional XComGameState UpdateState)
 {
-	return XComGameState_Unit(`XCOMHISTORY.GetGameStateForObjectID(UnitRef.ObjectID));
+	if (UpdateState == none)
+		return XComGameState_Unit(`XCOMHISTORY.GetGameStateForObjectID(UnitRef.ObjectID));
+	else
+		return XComGameState_Unit(UpdateState.GetGameStateForObjectID(UnitRef.ObjectID));
 }
 
 function bool ParentUnitIs(XComGameState_Unit UnitState)
@@ -35,11 +38,11 @@ function X2SpecializationTemplate GetLastTrainedSpecialization()
 	return LastTrainedSpecialization;
 }
 
-function AddSpecialization(name SpecializationName)
+function AddSpecialization(name SpecializationName, optional XComGameState UpdateState)
 {
 	`log("STCO: Adding specialization.");
 
-	AddSpecializationToRow(GetSpecializationTemplate(SpecializationName).Abilities, 0);
+	AddSpecializationToRow(GetSpecializationTemplate(SpecializationName).Abilities, 0, UpdateState);
 
 	//CurrentSpecializations.AddItem(SpecializationName);
 	CurrentSpecializations[0] = SpecializationName;
@@ -61,20 +64,31 @@ protected function X2SpecializationTemplate GetSpecializationTemplate(name Speci
 	return SpecializationTemplateManager.FindSpecializationTemplate(SpecializationName);
 }
 
-protected function AddSpecializationToRow(array<SoldierClassAbilityType> Abilities, int row)
+protected function AddSpecializationToRow(array<SoldierClassAbilityType> Abilities, int row, optional XComGameState UpdateState)
 {
 	local XComGameState_Unit ParentUnit;
 	local int i;
 
-	ParentUnit = GetParentUnit();
+	`log("STCO: Beginning AddSpecializationToRow function...");
 
-	ParentUnit.AbilityTree.Length = 0;
+	ParentUnit = GetParentUnit(UpdateState);
+
+	`log("STCO: Got parent unit.");
+
+	//ParentUnit.AbilityTree.Length = 0;
+	//ParentUnit.ResetSoldierAbilities();
 
 	if (Abilities.Length > ParentUnit.AbilityTree.Length)
+	{	
+		`log("STCO: Increasing ability tree length.");
 		ParentUnit.AbilityTree.Length = Abilities.Length;
+	}
 
 	for (i = 0; i < Abilities.Length; i++)
 	{
+		`log("STCO: Adding a new ability...");
 		ParentUnit.AbilityTree[i].Abilities[row] = Abilities[i];
 	}
+	
+	`log("STCO: Done!");
 }
