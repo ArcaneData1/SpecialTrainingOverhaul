@@ -57,6 +57,26 @@ function X2SpecializationTemplate GetSpecializationAt(int index)
 	return GetSpecializationTemplate(CurrentSpecializations[index]);
 }
 
+function array<name> GetAllowedSlots()
+{
+	local name SpecializationName;
+	local X2SpecializationTemplate Template;
+	local name SlotName;
+	local array<name> AllowedSlots;
+
+	foreach CurrentSpecializations(SpecializationName)
+	{
+		Template = GetSpecializationTemplate(SpecializationName);
+
+		foreach Template.AllowedSlots(SlotName)
+		{
+			AllowedSlots.AddItem(SlotName);
+		}
+	}
+
+	return AllowedSlots;
+}
+
 protected function X2SpecializationTemplate GetSpecializationTemplate(name SpecializationName)
 {
 	local X2SpecializationTemplateManager SpecializationTemplateManager;

@@ -54,7 +54,20 @@ static function bool CanAddItemToSlot(CHItemSlot Slot, XComGameState_Unit Unit, 
 
 static function bool HasSlot(CHItemSlot Slot, XComGameState_Unit UnitState, out string LockedReason, optional XComGameState CheckGameState)
 {
-	return UnitState.IsSoldier() && !UnitState.IsRobotic();
+	local XComGameState_Unit_SpecialTraining TrainingState;
+	local array<name> AllowedSlots;
+
+	TrainingState = class'SpecialTrainingUtilities'.static.GetSpecialTrainingComponentOf(UnitState);
+
+	if (TrainingState == none)
+		return false;
+
+	AllowedSlots = TrainingState.GetAllowedSlots();
+
+	return AllowedSlots.Find(Slot.DataName) != INDEX_NONE;
+
+	//return TrainingState != none && TrainingState.GetAllowedSlots().Find(Slot.DataName) != INDEX_NONE;
+	//return UnitState.IsSoldier() && !UnitState.IsRobotic();
 }
 
 static function int GetPriority(CHItemSlot Slot, XComGameState_Unit UnitState, optional XComGameState CheckGameState)
