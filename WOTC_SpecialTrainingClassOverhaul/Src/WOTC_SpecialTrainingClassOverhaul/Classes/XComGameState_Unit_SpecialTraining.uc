@@ -75,9 +75,6 @@ protected function AddSpecializationToRow(array<SoldierClassAbilityType> Abiliti
 
 	`log("STCO: Got parent unit.");
 
-	//ParentUnit.AbilityTree.Length = 0;
-	//ParentUnit.ResetSoldierAbilities();
-
 	if (Abilities.Length > ParentUnit.AbilityTree.Length)
 	{	
 		`log("STCO: Increasing ability tree length.");

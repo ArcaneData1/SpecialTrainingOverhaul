@@ -72,7 +72,6 @@ simulated function array<Commodity> ConvertSpecializationsToCommodities()
 	local Commodity TrainingComm;
 	
 	m_arrSpecializations.Remove(0, m_arrSpecializations.Length);
-	//m_arrSpecializations = GetSpecializations();
 	m_arrSpecializations = class'X2SpecializationTemplateManager'.static.GetSpecializationTemplateManager().GetAllSpecializationTemplates(true);
 	m_arrSpecializations.Sort(SortSpecializationsByName);
 
@@ -92,27 +91,7 @@ simulated function array<Commodity> ConvertSpecializationsToCommodities()
 }
 
 //-----------------------------------------------------------------------------
-/*
-//This is overwritten in the research archives. 
-simulated function array<X2SpecializationTemplate> GetSpecializations() // TODO: Move function to TemplateManager
-{
-	local X2SpecializationTemplateManager TrainingManager;
-	local X2SpecializationTemplate SpecializationTemplate;
-	local X2DataTemplate Template;
-	local array<X2SpecializationTemplate> SpecializationTemplates;
 
-	TrainingManager = class'X2SpecializationTemplateManager'.static.GetSpecializationTemplateManager();
-
-	foreach TrainingManager.IterateTemplates(Template)
-	{		
-		SpecializationTemplate = X2SpecializationTemplate(Template);
-		if (SpecializationTemplate.CanBeTrained)
-			SpecializationTemplates.AddItem(SpecializationTemplate);
-	}
-
-	return SpecializationTemplates;
-}
-*/
 function int SortSpecializationsByName(X2SpecializationTemplate a, X2SpecializationTemplate b)
 {	
 	if (a.DisplayName < b.DisplayName)
