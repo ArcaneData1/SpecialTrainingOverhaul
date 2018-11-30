@@ -76,5 +76,17 @@ static function int GetPriority(CHItemSlot Slot, XComGameState_Unit UnitState, o
 
 static function bool ShowItemInLockerList(CHItemSlot Slot, XComGameState_Unit Unit, XComGameState_Item ItemState, X2ItemTemplate ItemTemplate, XComGameState CheckGameState)
 {
-	return X2WeaponTemplate(ItemTemplate).InventorySlot == eInvSlot_SecondaryWeapon;
+	switch (Slot.InvSlot)
+	{
+		case eInvSlot_AugmentationHead:
+			return X2WeaponTemplate(ItemTemplate).WeaponCat == 'sword';
+		case eInvSlot_AugmentationTorso:
+			return X2WeaponTemplate(ItemTemplate).WeaponCat == 'pistol';
+		case eInvSlot_AugmentationArms:
+			return X2WeaponTemplate(ItemTemplate).WeaponCat == 'gremlin';
+		case eInvSlot_AugmentationLegs:
+			return X2WeaponTemplate(ItemTemplate).WeaponCat == 'grenade_launcher';
+		default:
+			return X2WeaponTemplate(ItemTemplate).WeaponCat == 'sword';
+	}
 }
