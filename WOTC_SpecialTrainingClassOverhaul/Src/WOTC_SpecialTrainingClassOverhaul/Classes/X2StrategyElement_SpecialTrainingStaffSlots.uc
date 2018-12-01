@@ -114,11 +114,9 @@ static function bool STCO_IsUnitValidForOTSSoldierSlot(XComGameState_StaffSlot S
 	Unit = XComGameState_Unit(`XCOMHISTORY.GetGameStateForObjectID(UnitInfo.UnitRef.ObjectID));
 
 	return (
-		Unit.CanBeStaffed()	&& 
-		Unit.IsSoldier() &&
+		Unit.CanBeStaffed() &&
 		Unit.IsActive() &&
-		!Unit.CanRankUpSoldier() &&
-		SlotState.GetMyTemplate().ExcludeClasses.Find(Unit.GetSoldierClassTemplateName()) == INDEX_NONE);
+		class'SpecialTrainingUtilities'.static.CanUnitReceiveSpecialTraining(Unit));
 }
 
 static function XComGameState_HeadquartersProjectSpecialTraining GetSpecialTrainingProject(XComGameState_StaffSlot SlotState)

@@ -42,7 +42,7 @@ static function XComGameState_Unit_SpecialTraining GetSpecialTrainingComponentOf
 // runs checks to see if unit should have AddNewSpecialTrainingComponentTo called on it
 static function bool UnitRequiresSpecialTrainingComponent(XComGameState_Unit UnitState)
 {
-	return !DoesUnitHaveSpecialTrainingComponent(UnitState) && IsUnitCapableOfSpecialTraining(UnitState);
+	return !DoesUnitHaveSpecialTrainingComponent(UnitState) && UnitState.GetSoldierClassTemplateName() == 'STCO_Soldier';
 }
 
 // checks if a soldier already has a training component attached
@@ -51,8 +51,13 @@ static function bool DoesUnitHaveSpecialTrainingComponent(XComGameState_Unit Uni
 	return GetSpecialTrainingComponentOf(UnitState) != none;
 }
 
-// tests if unit is capable of special training; NOT if they can actually recieve some right now
-static function bool IsUnitCapableOfSpecialTraining(XComGameState_Unit UnitState)
+// tests if unit can currently receive special training
+static function bool CanUnitReceiveSpecialTraining(XComGameState_Unit UnitState)
 {
-	return UnitState.GetSoldierClassTemplateName() == 'STCO_Soldier';
+	local XComGameState_Unit_SpecialTraining TrainingComponent;
+
+	TrainingComponent = GetSpecialTrainingComponentOf(UnitState);
+
+	return (TrainingComponent != none && TrainingComponent.GetSpecializationAt(0).CanBeReplaced);
 }
+

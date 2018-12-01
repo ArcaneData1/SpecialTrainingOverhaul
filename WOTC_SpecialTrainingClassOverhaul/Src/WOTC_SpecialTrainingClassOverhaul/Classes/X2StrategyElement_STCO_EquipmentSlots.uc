@@ -65,9 +65,6 @@ static function bool HasSlot(CHItemSlot Slot, XComGameState_Unit UnitState, out 
 	AllowedSlots = TrainingState.GetAllowedSlots();
 
 	return AllowedSlots.Find(Slot.DataName) != INDEX_NONE;
-
-	//return TrainingState != none && TrainingState.GetAllowedSlots().Find(Slot.DataName) != INDEX_NONE;
-	//return UnitState.IsSoldier() && !UnitState.IsRobotic();
 }
 
 static function int GetPriority(CHItemSlot Slot, XComGameState_Unit UnitState, optional XComGameState CheckGameState)

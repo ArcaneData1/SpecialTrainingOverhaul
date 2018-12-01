@@ -40,16 +40,11 @@ function X2SpecializationTemplate GetLastTrainedSpecialization()
 
 function AddSpecialization(name SpecializationName, optional XComGameState UpdateState)
 {
-	`log("STCO: Adding specialization.");
-
 	AddSpecializationToRow(GetSpecializationTemplate(SpecializationName).Abilities, 0, UpdateState);
 
-	//CurrentSpecializations.AddItem(SpecializationName);
 	CurrentSpecializations[0] = SpecializationName;
 
 	LastTrainedSpecialization = GetSpecializationTemplate(SpecializationName);
-
-	`log("STCO: Finished adding specialization. New count: " $ CurrentSpecializations.Length);
 }
 
 function X2SpecializationTemplate GetSpecializationAt(int index)
@@ -89,23 +84,15 @@ protected function AddSpecializationToRow(array<SoldierClassAbilityType> Abiliti
 	local XComGameState_Unit ParentUnit;
 	local int i;
 
-	`log("STCO: Beginning AddSpecializationToRow function...");
-
 	ParentUnit = GetParentUnit(UpdateState);
-
-	`log("STCO: Got parent unit.");
 
 	if (Abilities.Length > ParentUnit.AbilityTree.Length)
 	{	
-		`log("STCO: Increasing ability tree length.");
 		ParentUnit.AbilityTree.Length = Abilities.Length;
 	}
 
 	for (i = 0; i < Abilities.Length; i++)
 	{
-		`log("STCO: Adding a new ability...");
 		ParentUnit.AbilityTree[i].Abilities[row] = Abilities[i];
 	}
-	
-	`log("STCO: Done!");
 }
