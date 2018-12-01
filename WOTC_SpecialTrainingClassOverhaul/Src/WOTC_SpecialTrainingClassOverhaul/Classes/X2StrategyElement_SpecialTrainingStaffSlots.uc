@@ -20,12 +20,9 @@ static function X2DataTemplate CreateSpecialTrainingStaffSlotTemplate()
 	Template.UIStaffSlotClass = class'UIFacility_SpecialTrainingSlot';
 	Template.FillFn = STCO_FillOTSSlot;
 	Template.EmptyStopProjectFn = STCO_EmptyStopProjectOTSSoldierSlot;
-	//Template.ShouldDisplayToDoWarningFn = STCO_ShouldDisplayOTSSoldierToDoWarning;
 	Template.ShouldDisplayToDoWarningFn = ShouldDisplayOTSSoldierToDoWarning;
-	//Template.GetSkillDisplayStringFn = STCO_GetOTSSkillDisplayString;
 	Template.GetBonusDisplayStringFn = STCO_GetOTSBonusDisplayString;
 	Template.GetSkillDisplayStringFn = GetOTSSkillDisplayString;
-	//Template.GetBonusDisplayStringFn = GetOTSBonusDisplayString;
 	Template.IsUnitValidForSlotFn = STCO_IsUnitValidForOTSSoldierSlot;
 	Template.MatineeSlotName = "Soldier";
 
@@ -95,16 +92,14 @@ static function string STCO_GetOTSSkillDisplayString(XComGameState_StaffSlot Slo
 static function string STCO_GetOTSBonusDisplayString(XComGameState_StaffSlot SlotState, optional bool bPreview)
 {
 	local XComGameState_HeadquartersProjectSpecialTraining TrainProject;
-	local string Contribution;
+	local string SpecializationName;
 
-	if (SlotState.IsSlotFilled())
-	{
-		TrainProject = GetSpecialTrainingProject(SlotState);
-		//Contribution = Caps(TrainProject.NewSpecializationName());
-		Contribution = "NOW TRAINING";
-	}
+	if (!SlotState.IsSlotFilled())
+		return SlotState.GetMyTemplate().BonusEmptyText;
 
-	return GetBonusDisplayString(SlotState, "%SKILL", Contribution);
+	TrainProject = class'SpecialTrainingUtilities'.static.GetSpecialTrainingProject(SlotState);
+	SpecializationName = Caps(TrainProject.GetTrainingSpecializationTemplate().DisplayName);
+	return Repl(SlotState.GetMyTemplate().BonusText, "%SKILL", SpecializationName);
 }
 
 static function bool STCO_IsUnitValidForOTSSoldierSlot(XComGameState_StaffSlot SlotState, StaffUnitInfo UnitInfo)
@@ -117,25 +112,4 @@ static function bool STCO_IsUnitValidForOTSSoldierSlot(XComGameState_StaffSlot S
 		Unit.CanBeStaffed() &&
 		Unit.IsActive() &&
 		class'SpecialTrainingUtilities'.static.CanUnitReceiveSpecialTraining(Unit));
-}
-
-static function XComGameState_HeadquartersProjectSpecialTraining GetSpecialTrainingProject(XComGameState_StaffSlot SlotState)
-{
-	local XComGameState_HeadquartersXCom XComHQ;
-	local XComGameState_HeadquartersProjectSpecialTraining TrainProject;
-	local int idx;
-
-	XComHQ = class'UIUtilities_Strategy'.static.GetXComHQ();
-	for (idx = 0; idx < XComHQ.Projects.Length; idx++)
-	{
-		TrainProject = XComGameState_HeadquartersProjectSpecialTraining(`XCOMHISTORY.GetGameStateForObjectID(XComHQ.Projects[idx].ObjectID));
-
-		if (TrainProject != none)
-		{
-			if (SlotState.GetAssignedStaffRef() == TrainProject.ProjectFocus)
-			{
-				return TrainProject;
-			}
-		}
-	}
 }

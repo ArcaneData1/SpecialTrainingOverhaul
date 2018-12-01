@@ -20,7 +20,6 @@ simulated function ShowDropDown()
 {
 	local XComGameState_StaffSlot StaffSlot;
 	local XComGameState_Unit UnitState;
-	local XComGameState_HeadquartersXCom XComHQ;
 	local XComGameState_HeadquartersProjectSpecialTraining TrainProject;
 	local string StopTrainingText;
 
@@ -32,13 +31,12 @@ simulated function ShowDropDown()
 	}
 	else // Ask the user to confirm that they want to empty the slot and stop training
 	{
-		//XComHQ = class'UIUtilities_Strategy'.static.GetXComHQ();
 		UnitState = StaffSlot.GetAssignedStaff();
-		//TrainProject = XComHQ.GetTrainRookieProject(UnitState.GetReference());
+		TrainProject = class'SpecialTrainingUtilities'.static.GetSpecialTrainingProject(StaffSlot);
 
 		StopTrainingText = m_strStopSpecialTrainingDialogText;
 		StopTrainingText = Repl(StopTrainingText, "%UNITNAME", UnitState.GetName(eNameType_RankFull));
-		//StopTrainingText = Repl(StopTrainingText, "%CLASSNAME", TrainProject.GetTrainingClassTemplate().DisplayName);
+		StopTrainingText = Repl(StopTrainingText, "%SPECNAME", TrainProject.GetTrainingSpecializationTemplate().DisplayName);
 
 		ConfirmEmptyProjectSlotPopup(m_strStopSpecialTrainingDialogTitle, StopTrainingText);
 	}

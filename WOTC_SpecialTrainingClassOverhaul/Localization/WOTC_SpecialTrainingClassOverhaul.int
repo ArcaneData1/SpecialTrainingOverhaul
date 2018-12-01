@@ -9,7 +9,7 @@ Summary="Support and heal squadmates with a GREMLIN."
 m_strSpecialTrainingDialogTitle=SPECIAL TRAINING
 m_strSpecialTrainingDialogText=<XGParam:StrValue0/!UnitName/> can undergo specialized training at the Guerrilla Tactics School but they will be unavailable for combat during the training process. Do you want to proceed?
 m_strStopSpecialTrainingDialogTitle=STOP SPECIAL TRAINING?
-m_strStopSpecialTrainingDialogText=Do you want to stop %UNITNAME from special %CLASSNAME training?\n\nWARNING: All training progress will be lost.
+m_strStopSpecialTrainingDialogText=Do you want to stop %UNITNAME from %SPECNAME special training?\n\nWARNING: All training progress will be lost.
 m_strNoSoldiersTooltip=There are no soldiers available for Guerrilla Tactics School special training. 
 m_strSoldiersAvailableTooltip=Assign a soldier to receive special training.
 

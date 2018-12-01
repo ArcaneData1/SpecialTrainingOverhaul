@@ -61,3 +61,26 @@ static function bool CanUnitReceiveSpecialTraining(XComGameState_Unit UnitState)
 	return (TrainingComponent != none && TrainingComponent.GetSpecializationAt(0).CanBeReplaced);
 }
 
+// gets the currently-running special training project for the given slot
+static function XComGameState_HeadquartersProjectSpecialTraining GetSpecialTrainingProject(XComGameState_StaffSlot SlotState)
+{
+	local XComGameState_HeadquartersXCom XComHQ;
+	local XComGameState_HeadquartersProjectSpecialTraining TrainProject;
+	local int idx;
+
+	XComHQ = class'UIUtilities_Strategy'.static.GetXComHQ();
+
+	for (idx = 0; idx < XComHQ.Projects.Length; idx++)
+	{
+		TrainProject = XComGameState_HeadquartersProjectSpecialTraining(`XCOMHISTORY.GetGameStateForObjectID(XComHQ.Projects[idx].ObjectID));
+
+		if (TrainProject != none)
+		{
+			if (SlotState.GetAssignedStaffRef() == TrainProject.ProjectFocus)
+			{
+				return TrainProject;
+			}
+		}
+	}
+}
+
