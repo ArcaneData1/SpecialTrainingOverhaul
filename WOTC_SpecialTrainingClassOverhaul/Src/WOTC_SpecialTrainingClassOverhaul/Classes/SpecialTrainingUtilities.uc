@@ -1,4 +1,6 @@
-class SpecialTrainingUtilities extends Object;
+class SpecialTrainingUtilities extends Object config (SpecialTrainingClassOverhaul);
+
+var config array<int> DefaultSpecialTrainingDays;
 
 // adds a new training component to a soldier and gives them the initial perks
 static function AddNewSpecialTrainingComponentTo(XComGameState_Unit UnitState, optional XComGameState GameState = none)
@@ -84,3 +86,7 @@ static function XComGameState_HeadquartersProjectSpecialTraining GetSpecialTrain
 	}
 }
 
+static function float GetSpecialTrainingDays()
+{
+	return `ScaleStrategyArrayInt(default.DefaultSpecialTrainingDays);
+}

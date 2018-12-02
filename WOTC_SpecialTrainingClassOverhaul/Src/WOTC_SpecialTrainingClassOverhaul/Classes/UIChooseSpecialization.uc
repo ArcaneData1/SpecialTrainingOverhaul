@@ -82,7 +82,8 @@ simulated function array<Commodity> ConvertSpecializationsToCommodities()
 		TrainingComm.Title = TrainingTemplate.DisplayName;
 		TrainingComm.Image = TrainingTemplate.IconImage;
 		TrainingComm.Desc = TrainingTemplate.Summary;
-		TrainingComm.OrderHours = XComHQ.GetTrainRookieDays() * 24;
+		TrainingComm.OrderHours = class'SpecialTrainingUtilities'.static.GetSpecialTrainingDays() * 24;
+		//TrainingComm.OrderHours = XComHQ.GetTrainRookieDays() * 24;
 
 		arrCommodoties.AddItem(TrainingComm);
 	}

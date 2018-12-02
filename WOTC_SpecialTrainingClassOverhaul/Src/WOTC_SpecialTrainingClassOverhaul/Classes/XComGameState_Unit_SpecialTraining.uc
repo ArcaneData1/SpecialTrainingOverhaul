@@ -11,6 +11,11 @@ function Initialize(XComGameState_Unit ParentUnit)
 	local name SpecializationName;
 
 	UnitRef = ParentUnit.GetReference();
+
+	//for (i = 0; i < ParentUnit.AbilityTree.Length; i++)
+	//{
+	//	ParentUnit.AbilityTree[i].Abilities[row] = Abilities[i];
+	//}
 	
 	ParentUnit.AbilityTree.Length = 0; // TODO: turn this into function and make sure to reset soldier properly, like removing any obtained perks
 
@@ -86,6 +91,8 @@ protected function AddSpecializationToRow(array<SoldierClassAbilityType> Abiliti
 
 	ParentUnit = GetParentUnit(UpdateState);
 
+	//ClearPerkRow(row, UpdateState);
+
 	if (Abilities.Length > ParentUnit.AbilityTree.Length)
 	{	
 		ParentUnit.AbilityTree.Length = Abilities.Length;
@@ -96,3 +103,17 @@ protected function AddSpecializationToRow(array<SoldierClassAbilityType> Abiliti
 		ParentUnit.AbilityTree[i].Abilities[row] = Abilities[i];
 	}
 }
+/*
+protected function ClearPerkRow(int row, optional XComGameState UpdateState)
+{	
+	local XComGameState_Unit ParentUnit;
+	local int i;
+
+	ParentUnit = GetParentUnit(UpdateState);
+
+	for (i = 0; i < Abilities.Length; i++)
+	{
+		ParentUnit.AbilityTree[i].Abilities[row]
+	}
+}
+*/

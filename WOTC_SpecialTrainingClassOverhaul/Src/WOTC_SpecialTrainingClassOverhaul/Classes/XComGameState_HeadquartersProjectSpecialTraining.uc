@@ -46,13 +46,14 @@ function SetProjectFocus(StateObjectReference FocusRef, optional XComGameState N
 //---------------------------------------------------------------------------------------
 function int CalculatePointsToTrain()
 {
+	return int(class'SpecialTrainingUtilities'.static.GetSpecialTrainingDays() * 24.0);
 	//return int(class'LWOfficerUtilities'.static.GetOfficerTrainingDays(NewRank) * 24.0);
-	local XComGameStateHistory History;
-	local XComGameState_HeadquartersXCom XComHQ;
+	//local XComGameStateHistory History;
+	//local XComGameState_HeadquartersXCom XComHQ;
 
-	History = `XCOMHISTORY;
-	XComHQ = XComGameState_HeadquartersXCom(History.GetSingleGameStateObjectForClass(class'XComGameState_HeadquartersXCom'));
-	return XComHQ.GetTrainRookieDays() * 24;
+	//History = `XCOMHISTORY;
+	//XComHQ = XComGameState_HeadquartersXCom(History.GetSingleGameStateObjectForClass(class'XComGameState_HeadquartersXCom'));
+	//return XComHQ.GetTrainRookieDays() * 24;
 }
 
 //---------------------------------------------------------------------------------------

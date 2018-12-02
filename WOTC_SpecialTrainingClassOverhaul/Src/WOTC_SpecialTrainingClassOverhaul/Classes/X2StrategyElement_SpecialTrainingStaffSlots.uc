@@ -79,16 +79,6 @@ static function STCO_EmptyStopProjectOTSSoldierSlot(StateObjectReference SlotRef
 	}
 }
 
-static function bool STCO_ShouldDisplayOTSSoldierToDoWarning(StateObjectReference SlotRef)
-{
-	return false;
-}
-
-static function string STCO_GetOTSSkillDisplayString(XComGameState_StaffSlot SlotState)
-{
-	return "";
-}
-
 static function string STCO_GetOTSBonusDisplayString(XComGameState_StaffSlot SlotState, optional bool bPreview)
 {
 	local XComGameState_HeadquartersProjectSpecialTraining TrainProject;
