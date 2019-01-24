@@ -11,11 +11,6 @@ function Initialize(XComGameState_Unit ParentUnit)
 	local name SpecializationName;
 
 	UnitRef = ParentUnit.GetReference();
-
-	//for (i = 0; i < ParentUnit.AbilityTree.Length; i++)
-	//{
-	//	ParentUnit.AbilityTree[i].Abilities[row] = Abilities[i];
-	//}
 	
 	ParentUnit.AbilityTree.Length = 0; // TODO: turn this into function and make sure to reset soldier properly, like removing any obtained perks
 
@@ -45,11 +40,13 @@ function X2SpecializationTemplate GetLastTrainedSpecialization()
 
 function AddSpecialization(name SpecializationName, optional XComGameState UpdateState)
 {
-	AddSpecializationToRow(GetSpecializationTemplate(SpecializationName).Abilities, 0, UpdateState);
-
-	CurrentSpecializations[0] = SpecializationName;
+	CurrentSpecializations.AddItem(SpecializationName);
 
 	LastTrainedSpecialization = GetSpecializationTemplate(SpecializationName);
+
+	// TODO: make sure there is room for new row, and order row by primary first, then secondaries in alphebetical
+
+	RegeneratePerks(UpdateState);
 }
 
 function X2SpecializationTemplate GetSpecializationAt(int index)
@@ -84,36 +81,24 @@ protected function X2SpecializationTemplate GetSpecializationTemplate(name Speci
 	return SpecializationTemplateManager.FindSpecializationTemplate(SpecializationName);
 }
 
-protected function AddSpecializationToRow(array<SoldierClassAbilityType> Abilities, int row, optional XComGameState UpdateState)
+protected function RegeneratePerks(optional XComGameState UpdateState)
 {
 	local XComGameState_Unit ParentUnit;
-	local int i;
+	local X2SpecializationTemplate Specialization;
+	local int a, b;
 
 	ParentUnit = GetParentUnit(UpdateState);
 
-	//ClearPerkRow(row, UpdateState);
+	ParentUnit.AbilityTree.Length = 0;
+	ParentUnit.AbilityTree.Length = 7; // TODO: Make this configurable
 
-	if (Abilities.Length > ParentUnit.AbilityTree.Length)
-	{	
-		ParentUnit.AbilityTree.Length = Abilities.Length;
-	}
-
-	for (i = 0; i < Abilities.Length; i++)
+	for (a = 0; a < CurrentSpecializations.Length; a++)
 	{
-		ParentUnit.AbilityTree[i].Abilities[row] = Abilities[i];
+		Specialization = GetSpecializationTemplate(CurrentSpecializations[a]);
+
+		for (b = 0; b < Specialization.Abilities.Length; b++)
+		{
+			ParentUnit.AbilityTree[b].Abilities[a] = Specialization.Abilities[b];
+		}
 	}
 }
-/*
-protected function ClearPerkRow(int row, optional XComGameState UpdateState)
-{	
-	local XComGameState_Unit ParentUnit;
-	local int i;
-
-	ParentUnit = GetParentUnit(UpdateState);
-
-	for (i = 0; i < Abilities.Length; i++)
-	{
-		ParentUnit.AbilityTree[i].Abilities[row]
-	}
-}
-*/
