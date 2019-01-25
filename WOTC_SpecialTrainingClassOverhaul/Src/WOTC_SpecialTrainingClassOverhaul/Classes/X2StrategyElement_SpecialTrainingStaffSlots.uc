@@ -95,11 +95,14 @@ static function string STCO_GetOTSBonusDisplayString(XComGameState_StaffSlot Slo
 static function bool STCO_IsUnitValidForOTSSoldierSlot(XComGameState_StaffSlot SlotState, StaffUnitInfo UnitInfo)
 {
 	local XComGameState_Unit Unit;
+	local XComGameState_Unit_SpecialTraining SpecialTraining;
 
 	Unit = XComGameState_Unit(`XCOMHISTORY.GetGameStateForObjectID(UnitInfo.UnitRef.ObjectID));
-
+	SpecialTraining = class'SpecialTrainingUtilities'.static.GetSpecialTrainingComponentOf(Unit);
+	
 	return (
 		Unit.CanBeStaffed() &&
 		Unit.IsActive() &&
-		class'SpecialTrainingUtilities'.static.CanUnitReceiveSpecialTraining(Unit));
+		SpecialTraining != None &&
+		SpecialTraining.CanReceiveTraining());
 }

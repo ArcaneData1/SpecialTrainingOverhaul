@@ -53,16 +53,6 @@ static function bool DoesUnitHaveSpecialTrainingComponent(XComGameState_Unit Uni
 	return GetSpecialTrainingComponentOf(UnitState) != none;
 }
 
-// tests if unit can currently receive special training
-static function bool CanUnitReceiveSpecialTraining(XComGameState_Unit UnitState)
-{
-	local XComGameState_Unit_SpecialTraining TrainingComponent;
-
-	TrainingComponent = GetSpecialTrainingComponentOf(UnitState);
-
-	return (TrainingComponent != none && TrainingComponent.GetSpecializationAt(0).CanBeReplaced);
-}
-
 // gets the currently-running special training project for the given slot
 static function XComGameState_HeadquartersProjectSpecialTraining GetSpecialTrainingProject(XComGameState_StaffSlot SlotState)
 {

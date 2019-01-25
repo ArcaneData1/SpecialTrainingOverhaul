@@ -1,5 +1,6 @@
 class XComGameState_Unit_SpecialTraining extends XComGameState_BaseObject config (SpecialTrainingClassOverhaul);
 
+var config int NumberOfRanks;
 var config array<name> DefaultSpecializations;
 
 var protected StateObjectReference UnitRef;
@@ -12,7 +13,7 @@ function Initialize(XComGameState_Unit ParentUnit)
 
 	UnitRef = ParentUnit.GetReference();
 	
-	ParentUnit.AbilityTree.Length = 0; // TODO: turn this into function and make sure to reset soldier properly, like removing any obtained perks
+	ParentUnit.AbilityTree.Length = 0;
 
 	foreach default.DefaultSpecializations(SpecializationName)
 	{
@@ -47,6 +48,11 @@ function AddSpecialization(name SpecializationName, optional XComGameState Updat
 	// TODO: make sure there is room for new row, and order row by primary first, then secondaries in alphebetical
 
 	RegeneratePerks(UpdateState);
+}
+
+function bool CanReceiveTraining()
+{
+	return GetSpecializationAt(0).CanBeReplaced;
 }
 
 function X2SpecializationTemplate GetSpecializationAt(int index)
@@ -90,7 +96,7 @@ protected function RegeneratePerks(optional XComGameState UpdateState)
 	ParentUnit = GetParentUnit(UpdateState);
 
 	ParentUnit.AbilityTree.Length = 0;
-	ParentUnit.AbilityTree.Length = 7; // TODO: Make this configurable
+	ParentUnit.AbilityTree.Length = default.NumberOfRanks;
 
 	for (a = 0; a < CurrentSpecializations.Length; a++)
 	{
