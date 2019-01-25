@@ -1,5 +1,6 @@
 class XComGameState_Unit_SpecialTraining extends XComGameState_BaseObject config (SpecialTrainingClassOverhaul);
 
+var config int MaxSpecializations;
 var config int NumberOfRanks;
 var config array<name> DefaultSpecializations;
 
@@ -53,6 +54,19 @@ function AddSpecialization(name SpecializationName, optional XComGameState Updat
 function bool CanReceiveTraining()
 {
 	return GetSpecializationAt(0).CanBeReplaced;
+}
+
+function array<X2SpecializationTemplate> GetCurrentSpecializations()
+{
+	local name SpecializationName;
+	local array<X2SpecializationTemplate> Specializations;
+
+	foreach CurrentSpecializations(SpecializationName)
+	{
+		Specializations.AddItem(GetSpecializationTemplate(SpecializationName));
+	}
+
+	return Specializations;
 }
 
 function X2SpecializationTemplate GetSpecializationAt(int index)

@@ -5,8 +5,9 @@ event OnInit(UIScreen Screen)
 	local XComGameState_Unit UnitState;
 	local XComGameState_Unit_SpecialTraining TrainingState;
 	local X2SoldierClassTemplate ClassTemplate;
-	local X2SpecializationTemplate SpecializationTemplate;
+	local array<X2SpecializationTemplate> Specializations;
 	local UIArmory_PromotionHero Screen_pr;
+	local int i;
 
 	Screen_pr = UIArmory_PromotionHero(Screen);
 
@@ -22,14 +23,14 @@ event OnInit(UIScreen Screen)
 		return;
 		
 	ClassTemplate = UnitState.GetSoldierClassTemplate();
-	SpecializationTemplate = TrainingState.GetSpecializationAt(0);
+	Specializations = TrainingState.GetCurrentSpecializations();
 
-	// if ability tree names don't match the soldier's specializations, then change them and repopulate the screen
-	if (ClassTemplate.AbilityTreeTitles[0] != SpecializationTemplate.DisplayName)
+	for (i = 0; i < class'XComGameState_Unit_SpecialTraining'.default.MaxSpecializations; i++)
 	{
-		ClassTemplate.AbilityTreeTitles[0] = SpecializationTemplate.DisplayName;
-		Screen_pr.PopulateData();
-	}	
+		ClassTemplate.AbilityTreeTitles[i] = i < Specializations.Length ? Specializations[i].DisplayName : "";
+	}
+
+	Screen_pr.PopulateData();
 }
 
 defaultproperties
