@@ -87,6 +87,19 @@ protected function X2SpecializationTemplate GetSpecializationTemplate(name Speci
 	return SpecializationTemplateManager.FindSpecializationTemplate(SpecializationName);
 }
 
+protected function ClearPerksFromRow(int row, optional XComGameState UpdateState)
+{
+	local XComGameState_Unit ParentUnit;
+	local int i;
+
+	ParentUnit = GetParentUnit(UpdateState);
+
+	for (i = 0; i < default.NumberOfRanks; i++)
+	{
+		ParentUnit.RemoveSoldierProgressionAbility(i, row);
+	}
+}
+
 protected function RegeneratePerks(optional XComGameState UpdateState)
 {
 	local XComGameState_Unit ParentUnit;
