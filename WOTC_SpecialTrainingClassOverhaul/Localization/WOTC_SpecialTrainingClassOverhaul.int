@@ -5,6 +5,10 @@ DisplayName="Trooper"
 DisplayName="Medic"
 Summary="Support and heal squadmates with a GREMLIN."
 
+[STCO_Gunner X2SpecializationTemplate]
+DisplayName="Gunner"
+Summary="Lay down suppressing fire with a heavy cannon."
+
 [UIFacility_SpecialTrainingSlot]
 m_strSpecialTrainingDialogTitle=SPECIAL TRAINING
 m_strSpecialTrainingDialogText=<XGParam:StrValue0/!UnitName/> can undergo specialized training at the Guerrilla Tactics School but they will be unavailable for combat during the training process. Do you want to proceed?
