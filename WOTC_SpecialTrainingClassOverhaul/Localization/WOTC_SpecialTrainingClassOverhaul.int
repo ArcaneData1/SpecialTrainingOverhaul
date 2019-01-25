@@ -3,11 +3,11 @@ DisplayName="Trooper"
 
 [STCO_Medic X2SpecializationTemplate]
 DisplayName="Medic"
-Summary="Support and heal squadmates with a GREMLIN."
+Summary="SECONDARY: Support and heal squadmates with a GREMLIN."
 
 [STCO_Gunner X2SpecializationTemplate]
 DisplayName="Gunner"
-Summary="Lay down suppressing fire with a heavy cannon."
+Summary="PRIMARY: Lay down suppressing fire with a heavy cannon."
 
 [UIFacility_SpecialTrainingSlot]
 m_strSpecialTrainingDialogTitle=SPECIAL TRAINING

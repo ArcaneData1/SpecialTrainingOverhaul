@@ -42,18 +42,28 @@ function X2SpecializationTemplate GetLastTrainedSpecialization()
 
 function AddSpecialization(name SpecializationName, optional XComGameState UpdateState)
 {
-	CurrentSpecializations.AddItem(SpecializationName);
+	local X2SpecializationTemplate Specialization;
 
-	LastTrainedSpecialization = GetSpecializationTemplate(SpecializationName);
+	Specialization = GetSpecializationTemplate(SpecializationName);
 
-	// TODO: make sure there is room for new row, and order row by primary first, then secondaries in alphebetical
+	if (Specialization.IsPrimary)
+	{
+		ClearPerksFromRow(0, UpdateState);
+		CurrentSpecializations[0] = SpecializationName;
+	}
+	else
+	{
+		CurrentSpecializations.AddItem(SpecializationName);		
+	}
+
+	LastTrainedSpecialization = Specialization;
 
 	RegeneratePerks(UpdateState);
 }
 
 function bool CanReceiveTraining()
 {
-	return GetSpecializationAt(0).CanBeReplaced;
+	return CurrentSpecializations.Length < MaxSpecializations;
 }
 
 function array<X2SpecializationTemplate> GetCurrentSpecializations()
