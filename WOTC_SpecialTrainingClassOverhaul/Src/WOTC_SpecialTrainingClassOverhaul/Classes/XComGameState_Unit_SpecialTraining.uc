@@ -15,6 +15,7 @@ function Initialize(XComGameState_Unit ParentUnit)
 	UnitRef = ParentUnit.GetReference();
 	
 	ParentUnit.AbilityTree.Length = 0;
+	ParentUnit.AbilityTree.Length = default.NumberOfRanks;
 
 	foreach default.DefaultSpecializations(SpecializationName)
 	{
@@ -58,7 +59,7 @@ function AddSpecialization(name SpecializationName, optional XComGameState Updat
 
 	LastTrainedSpecialization = Specialization;
 
-	RegeneratePerks(UpdateState);
+	AddPerksToRow(CurrentSpecializations.Find(SpecializationName), Specialization.Abilities, UpdateState);
 }
 
 function bool CanReceiveTraining()
@@ -135,25 +136,16 @@ protected function ClearPerksFromRow(int row, optional XComGameState UpdateState
 	}
 }
 
-protected function RegeneratePerks(optional XComGameState UpdateState)
+protected function AddPerksToRow(int row, array<SoldierClassAbilityType> Abilities, optional XComGameState UpdateState)
 {
 	local XComGameState_Unit ParentUnit;
-	local X2SpecializationTemplate Specialization;
-	local int a, b;
+	local int i;
 
 	ParentUnit = GetParentUnit(UpdateState);
 
-	ParentUnit.AbilityTree.Length = 0;
-	ParentUnit.AbilityTree.Length = default.NumberOfRanks;
-
-	for (a = 0; a < CurrentSpecializations.Length; a++)
+	for (i = 0; i < default.NumberOfRanks; i++)
 	{
-		Specialization = GetSpecializationTemplate(CurrentSpecializations[a]);
-
-		for (b = 0; b < Specialization.Abilities.Length; b++)
-		{
-			ParentUnit.AbilityTree[b].Abilities[a] = Specialization.Abilities[b];
-		}
+		ParentUnit.AbilityTree[i].Abilities[row] = Abilities[i];
 	}
 }
 
