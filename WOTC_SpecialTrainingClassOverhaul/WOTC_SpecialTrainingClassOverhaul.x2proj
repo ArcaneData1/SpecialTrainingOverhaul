@@ -43,6 +43,9 @@
     <Content Include="Src\WOTC_SpecialTrainingClassOverhaul\Classes\UIFacility_SpecialTrainingSlot.uc">
       <SubType>Content</SubType>
     </Content>
+    <Content Include="Src\WOTC_SpecialTrainingClassOverhaul\Classes\UIScreenListener_Armory_STCO.uc">
+      <SubType>Content</SubType>
+    </Content>
     <Content Include="Src\WOTC_SpecialTrainingClassOverhaul\Classes\UIScreenListener_PromotionScreen_STCO.uc">
       <SubType>Content</SubType>
     </Content>
