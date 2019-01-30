@@ -43,12 +43,6 @@
     <Content Include="Src\WOTC_SpecialTrainingClassOverhaul\Classes\UIFacility_SpecialTrainingSlot.uc">
       <SubType>Content</SubType>
     </Content>
-    <Content Include="Src\WOTC_SpecialTrainingClassOverhaul\Classes\UIScreenListener_Armory_STCO.uc">
-      <SubType>Content</SubType>
-    </Content>
-    <Content Include="Src\WOTC_SpecialTrainingClassOverhaul\Classes\UIScreenListener_PromotionScreen_STCO.uc">
-      <SubType>Content</SubType>
-    </Content>
     <Content Include="Src\WOTC_SpecialTrainingClassOverhaul\Classes\X2DownloadableContentInfo_WOTC_SpecialTrainingClassOverhaul.uc" />
     <Content Include="Src\WOTC_SpecialTrainingClassOverhaul\Classes\X2EventListener_SpecializationModifiers.uc">
       <SubType>Content</SubType>

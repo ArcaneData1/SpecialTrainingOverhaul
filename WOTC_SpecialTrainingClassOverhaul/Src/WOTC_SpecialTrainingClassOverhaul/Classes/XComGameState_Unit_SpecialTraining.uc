@@ -41,6 +41,11 @@ function XComGameState_Unit GetParentUnit(optional XComGameState UpdateState)
 		return XComGameState_Unit(UpdateState.GetGameStateForObjectID(UnitRef.ObjectID));
 }
 
+function X2SoldierClassTemplate GetSoldierClassTemplate(optional XComGameState UpdateState)
+{
+	return GetParentUnit(UpdateState).GetSoldierClassTemplate();
+}
+
 function bool ParentUnitIs(XComGameState_Unit UnitState)
 {
 	return UnitRef.ObjectID == UnitState.ObjectID;
@@ -54,6 +59,8 @@ function X2SpecializationTemplate GetLastTrainedSpecialization()
 function AddSpecialization(name SpecializationName, optional XComGameState UpdateState)
 {
 	local X2SpecializationTemplate Specialization;
+	local X2SoldierClassTemplate ClassTemplate;
+	local int i, Row;
 
 	Specialization = GetSpecializationTemplate(SpecializationName);
 
@@ -67,9 +74,22 @@ function AddSpecialization(name SpecializationName, optional XComGameState Updat
 		CurrentSpecializations.AddItem(SpecializationName);		
 	}
 
+	Row = CurrentSpecializations.Find(SpecializationName);
+	ClassTemplate = GetSoldierClassTemplate(UpdateState);
+
 	LastTrainedSpecialization = Specialization;
 
-	AddPerksToRow(CurrentSpecializations.Find(SpecializationName), Specialization.Abilities, UpdateState);
+	AddPerksToRow(Row, Specialization.Abilities, UpdateState);
+
+	ClassTemplate.AbilityTreeTitles[Row] = Specialization.DisplayName;
+
+	for (i = 0; i < Specialization.AllowedPrimaryWeapons.Length; i++)
+	{		
+			ClassTemplate.AllowedWeapons.Add(1);
+			
+			ClassTemplate.AllowedWeapons[ClassTemplate.AllowedWeapons.Length - 1].WeaponType = Specialization.AllowedPrimaryWeapons[i];
+			ClassTemplate.AllowedWeapons[ClassTemplate.AllowedWeapons.Length - 1].SlotType = eInvSlot_PrimaryWeapon;
+	}
 }
 
 function bool CanReceiveTraining()
