@@ -22,12 +22,15 @@ static event OnLoadedSavedGame()
 /// Called when the player starts a new campaign while this DLC / Mod is installed
 /// </summary>
 static event InstallNewCampaign(XComGameState StartState)
-{
+{	
+	class'XComGameState_DynamicClassTemplatePool'.static.CreateDynamicClassTemplatePool(StartState);
+
 	ModifyAllSoldiersInBarracks(StartState);
 }
 
 static event OnPostTemplatesCreated()
 {
+	class'XComGameState_DynamicClassTemplatePool'.static.CreateObjectsForPool();
 	DisableAllOtherClasses();
 	ModifyDefaultSoldierTemplate();
 	AddNewStaffSlots();

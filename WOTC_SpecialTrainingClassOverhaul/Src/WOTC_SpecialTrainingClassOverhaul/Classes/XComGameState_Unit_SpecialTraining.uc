@@ -10,10 +10,20 @@ var protected X2SpecializationTemplate LastTrainedSpecialization;
 
 function Initialize(XComGameState_Unit ParentUnit)
 {
-	local name SpecializationName;
-
-	UnitRef = ParentUnit.GetReference();
+	local name NewClassName, SpecializationName;
+	local X2SoldierClassTemplate NewClassTemplate;
+	local XComGameState_DynamicClassTemplatePool TemplatePool;
 	
+	UnitRef = ParentUnit.GetReference();
+
+	TemplatePool = class'XComGameState_DynamicClassTemplatePool'.static.GetDynamicClassTemplatePool(true);
+
+	if (TemplatePool != None)
+	{
+		NewClassTemplate = TemplatePool.GetTemplateFromPool();
+		ParentUnit.SetSoldierClassTemplate(NewClassTemplate.DataName);
+	}
+
 	ParentUnit.AbilityTree.Length = 0;
 	ParentUnit.AbilityTree.Length = default.NumberOfRanks;
 

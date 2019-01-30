@@ -68,6 +68,9 @@
     <Content Include="Src\WOTC_SpecialTrainingClassOverhaul\Classes\X2StrategyElement_STCO_EquipmentSlots.uc">
       <SubType>Content</SubType>
     </Content>
+    <Content Include="Src\WOTC_SpecialTrainingClassOverhaul\Classes\XComGameState_DynamicClassTemplatePool.uc">
+      <SubType>Content</SubType>
+    </Content>
     <Content Include="Src\WOTC_SpecialTrainingClassOverhaul\Classes\XComGameState_HeadquartersProjectSpecialTraining.uc">
       <SubType>Content</SubType>
     </Content>
