@@ -64,7 +64,7 @@ function PopulateAvailableTemplates()
 
 	foreach Templates(Template)
 	{
-		if (InStr(string(Template.DataName), "STCO_Soldier_Instance") != -1)
+		if (InStr(string(Template.DataName), ParentSoldierClassTemplate $ "_Instance") != -1)
 		{
 			AvailableTemplates.AddItem(Template.DataName);
 		}
