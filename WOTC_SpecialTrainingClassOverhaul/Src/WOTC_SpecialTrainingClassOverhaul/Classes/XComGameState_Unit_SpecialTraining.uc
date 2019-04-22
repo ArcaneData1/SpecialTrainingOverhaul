@@ -84,11 +84,11 @@ function AddSpecialization(name SpecializationName, optional XComGameState Updat
 	ClassTemplate.AbilityTreeTitles[Row] = Specialization.DisplayName;
 
 	for (i = 0; i < Specialization.AllowedPrimaryWeapons.Length; i++)
-	{		
-			ClassTemplate.AllowedWeapons.Add(1);
+	{
+		ClassTemplate.AllowedWeapons.Add(1);
 			
-			ClassTemplate.AllowedWeapons[ClassTemplate.AllowedWeapons.Length - 1].WeaponType = Specialization.AllowedPrimaryWeapons[i];
-			ClassTemplate.AllowedWeapons[ClassTemplate.AllowedWeapons.Length - 1].SlotType = eInvSlot_PrimaryWeapon;
+		ClassTemplate.AllowedWeapons[ClassTemplate.AllowedWeapons.Length - 1].WeaponType = Specialization.AllowedPrimaryWeapons[i];
+		ClassTemplate.AllowedWeapons[ClassTemplate.AllowedWeapons.Length - 1].SlotType = eInvSlot_PrimaryWeapon;
 	}
 }
 
