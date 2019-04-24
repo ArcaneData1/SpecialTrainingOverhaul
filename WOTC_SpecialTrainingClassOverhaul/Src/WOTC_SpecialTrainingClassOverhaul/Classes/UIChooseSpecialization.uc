@@ -1,10 +1,23 @@
-class UIChooseSpecialization extends UISimpleCommodityScreen;
+class UIChooseSpecialization extends UIInventory;
+
+var array<Commodity>		arrItems;
+var int						iSelectedItem;
+var array<StateObjectReference> m_arrRefs;
 
 var array<X2SpecializationTemplate> m_arrSpecializations;
 
 var StateObjectReference m_UnitRef;
 
-//-------------- EVENT HANDLING --------------------------------------------------------
+var bool		m_bShowButton;
+var bool		m_bInfoOnly;
+var EUIState	m_eMainColor;
+var EUIConfirmButtonStyle m_eStyle;
+var int ConfirmButtonX;
+var int ConfirmButtonY;
+
+var public localized String m_strBuy;
+
+
 simulated function OnPurchaseClicked(UIList kList, int itemIndex)
 {
 	if (itemIndex != iSelectedItem)
@@ -23,42 +36,6 @@ simulated function OnPurchaseClicked(UIList kList, int itemIndex)
 	}
 }
 
-simulated function InitScreen(XComPlayerController InitController, UIMovie InitMovie, optional name InitName)
-{
-	super.InitScreen(InitController, InitMovie, InitName);
-
-	ItemCard.Hide();
-	Navigator.SetSelected(List);
-	List.SetSelectedIndex(0);
-}
-
-simulated function PopulateData()
-{
-	local Commodity Template;
-	local int i;
-
-	List.ClearItems();
-	List.bSelectFirstAvailable = false;
-	
-	for(i = 0; i < arrItems.Length; i++)
-	{
-		Template = arrItems[i];
-		if(i < m_arrRefs.Length)
-		{
-			Spawn(class'UIInventory_ClassListItem', List.itemContainer).InitInventoryListCommodity(Template, m_arrRefs[i], GetButtonString(i), m_eStyle, , 126);
-		}
-		else
-		{
-			Spawn(class'UIInventory_ClassListItem', List.itemContainer).InitInventoryListCommodity(Template, , GetButtonString(i), m_eStyle, , 126);
-		}
-	}
-}
-
-simulated function PopulateResearchCard(optional Commodity ItemCommodity, optional StateObjectReference ItemRef)
-{
-}
-
-//-------------- GAME DATA HOOKUP --------------------------------------------------------
 simulated function GetItems()
 {
 	arrItems = ConvertSpecializationsToCommodities();
@@ -91,7 +68,169 @@ simulated function array<Commodity> ConvertSpecializationsToCommodities()
 	return arrCommodoties;
 }
 
-//-----------------------------------------------------------------------------
+//-------------- UI LAYOUT --------------------------------------------------------
+simulated function InitScreen(XComPlayerController InitController, UIMovie InitMovie, optional name InitName)
+{
+	super.InitScreen(InitController, InitMovie, InitName);
+
+	// Move and resize list to accommodate label
+	List.OnItemDoubleClicked = OnPurchaseClicked;
+
+	SetBuiltLabel("");
+
+	GetItems();
+
+	SetChooseResearchLayout();
+	PopulateData();
+	UpdateNavHelp(); // bsg-jrebar (4/20/17): Update on Init instead of receive focus
+
+
+	
+	ItemCard.Hide();
+	Navigator.SetSelected(List);
+	List.SetSelectedIndex(0);
+}
+
+simulated function PopulateData()
+{
+	local Commodity Template;
+	local int i;
+
+	List.ClearItems();
+	List.bSelectFirstAvailable = false;
+	
+	for(i = 0; i < arrItems.Length; i++)
+	{
+		Template = arrItems[i];
+		if(i < m_arrRefs.Length)
+		{
+			Spawn(class'UIInventory_ClassListItem', List.itemContainer).InitInventoryListCommodity(Template, m_arrRefs[i], GetButtonString(i), m_eStyle, , 126);
+		}
+		else
+		{
+			Spawn(class'UIInventory_ClassListItem', List.itemContainer).InitInventoryListCommodity(Template, , GetButtonString(i), m_eStyle, , 126);
+		}
+	}
+}
+
+simulated function int GetItemIndex(Commodity Item)
+{
+	local int i;
+
+	for(i = 0; i < arrItems.Length; i++)
+	{
+		if(arrItems[i] == Item)
+		{
+			return i;
+		}
+	}
+
+	return -1;
+}
+
+simulated function bool NeedsAttention(int ItemIndex)
+{
+	// Implement in subclasses
+	return false;
+}
+simulated function bool ShouldShowGoodState(int ItemIndex)
+{
+	// Implement in subclasses
+	return false;
+}
+
+simulated function bool CanAffordItem(int ItemIndex)
+{
+	if( ItemIndex > -1 && ItemIndex < arrItems.Length )
+	{
+		return XComHQ.CanAffordCommodity(arrItems[ItemIndex]);
+	}
+	else
+	{
+		return false;
+	}
+}
+
+simulated function bool MeetsItemReqs(int ItemIndex)
+{
+	if( ItemIndex > -1 && ItemIndex < arrItems.Length )
+	{
+		return XComHQ.MeetsCommodityRequirements(arrItems[ItemIndex]);
+	}
+	else
+	{
+		return false;
+	}
+}
+
+simulated function bool IsItemPurchased(int ItemIndex)
+{
+	// Implement in subclasses
+	return false;
+}
+
+simulated function String GetButtonString(int ItemIndex)
+{
+	return m_strBuy;
+}
+
+// bsg-jrebar (4/20/17): Override Inventory versions to look if can afford before select
+simulated function bool OnUnrealCommand(int cmd, int arg)
+{
+	local bool bHandled;
+
+	if (!CheckInputIsReleaseOrDirectionRepeat(cmd, arg))
+		return false;
+
+	// Only pay attention to presses or repeats; ignoring other input types
+	// NOTE: Ensure repeats only occur with arrow keys
+
+	bHandled = super.OnUnrealCommand(cmd, arg);
+
+	if (bHandled)
+	{
+		if (List.GetSelectedItem() != none)
+			iSelectedItem = List.GetItemIndex(List.GetSelectedItem());
+	}
+	else
+	{
+		if (`ISCONTROLLERACTIVE && CanAffordItem(iSelectedItem) && !IsItemPurchased(iSelectedItem))
+		{
+			switch (cmd)
+			{
+			case class'UIUtilities_Input'.const.FXS_BUTTON_A :
+				OnPurchaseClicked(List, iSelectedItem);
+				bHandled = true;
+				break;
+			}
+		}
+	}
+
+	return bHandled;
+}
+
+simulated function UpdateNavHelp()
+{
+	local UINavigationHelp NavHelp;
+
+	NavHelp = `HQPRES.m_kAvengerHUD.NavHelp;
+
+	NavHelp.ClearButtonHelp();
+	NavHelp.bIsVerticalHelp = `ISCONTROLLERACTIVE;
+	NavHelp.AddBackButton(CloseScreen);
+
+	if(`ISCONTROLLERACTIVE && CanAffordItem(iSelectedItem) && !IsItemPurchased(iSelectedItem))
+	{
+		NavHelp.AddSelectNavHelp();
+	}
+}
+
+simulated function PlayNegativeSound()
+{
+	if(!`ISCONTROLLERACTIVE)
+			class'UIUtilities_Sound'.static.PlayNegativeSound();
+}
+// bsg-jrebar (4/20/17): end
 
 function int SortSpecializationsByName(X2SpecializationTemplate a, X2SpecializationTemplate b)
 {	
@@ -153,7 +292,6 @@ simulated function RefreshFacility()
 		UIFacility_Academy(QueueScreen).RealizeFacility();
 }
 
-//----------------------------------------------------------------
 simulated function OnCancelButton(UIButton kButton) { OnCancel(); }
 simulated function OnCancel()
 {
@@ -177,11 +315,17 @@ simulated function OnReceiveFocus()
 
 defaultproperties
 {
-	InputState = eInputState_Consume;
-
-	bHideOnLoseFocus = true;
-	//bConsumeMouseEvents = true;
-
+	bAutoSelectFirstNavigable = false
+	m_bShowButton = true
+	m_bInfoOnly = false
+	m_eMainColor = eUIState_Normal
+	m_eStyle = eUIConfirmButtonStyle_Default //word button
+	ConfirmButtonX = 12
+	ConfirmButtonY = 0
+	
+	InputState = eInputState_Consume	
+	bHideOnLoseFocus = true
+	
 	DisplayTag="UIDisplay_Academy"
 	CameraTag="UIDisplay_Academy"
 }
