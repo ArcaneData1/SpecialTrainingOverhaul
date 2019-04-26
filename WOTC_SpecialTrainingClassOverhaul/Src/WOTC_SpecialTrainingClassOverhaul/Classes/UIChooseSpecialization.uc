@@ -3,7 +3,6 @@ class UIChooseSpecialization extends UIInventory;
 var array<X2SpecializationTemplate> PrimarySpecializations;
 var array<Commodity>		PrimaryCommodities;
 var int						PrimarySelectedIndex;
-//var array<StateObjectReference> m_arrRefs;
 
 
 var array<X2SpecializationTemplate> SecondarySpecializations;
@@ -11,12 +10,6 @@ var array<Commodity>		SecondaryCommodities;
 var int						SecondarySelectedIndex;
 
 var StateObjectReference m_UnitRef;
-
-var bool		m_bShowButton;
-var bool		m_bInfoOnly;
-var EUIState	m_eMainColor;
-var int ConfirmButtonX;
-var int ConfirmButtonY;
 
 var public localized String m_strBuy;
 
@@ -98,7 +91,6 @@ simulated function InitScreen(XComPlayerController InitController, UIMovie InitM
 	UpdateNavHelp();
 
 	SetCategory("");
-	TitleHeader.Hide();
 	ListContainer.Hide();
 	ItemCard.Hide();
 
@@ -358,11 +350,6 @@ simulated function OnReceiveFocus()
 defaultproperties
 {
 	bAutoSelectFirstNavigable = false
-	m_bShowButton = true
-	m_bInfoOnly = false
-	m_eMainColor = eUIState_Normal
-	ConfirmButtonX = 12
-	ConfirmButtonY = 0
 	
 	InputState = eInputState_Consume	
 	bHideOnLoseFocus = true
