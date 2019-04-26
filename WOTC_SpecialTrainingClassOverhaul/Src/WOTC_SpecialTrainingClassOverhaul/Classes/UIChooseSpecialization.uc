@@ -4,72 +4,31 @@ var array<X2SpecializationTemplate> PrimarySpecializations;
 var array<Commodity>		PrimaryCommodities;
 var int						PrimarySelectedIndex;
 
-
 var array<X2SpecializationTemplate> SecondarySpecializations;
 var array<Commodity>		SecondaryCommodities;
 var int						SecondarySelectedIndex;
 
-var StateObjectReference m_UnitRef;
-
-var public localized String m_strBuy;
-
 var UIX2PanelHeader PrimaryHeader;
 var UIList PrimaryList;
-
 var UIX2PanelHeader SecondaryHeader;
 var UIList SecondaryList;
+
+var StateObjectReference m_UnitRef;
+
+var localized string m_strBuy;
 
 
 simulated function InitScreen(XComPlayerController InitController, UIMovie InitMovie, optional name InitName)
 {
 	super.InitScreen(InitController, InitMovie, InitName);
-			
-	PrimaryList = Spawn(class'UIList', self);
-	PrimaryList.BGPaddingTop = 90;
-	PrimaryList.BGPaddingRight = 30;
-	PrimaryList.bSelectFirstAvailable = false;
-	PrimaryList.bAnimateOnInit = false;
-	PrimaryList.InitList(
-		'PrimaryList',
-		120, 230,
-		568, 710,
-		false, true
-	);
-	PrimaryList.BG.SetAlpha(75);
 
-	PrimaryHeader = Spawn(class'UIX2PanelHeader', self);	
-	PrimaryHeader.bAnimateOnInit = false;
-	PrimaryHeader.InitPanelHeader('PrimaryHeader',
-		"Primary Specializations", "Available Specializations:");	
-	PrimaryHeader.SetPosition(120, 150);
-	PrimaryHeader.SetHeaderWidth(588);
+	BuildList(PrimaryList, PrimaryHeader, 'PrimaryList', 'PrimaryHeader',
+		120, "Primary Specializations", "Available Specializations:");
 
-	
-	SecondaryList = Spawn(class'UIList', self);
-	SecondaryList.BGPaddingTop = 90;
-	SecondaryList.BGPaddingRight = 30;
-	SecondaryList.bSelectFirstAvailable = false;
-	SecondaryList.bAnimateOnInit = false;
-	SecondaryList.InitList(
-		'SecondaryList',
-		1200, 230,
-		568, 710,
-		false, true
-	);
-	SecondaryList.BG.SetAlpha(75);
+	BuildList(SecondaryList, SecondaryHeader, 'SecondaryList', 'SecondaryHeader',
+		1200, "Secondary Specializations", "Available Specializations:");
 
-	SecondaryHeader = Spawn(class'UIX2PanelHeader', self);	
-	SecondaryHeader.bAnimateOnInit = false;
-	SecondaryHeader.InitPanelHeader('SecondaryHeader',
-		"Secondary Specializations", "Available Specializations:");	
-	SecondaryHeader.SetPosition(1200, 150);
-	SecondaryHeader.SetHeaderWidth(588);
-	
-	
-	// Move and resize list to accommodate label
 	List.OnItemDoubleClicked = OnPurchaseClicked;
-
-	SetBuiltLabel("");
 	
 	PrimarySpecializations.Remove(0, PrimarySpecializations.Length);
 	PrimarySpecializations = class'X2SpecializationTemplateManager'.static.GetInstance().GetPrimarySpecializationTemplates(true);
@@ -77,7 +36,7 @@ simulated function InitScreen(XComPlayerController InitController, UIMovie InitM
 
 	PrimaryCommodities = ConvertToCommodities(PrimarySpecializations);
 
-	
+		
 	SecondarySpecializations.Remove(0, SecondarySpecializations.Length);
 	SecondarySpecializations = class'X2SpecializationTemplateManager'.static.GetInstance().GetSecondarySpecializationTemplates(true);
 	SecondarySpecializations.Sort(SortSpecializationsByName);
@@ -85,17 +44,39 @@ simulated function InitScreen(XComPlayerController InitController, UIMovie InitM
 	SecondaryCommodities = ConvertToCommodities(SecondarySpecializations);
 
 
-
-	SetChooseResearchLayout();
 	PopulateData();
 	UpdateNavHelp();
-
+	
+	SetBuiltLabel("");
 	SetCategory("");
 	ListContainer.Hide();
 	ItemCard.Hide();
-
+	
 	Navigator.SetSelected(List);
 	List.SetSelectedIndex(0);
+}
+
+simulated function BuildList(out UIList CommList, out UIX2PanelHeader Header, name ListName, name HeaderName,
+	int PositionX, optional string HeaderTitle = "", optional string HeaderSubtitle = "")
+{
+	CommList = Spawn(class'UIList', self);
+	CommList.BGPaddingTop = 90;
+	CommList.BGPaddingRight = 30;
+	CommList.bSelectFirstAvailable = false;
+	CommList.bAnimateOnInit = false;
+	CommList.InitList(ListName,
+		PositionX, 230,
+		568, 710,
+		false, true
+	);
+	CommList.BG.SetAlpha(75);
+
+	Header = Spawn(class'UIX2PanelHeader', self);	
+	Header.bAnimateOnInit = false;
+	Header.InitPanelHeader(HeaderName,
+		HeaderTitle, HeaderSubtitle);	
+	Header.SetPosition(PositionX, 150);
+	Header.SetHeaderWidth(588);
 }
 
 simulated function array<Commodity> ConvertToCommodities(array<X2SpecializationTemplate> Specializations)
@@ -135,17 +116,15 @@ simulated function PopulateData()
 	local Commodity Template;
 	local int i;
 
-	PrimaryList.ClearItems();
-	
+	PrimaryList.ClearItems();	
 	for(i = 0; i < PrimaryCommodities.Length; i++)
 	{
 		Template = PrimaryCommodities[i];
-		Spawn(class'UIInventory_ClassListItem', PrimaryList.itemContainer).InitInventoryListCommodity(Template, , m_strBuy, , , 126);		
+		Spawn(class'UIInventory_ClassListItem', PrimaryList.itemContainer).InitInventoryListCommodity(Template, , m_strBuy, , , 126);
 	}
 
 
-	SecondaryList.ClearItems();
-	
+	SecondaryList.ClearItems();	
 	for(i = 0; i < SecondaryCommodities.Length; i++)
 	{
 		Template = SecondaryCommodities[i];
@@ -166,17 +145,6 @@ simulated function int GetItemIndex(Commodity Item)
 	}
 
 	return -1;
-}
-
-simulated function bool NeedsAttention(int ItemIndex)
-{
-	// Implement in subclasses
-	return false;
-}
-simulated function bool ShouldShowGoodState(int ItemIndex)
-{
-	// Implement in subclasses
-	return false;
 }
 
 simulated function bool CanAffordItem(int ItemIndex)
@@ -317,6 +285,7 @@ simulated function PlayNegativeSound()
 	if(!`ISCONTROLLERACTIVE)
 			class'UIUtilities_Sound'.static.PlayNegativeSound();
 }
+
 simulated function RefreshFacility()
 {
 	local UIScreen QueueScreen;
@@ -350,9 +319,9 @@ simulated function OnReceiveFocus()
 defaultproperties
 {
 	bAutoSelectFirstNavigable = false
-	
-	InputState = eInputState_Consume	
 	bHideOnLoseFocus = true
+	
+	InputState = eInputState_Consume
 	
 	DisplayTag="UIDisplay_Academy"
 	CameraTag="UIDisplay_Academy"
