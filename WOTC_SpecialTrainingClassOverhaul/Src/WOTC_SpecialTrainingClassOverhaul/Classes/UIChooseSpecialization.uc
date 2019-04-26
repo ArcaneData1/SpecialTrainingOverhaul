@@ -28,6 +28,9 @@ simulated function InitScreen(XComPlayerController InitController, UIMovie InitM
 	BuildList(SecondaryList, SecondaryHeader, 'SecondaryList', 'SecondaryHeader',
 		1200, "Secondary Specializations", "Available Specializations:");
 
+	PrimaryList.BG.OnMouseEventDelegate = OnChildMouseEvent;
+	SecondaryList.BG.OnMouseEventDelegate = OnChildMouseEvent;
+	
 	List.OnItemDoubleClicked = OnPurchaseClicked;
 	
 	PrimarySpecializations.Remove(0, PrimarySpecializations.Length);
@@ -115,12 +118,14 @@ simulated function PopulateData()
 {
 	local Commodity Template;
 	local int i;
+	local UIInventory_ClassListItem Item;
 
 	PrimaryList.ClearItems();	
 	for(i = 0; i < PrimaryCommodities.Length; i++)
 	{
 		Template = PrimaryCommodities[i];
-		Spawn(class'UIInventory_ClassListItem', PrimaryList.itemContainer).InitInventoryListCommodity(Template, , m_strBuy, , , 126);
+		Item = Spawn(class'UIInventory_ClassListItem', PrimaryList.itemContainer);
+		Item.InitInventoryListCommodity(Template, , m_strBuy, , , 126);
 	}
 
 
@@ -128,7 +133,8 @@ simulated function PopulateData()
 	for(i = 0; i < SecondaryCommodities.Length; i++)
 	{
 		Template = SecondaryCommodities[i];
-		Spawn(class'UIInventory_ClassListItem', SecondaryList.itemContainer).InitInventoryListCommodity(Template, , m_strBuy, , , 126);
+		Item = Spawn(class'UIInventory_ClassListItem', SecondaryList.itemContainer);
+		Item.InitInventoryListCommodity(Template, , m_strBuy, , , 126);
 	}
 }
 
@@ -299,6 +305,17 @@ simulated function OnCancelButton(UIButton kButton) { OnCancel(); }
 simulated function OnCancel()
 {
 	CloseScreen();
+}
+
+simulated function OnChildMouseEvent(UIPanel Control, int Cmd)
+{
+	switch(Cmd)
+	{
+		case class'UIUtilities_Input'.const.FXS_L_MOUSE_OUT:
+			PrimaryList.ClearSelection();
+			SecondaryList.ClearSelection();
+			break;
+	}
 }
 
 //==============================================================================
