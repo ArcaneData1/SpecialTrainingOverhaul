@@ -1,10 +1,14 @@
 class UIChooseSpecialization extends UIInventory;
 
-var array<Commodity>		arrItems;
-var int						iSelectedItem;
-var array<StateObjectReference> m_arrRefs;
+var array<X2SpecializationTemplate> PrimarySpecializations;
+var array<Commodity>		PrimaryCommodities;
+var int						PrimarySelectedIndex;
+//var array<StateObjectReference> m_arrRefs;
 
-var array<X2SpecializationTemplate> m_arrSpecializations;
+
+var array<X2SpecializationTemplate> SecondarySpecializations;
+var array<Commodity>		SecondaryCommodities;
+var int						SecondarySelectedIndex;
 
 var StateObjectReference m_UnitRef;
 
@@ -73,8 +77,21 @@ simulated function InitScreen(XComPlayerController InitController, UIMovie InitM
 	List.OnItemDoubleClicked = OnPurchaseClicked;
 
 	SetBuiltLabel("");
+	
+	PrimarySpecializations.Remove(0, PrimarySpecializations.Length);
+	PrimarySpecializations = class'X2SpecializationTemplateManager'.static.GetInstance().GetPrimarySpecializationTemplates(true);
+	PrimarySpecializations.Sort(SortSpecializationsByName);
 
-	arrItems = ConvertSpecializationsToCommodities();
+	PrimaryCommodities = ConvertToCommodities(PrimarySpecializations);
+
+	
+	SecondarySpecializations.Remove(0, SecondarySpecializations.Length);
+	SecondarySpecializations = class'X2SpecializationTemplateManager'.static.GetInstance().GetSecondarySpecializationTemplates(true);
+	SecondarySpecializations.Sort(SortSpecializationsByName);
+
+	SecondaryCommodities = ConvertToCommodities(SecondarySpecializations);
+
+
 
 	SetChooseResearchLayout();
 	PopulateData();
@@ -89,30 +106,26 @@ simulated function InitScreen(XComPlayerController InitController, UIMovie InitM
 	List.SetSelectedIndex(0);
 }
 
-simulated function array<Commodity> ConvertSpecializationsToCommodities()
+simulated function array<Commodity> ConvertToCommodities(array<X2SpecializationTemplate> Specializations)
 {
-	local X2SpecializationTemplate TrainingTemplate;
-	local int iTraining;
-	local array<Commodity> arrCommodoties;
-	local Commodity TrainingComm;
-	
-	m_arrSpecializations.Remove(0, m_arrSpecializations.Length);
-	m_arrSpecializations = class'X2SpecializationTemplateManager'.static.GetSpecializationTemplateManager().GetAllSpecializationTemplates(true);
-	m_arrSpecializations.Sort(SortSpecializationsByName);
+	local X2SpecializationTemplate Template;
+	local int i;
+	local array<Commodity> Commodities;
+	local Commodity Comm;
 
-	for (iTraining = 0; iTraining < m_arrSpecializations.Length; iTraining++)
+	for (i = 0; i < Specializations.Length; i++)
 	{
-		TrainingTemplate = m_arrSpecializations[iTraining];
+		Template = Specializations[i];
 		
-		TrainingComm.Title = TrainingTemplate.DisplayName;
-		TrainingComm.Image = TrainingTemplate.IconImage;
-		TrainingComm.Desc = TrainingTemplate.Summary;
-		TrainingComm.OrderHours = class'SpecialTrainingUtilities'.static.GetSpecialTrainingDays() * 24;
+		Comm.Title = Template.DisplayName;
+		Comm.Image = Template.IconImage;
+		Comm.Desc = Template.Summary;
+		Comm.OrderHours = class'SpecialTrainingUtilities'.static.GetSpecialTrainingDays() * 24;
 
-		arrCommodoties.AddItem(TrainingComm);
+		Commodities.AddItem(Comm);
 	}
 
-	return arrCommodoties;
+	return Commodities;
 }
 
 function int SortSpecializationsByName(X2SpecializationTemplate a, X2SpecializationTemplate b)
@@ -132,18 +145,18 @@ simulated function PopulateData()
 
 	PrimaryList.ClearItems();
 	
-	for(i = 0; i < arrItems.Length; i++)
+	for(i = 0; i < PrimaryCommodities.Length; i++)
 	{
-		Template = arrItems[i];
+		Template = PrimaryCommodities[i];
 		Spawn(class'UIInventory_ClassListItem', PrimaryList.itemContainer).InitInventoryListCommodity(Template, , m_strBuy, , , 126);		
 	}
 
 
 	SecondaryList.ClearItems();
 	
-	for(i = 0; i < arrItems.Length; i++)
+	for(i = 0; i < SecondaryCommodities.Length; i++)
 	{
-		Template = arrItems[i];
+		Template = SecondaryCommodities[i];
 		Spawn(class'UIInventory_ClassListItem', SecondaryList.itemContainer).InitInventoryListCommodity(Template, , m_strBuy, , , 126);
 	}
 }
@@ -152,9 +165,9 @@ simulated function int GetItemIndex(Commodity Item)
 {
 	local int i;
 
-	for(i = 0; i < arrItems.Length; i++)
+	for(i = 0; i < PrimaryCommodities.Length; i++)
 	{
-		if(arrItems[i] == Item)
+		if(PrimaryCommodities[i] == Item)
 		{
 			return i;
 		}
@@ -176,9 +189,9 @@ simulated function bool ShouldShowGoodState(int ItemIndex)
 
 simulated function bool CanAffordItem(int ItemIndex)
 {
-	if( ItemIndex > -1 && ItemIndex < arrItems.Length )
+	if( ItemIndex > -1 && ItemIndex < PrimaryCommodities.Length )
 	{
-		return XComHQ.CanAffordCommodity(arrItems[ItemIndex]);
+		return XComHQ.CanAffordCommodity(PrimaryCommodities[ItemIndex]);
 	}
 	else
 	{
@@ -188,9 +201,9 @@ simulated function bool CanAffordItem(int ItemIndex)
 
 simulated function bool MeetsItemReqs(int ItemIndex)
 {
-	if( ItemIndex > -1 && ItemIndex < arrItems.Length )
+	if( ItemIndex > -1 && ItemIndex < PrimaryCommodities.Length )
 	{
-		return XComHQ.MeetsCommodityRequirements(arrItems[ItemIndex]);
+		return XComHQ.MeetsCommodityRequirements(PrimaryCommodities[ItemIndex]);
 	}
 	else
 	{
@@ -206,14 +219,14 @@ simulated function bool IsItemPurchased(int ItemIndex)
 
 simulated function OnPurchaseClicked(UIList kList, int itemIndex)
 {
-	if (itemIndex != iSelectedItem)
+	if (itemIndex != PrimarySelectedIndex)
 	{
-		iSelectedItem = itemIndex;
+		PrimarySelectedIndex = itemIndex;
 	}
 
-	if (CanAffordItem(iSelectedItem))
+	if (CanAffordItem(PrimarySelectedIndex))
 	{
-		if (OnSpecializationSelected(iSelectedItem))
+		if (OnSpecializationSelected(PrimarySelectedIndex))
 			Movie.Stack.Pop(self);
 	}
 	else
@@ -243,7 +256,7 @@ function bool OnSpecializationSelected(int iOption)
 		// Find the new Training Project which was just created by filling the staff slot and set the class
 		foreach NewGameState.IterateByClassType(class'XComGameState_HeadquartersProjectSpecialTraining', SpecialTrainingProject)
 		{
-			SpecialTrainingProject.NewSpecializationName = m_arrSpecializations[iOption].DataName;
+			SpecialTrainingProject.NewSpecializationName = PrimarySpecializations[iOption].DataName;
 			break;
 		}
 		
@@ -272,16 +285,16 @@ simulated function bool OnUnrealCommand(int cmd, int arg)
 	if (bHandled)
 	{
 		if (List.GetSelectedItem() != none)
-			iSelectedItem = List.GetItemIndex(List.GetSelectedItem());
+			PrimarySelectedIndex = List.GetItemIndex(List.GetSelectedItem());
 	}
 	else
 	{
-		if (`ISCONTROLLERACTIVE && CanAffordItem(iSelectedItem) && !IsItemPurchased(iSelectedItem))
+		if (`ISCONTROLLERACTIVE && CanAffordItem(PrimarySelectedIndex) && !IsItemPurchased(PrimarySelectedIndex))
 		{
 			switch (cmd)
 			{
 			case class'UIUtilities_Input'.const.FXS_BUTTON_A :
-				OnPurchaseClicked(List, iSelectedItem);
+				OnPurchaseClicked(List, PrimarySelectedIndex);
 				bHandled = true;
 				break;
 			}
@@ -301,7 +314,7 @@ simulated function UpdateNavHelp()
 	NavHelp.bIsVerticalHelp = `ISCONTROLLERACTIVE;
 	NavHelp.AddBackButton(CloseScreen);
 
-	if(`ISCONTROLLERACTIVE && CanAffordItem(iSelectedItem) && !IsItemPurchased(iSelectedItem))
+	if(`ISCONTROLLERACTIVE && CanAffordItem(PrimarySelectedIndex) && !IsItemPurchased(PrimarySelectedIndex))
 	{
 		NavHelp.AddSelectNavHelp();
 	}

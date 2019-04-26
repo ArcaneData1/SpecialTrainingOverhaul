@@ -138,7 +138,7 @@ function array<name> GetAllowedSlots()
 protected function X2SpecializationTemplate GetSpecializationTemplate(name SpecializationName)
 {
 	local X2SpecializationTemplateManager SpecializationTemplateManager;
-	SpecializationTemplateManager = class'X2SpecializationTemplateManager'.static.GetSpecializationTemplateManager();
+	SpecializationTemplateManager = class'X2SpecializationTemplateManager'.static.GetInstance();
 	return SpecializationTemplateManager.FindSpecializationTemplate(SpecializationName);
 }
 

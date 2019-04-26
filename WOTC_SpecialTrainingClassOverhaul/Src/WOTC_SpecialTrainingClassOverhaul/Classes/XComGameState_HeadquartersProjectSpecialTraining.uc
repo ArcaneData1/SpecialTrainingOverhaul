@@ -64,7 +64,7 @@ function int CalculateWorkPerHour(optional XComGameState StartState = none, opti
 
 function X2SpecializationTemplate GetTrainingSpecializationTemplate()
 {
-	return class'X2SpecializationTemplateManager'.static.GetSpecializationTemplateManager().FindSpecializationTemplate(NewSpecializationName);
+	return class'X2SpecializationTemplateManager'.static.GetInstance().FindSpecializationTemplate(NewSpecializationName);
 }
 
 //---------------------------------------------------------------------------------------

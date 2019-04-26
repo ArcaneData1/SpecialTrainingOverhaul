@@ -1,10 +1,10 @@
 class X2SpecializationTemplate extends X2DataTemplate config(SpecialTrainingClassOverhaul);
-
+/*
 enum ESpecializationType
 {
 	Primary, Secondary
 };
-
+*/
 var config array<name> AllowedPrimaryWeapons;
 var config array<name> AllowedSlots;
 var config string IconImage;
