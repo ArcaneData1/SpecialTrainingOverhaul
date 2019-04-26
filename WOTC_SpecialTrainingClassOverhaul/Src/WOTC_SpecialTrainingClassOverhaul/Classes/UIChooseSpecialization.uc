@@ -11,34 +11,82 @@ var StateObjectReference m_UnitRef;
 var bool		m_bShowButton;
 var bool		m_bInfoOnly;
 var EUIState	m_eMainColor;
-var EUIConfirmButtonStyle m_eStyle;
 var int ConfirmButtonX;
 var int ConfirmButtonY;
 
 var public localized String m_strBuy;
 
+var UIX2PanelHeader PrimaryHeader;
+var UIList PrimaryList;
 
-simulated function OnPurchaseClicked(UIList kList, int itemIndex)
+var UIX2PanelHeader SecondaryHeader;
+var UIList SecondaryList;
+
+
+simulated function InitScreen(XComPlayerController InitController, UIMovie InitMovie, optional name InitName)
 {
-	if (itemIndex != iSelectedItem)
-	{
-		iSelectedItem = itemIndex;
-	}
+	super.InitScreen(InitController, InitMovie, InitName);
+			
+	PrimaryList = Spawn(class'UIList', self);
+	PrimaryList.BGPaddingTop = 90;
+	PrimaryList.BGPaddingRight = 30;
+	PrimaryList.bSelectFirstAvailable = false;
+	PrimaryList.bAnimateOnInit = false;
+	PrimaryList.InitList(
+		'PrimaryList',
+		120, 230,
+		568, 710,
+		false, true
+	);
+	PrimaryList.BG.SetAlpha(75);
 
-	if (CanAffordItem(iSelectedItem))
-	{
-		if (OnSpecializationSelected(iSelectedItem))
-			Movie.Stack.Pop(self);
-	}
-	else
-	{
-		PlayNegativeSound();
-	}
-}
+	PrimaryHeader = Spawn(class'UIX2PanelHeader', self);	
+	PrimaryHeader.bAnimateOnInit = false;
+	PrimaryHeader.InitPanelHeader('PrimaryHeader',
+		"Primary Specializations", "Available Specializations:");	
+	PrimaryHeader.SetPosition(120, 150);
+	PrimaryHeader.SetHeaderWidth(588);
 
-simulated function GetItems()
-{
+	
+	SecondaryList = Spawn(class'UIList', self);
+	SecondaryList.BGPaddingTop = 90;
+	SecondaryList.BGPaddingRight = 30;
+	SecondaryList.bSelectFirstAvailable = false;
+	SecondaryList.bAnimateOnInit = false;
+	SecondaryList.InitList(
+		'SecondaryList',
+		1200, 230,
+		568, 710,
+		false, true
+	);
+	SecondaryList.BG.SetAlpha(75);
+
+	SecondaryHeader = Spawn(class'UIX2PanelHeader', self);	
+	SecondaryHeader.bAnimateOnInit = false;
+	SecondaryHeader.InitPanelHeader('SecondaryHeader',
+		"Secondary Specializations", "Available Specializations:");	
+	SecondaryHeader.SetPosition(1200, 150);
+	SecondaryHeader.SetHeaderWidth(588);
+	
+	
+	// Move and resize list to accommodate label
+	List.OnItemDoubleClicked = OnPurchaseClicked;
+
+	SetBuiltLabel("");
+
 	arrItems = ConvertSpecializationsToCommodities();
+
+	SetChooseResearchLayout();
+	PopulateData();
+	UpdateNavHelp();
+
+	SetCategory("");
+	TitleHeader.Hide();
+	ListContainer.Hide();
+	ItemCard.Hide();
+
+	Navigator.SetSelected(List);
+	List.SetSelectedIndex(0);
 }
 
 simulated function array<Commodity> ConvertSpecializationsToCommodities()
@@ -60,7 +108,6 @@ simulated function array<Commodity> ConvertSpecializationsToCommodities()
 		TrainingComm.Image = TrainingTemplate.IconImage;
 		TrainingComm.Desc = TrainingTemplate.Summary;
 		TrainingComm.OrderHours = class'SpecialTrainingUtilities'.static.GetSpecialTrainingDays() * 24;
-		//TrainingComm.OrderHours = XComHQ.GetTrainRookieDays() * 24;
 
 		arrCommodoties.AddItem(TrainingComm);
 	}
@@ -68,27 +115,14 @@ simulated function array<Commodity> ConvertSpecializationsToCommodities()
 	return arrCommodoties;
 }
 
-//-------------- UI LAYOUT --------------------------------------------------------
-simulated function InitScreen(XComPlayerController InitController, UIMovie InitMovie, optional name InitName)
-{
-	super.InitScreen(InitController, InitMovie, InitName);
-
-	// Move and resize list to accommodate label
-	List.OnItemDoubleClicked = OnPurchaseClicked;
-
-	SetBuiltLabel("");
-
-	GetItems();
-
-	SetChooseResearchLayout();
-	PopulateData();
-	UpdateNavHelp(); // bsg-jrebar (4/20/17): Update on Init instead of receive focus
-
-
-	
-	ItemCard.Hide();
-	Navigator.SetSelected(List);
-	List.SetSelectedIndex(0);
+function int SortSpecializationsByName(X2SpecializationTemplate a, X2SpecializationTemplate b)
+{	
+	if (a.DisplayName < b.DisplayName)
+		return 1;
+	else if (a.DisplayName > b.DisplayName)
+		return -1;
+	else
+		return 0;
 }
 
 simulated function PopulateData()
@@ -96,20 +130,21 @@ simulated function PopulateData()
 	local Commodity Template;
 	local int i;
 
-	List.ClearItems();
-	List.bSelectFirstAvailable = false;
+	PrimaryList.ClearItems();
 	
 	for(i = 0; i < arrItems.Length; i++)
 	{
 		Template = arrItems[i];
-		if(i < m_arrRefs.Length)
-		{
-			Spawn(class'UIInventory_ClassListItem', List.itemContainer).InitInventoryListCommodity(Template, m_arrRefs[i], GetButtonString(i), m_eStyle, , 126);
-		}
-		else
-		{
-			Spawn(class'UIInventory_ClassListItem', List.itemContainer).InitInventoryListCommodity(Template, , GetButtonString(i), m_eStyle, , 126);
-		}
+		Spawn(class'UIInventory_ClassListItem', PrimaryList.itemContainer).InitInventoryListCommodity(Template, , m_strBuy, , , 126);		
+	}
+
+
+	SecondaryList.ClearItems();
+	
+	for(i = 0; i < arrItems.Length; i++)
+	{
+		Template = arrItems[i];
+		Spawn(class'UIInventory_ClassListItem', SecondaryList.itemContainer).InitInventoryListCommodity(Template, , m_strBuy, , , 126);
 	}
 }
 
@@ -169,12 +204,59 @@ simulated function bool IsItemPurchased(int ItemIndex)
 	return false;
 }
 
-simulated function String GetButtonString(int ItemIndex)
+simulated function OnPurchaseClicked(UIList kList, int itemIndex)
 {
-	return m_strBuy;
+	if (itemIndex != iSelectedItem)
+	{
+		iSelectedItem = itemIndex;
+	}
+
+	if (CanAffordItem(iSelectedItem))
+	{
+		if (OnSpecializationSelected(iSelectedItem))
+			Movie.Stack.Pop(self);
+	}
+	else
+	{
+		PlayNegativeSound();
+	}
 }
 
-// bsg-jrebar (4/20/17): Override Inventory versions to look if can afford before select
+function bool OnSpecializationSelected(int iOption)
+{
+	local XComGameState NewGameState;
+	local XComGameState_FacilityXCom FacilityState;
+	local XComGameState_StaffSlot StaffSlotState;
+	local XComGameState_HeadquartersProjectSpecialTraining SpecialTrainingProject;
+	local StaffUnitInfo UnitInfo;
+
+	FacilityState = XComHQ.GetFacilityByName('OfficerTrainingSchool');
+	StaffSlotState = FacilityState.GetEmptyStaffSlotByTemplate('STCO_SpecialTrainingStaffSlot');
+	
+	if (StaffSlotState != none)
+	{
+		// The Training project is started when the staff slot is filled. Pass in the NewGameState so the project can be found below.
+		NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("Staffing Special Training Slot");
+		UnitInfo.UnitRef = m_UnitRef;
+		StaffSlotState.FillSlot(UnitInfo, NewGameState);
+		
+		// Find the new Training Project which was just created by filling the staff slot and set the class
+		foreach NewGameState.IterateByClassType(class'XComGameState_HeadquartersProjectSpecialTraining', SpecialTrainingProject)
+		{
+			SpecialTrainingProject.NewSpecializationName = m_arrSpecializations[iOption].DataName;
+			break;
+		}
+		
+		`XCOMGAME.GameRuleset.SubmitGameState(NewGameState);
+
+		`XSTRATEGYSOUNDMGR.PlaySoundEvent("StrategyUI_Staff_Assign");
+		
+		RefreshFacility();
+	}
+
+	return true;
+}
+
 simulated function bool OnUnrealCommand(int cmd, int arg)
 {
 	local bool bHandled;
@@ -230,59 +312,6 @@ simulated function PlayNegativeSound()
 	if(!`ISCONTROLLERACTIVE)
 			class'UIUtilities_Sound'.static.PlayNegativeSound();
 }
-// bsg-jrebar (4/20/17): end
-
-function int SortSpecializationsByName(X2SpecializationTemplate a, X2SpecializationTemplate b)
-{	
-	if (a.DisplayName < b.DisplayName)
-	{
-		return 1;
-	}
-	else if (a.DisplayName > b.DisplayName)
-	{
-		return -1;
-	}
-	else
-	{
-		return 0;
-	}
-}
-
-function bool OnSpecializationSelected(int iOption)
-{
-	local XComGameState NewGameState;
-	local XComGameState_FacilityXCom FacilityState;
-	local XComGameState_StaffSlot StaffSlotState;
-	local XComGameState_HeadquartersProjectSpecialTraining SpecialTrainingProject;
-	local StaffUnitInfo UnitInfo;
-
-	FacilityState = XComHQ.GetFacilityByName('OfficerTrainingSchool');
-	StaffSlotState = FacilityState.GetEmptyStaffSlotByTemplate('STCO_SpecialTrainingStaffSlot');
-	
-	if (StaffSlotState != none)
-	{
-		// The Training project is started when the staff slot is filled. Pass in the NewGameState so the project can be found below.
-		NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("Staffing Special Training Slot");
-		UnitInfo.UnitRef = m_UnitRef;
-		StaffSlotState.FillSlot(UnitInfo, NewGameState);
-		
-		// Find the new Training Project which was just created by filling the staff slot and set the class
-		foreach NewGameState.IterateByClassType(class'XComGameState_HeadquartersProjectSpecialTraining', SpecialTrainingProject)
-		{
-			SpecialTrainingProject.NewSpecializationName = m_arrSpecializations[iOption].DataName;
-			break;
-		}
-		
-		`XCOMGAME.GameRuleset.SubmitGameState(NewGameState);
-
-		`XSTRATEGYSOUNDMGR.PlaySoundEvent("StrategyUI_Staff_Assign");
-		
-		RefreshFacility();
-	}
-
-	return true;
-}
-
 simulated function RefreshFacility()
 {
 	local UIScreen QueueScreen;
@@ -319,7 +348,6 @@ defaultproperties
 	m_bShowButton = true
 	m_bInfoOnly = false
 	m_eMainColor = eUIState_Normal
-	m_eStyle = eUIConfirmButtonStyle_Default //word button
 	ConfirmButtonX = 12
 	ConfirmButtonY = 0
 	

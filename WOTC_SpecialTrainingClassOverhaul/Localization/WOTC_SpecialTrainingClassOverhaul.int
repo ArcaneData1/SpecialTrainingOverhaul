@@ -21,6 +21,6 @@ m_strSoldiersAvailableTooltip=Assign a soldier to receive special training.
 m_strNewSpecializationLabel=NEW ABILITIES AVAILABLE
 
 [UIChooseSpecialization]
-m_strTitle=Choose Specialization
+m_strTitle=Primary Specializations
 m_strInventoryLabel=Available Specializations:
 m_strBuy=BEGIN TRAINING
