@@ -128,6 +128,9 @@ simulated function PopulateData()
 		Template = PrimaryCommodities[i];
 		Item = Spawn(class'UIInventory_ClassListItem', PrimaryList.itemContainer);
 		Item.InitInventoryListCommodity(Template, , m_strBuy, , , 126);
+
+		if (!CanTrainPrimarySpecialization(i))
+			Item.SetDisabled(true, "You already have a primary specialization.");
 	}
 
 
@@ -137,6 +140,9 @@ simulated function PopulateData()
 		Template = SecondaryCommodities[i];
 		Item = Spawn(class'UIInventory_ClassListItem', SecondaryList.itemContainer);
 		Item.InitInventoryListCommodity(Template, , m_strBuy, , , 126);
+		
+		if (!CanTrainSecondarySpecialization(i))
+			Item.SetDisabled(true, "You cannot train any more specializations.");
 	}
 }
 
@@ -155,9 +161,26 @@ simulated function int GetItemIndex(Commodity Item)
 	return -1;
 }
 
-simulated function bool CanTrainSpecialization(int ItemIndex)
+simulated function bool CanTrainPrimarySpecialization(int ItemIndex)
 {
-	return true;
+	local XComGameState_Unit UnitState;
+	local XComGameState_Unit_SpecialTraining TrainingState;
+
+	UnitState = XComGameState_Unit(`XCOMHISTORY.GetGameStateForObjectID(m_UnitRef.ObjectID));
+	TrainingState = class'SpecialTrainingUtilities'.static.GetSpecialTrainingComponentOf(UnitState);
+
+	return TrainingState.CanReceivePrimaryTraining();
+}
+
+simulated function bool CanTrainSecondarySpecialization(int ItemIndex)
+{
+	local XComGameState_Unit UnitState;
+	local XComGameState_Unit_SpecialTraining TrainingState;
+
+	UnitState = XComGameState_Unit(`XCOMHISTORY.GetGameStateForObjectID(m_UnitRef.ObjectID));
+	TrainingState = class'SpecialTrainingUtilities'.static.GetSpecialTrainingComponentOf(UnitState);
+
+	return TrainingState.CanReceiveSecondaryTraining();
 }
 
 simulated function OnPrimarySpecializationSelected(UIList kList, int itemIndex)
@@ -167,7 +190,7 @@ simulated function OnPrimarySpecializationSelected(UIList kList, int itemIndex)
 		PrimarySelectedIndex = itemIndex;
 	}
 
-	if (CanTrainSpecialization(PrimarySelectedIndex))
+	if (CanTrainPrimarySpecialization(PrimarySelectedIndex))
 	{
 		if (BeginTraining(PrimarySpecializations[itemIndex].DataName))
 			Movie.Stack.Pop(self);
@@ -185,7 +208,7 @@ simulated function OnSecondarySpecializationSelected(UIList kList, int itemIndex
 		SecondarySelectedIndex = itemIndex;
 	}
 
-	if (CanTrainSpecialization(SecondarySelectedIndex))
+	if (CanTrainSecondarySpecialization(SecondarySelectedIndex))
 	{
 		if (BeginTraining(SecondarySpecializations[itemIndex].DataName))
 			Movie.Stack.Pop(self);
@@ -276,7 +299,7 @@ simulated function UpdateNavHelp()
 	NavHelp.bIsVerticalHelp = `ISCONTROLLERACTIVE;
 	NavHelp.AddBackButton(CloseScreen);
 
-	if(`ISCONTROLLERACTIVE && CanTrainSpecialization(PrimarySelectedIndex))
+	if(`ISCONTROLLERACTIVE && CanTrainPrimarySpecialization(PrimarySelectedIndex))
 	{
 		NavHelp.AddSelectNavHelp();
 	}

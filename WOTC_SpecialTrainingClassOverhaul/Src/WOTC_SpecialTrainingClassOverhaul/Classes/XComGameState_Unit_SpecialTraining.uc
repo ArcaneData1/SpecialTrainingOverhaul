@@ -10,7 +10,7 @@ var protected X2SpecializationTemplate LastTrainedSpecialization;
 
 function Initialize(XComGameState_Unit ParentUnit)
 {
-	local name NewClassName, SpecializationName;
+	local name SpecializationName;
 	local X2SoldierClassTemplate NewClassTemplate;
 	local XComGameState_DynamicClassTemplatePool TemplatePool;
 	
@@ -95,6 +95,16 @@ function AddSpecialization(name SpecializationName, optional XComGameState Updat
 }
 
 function bool CanReceiveTraining()
+{
+	return CanReceivePrimaryTraining() || CanReceiveSecondaryTraining();
+}
+
+function bool CanReceivePrimaryTraining()
+{
+	return GetSpecializationAt(0).CanBeReplaced;
+}
+
+function bool CanReceiveSecondaryTraining()
 {
 	return CurrentSpecializations.Length < MaxSpecializations;
 }
