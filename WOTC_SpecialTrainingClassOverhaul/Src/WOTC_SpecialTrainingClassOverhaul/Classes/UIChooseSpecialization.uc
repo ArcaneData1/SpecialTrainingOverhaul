@@ -131,6 +131,9 @@ simulated function PopulateData()
 
 		if (!CanTrainPrimarySpecialization(i))
 			Item.SetDisabled(true, "You already have a primary specialization.");
+
+		if (GetSpecialTrainingState().HasSpecialization(PrimarySpecializations[i].DataName))
+			Item.ShouldShowGoodState(true, "This is your current primary specialization.");
 	}
 
 
@@ -161,26 +164,23 @@ simulated function int GetItemIndex(Commodity Item)
 	return -1;
 }
 
-simulated function bool CanTrainPrimarySpecialization(int ItemIndex)
+simulated function XComGameState_Unit_SpecialTraining GetSpecialTrainingState()
 {
 	local XComGameState_Unit UnitState;
-	local XComGameState_Unit_SpecialTraining TrainingState;
 
 	UnitState = XComGameState_Unit(`XCOMHISTORY.GetGameStateForObjectID(m_UnitRef.ObjectID));
-	TrainingState = class'SpecialTrainingUtilities'.static.GetSpecialTrainingComponentOf(UnitState);
 
-	return TrainingState.CanReceivePrimaryTraining();
+	return class'SpecialTrainingUtilities'.static.GetSpecialTrainingComponentOf(UnitState);
+}
+
+simulated function bool CanTrainPrimarySpecialization(int ItemIndex)
+{
+	return GetSpecialTrainingState().CanReceivePrimaryTraining();
 }
 
 simulated function bool CanTrainSecondarySpecialization(int ItemIndex)
 {
-	local XComGameState_Unit UnitState;
-	local XComGameState_Unit_SpecialTraining TrainingState;
-
-	UnitState = XComGameState_Unit(`XCOMHISTORY.GetGameStateForObjectID(m_UnitRef.ObjectID));
-	TrainingState = class'SpecialTrainingUtilities'.static.GetSpecialTrainingComponentOf(UnitState);
-
-	return TrainingState.CanReceiveSecondaryTraining();
+	return GetSpecialTrainingState().CanReceiveSecondaryTraining();
 }
 
 simulated function OnPrimarySpecializationSelected(UIList kList, int itemIndex)

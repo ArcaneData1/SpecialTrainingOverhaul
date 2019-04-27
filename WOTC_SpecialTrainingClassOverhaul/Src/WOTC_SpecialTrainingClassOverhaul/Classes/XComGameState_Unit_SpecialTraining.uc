@@ -56,6 +56,11 @@ function X2SpecializationTemplate GetLastTrainedSpecialization()
 	return LastTrainedSpecialization;
 }
 
+function bool HasSpecialization(name SpecializationName)
+{
+	return CurrentSpecializations.Find(SpecializationName) != INDEX_NONE;
+}
+
 function AddSpecialization(name SpecializationName, optional XComGameState UpdateState)
 {
 	local X2SpecializationTemplate Specialization;
