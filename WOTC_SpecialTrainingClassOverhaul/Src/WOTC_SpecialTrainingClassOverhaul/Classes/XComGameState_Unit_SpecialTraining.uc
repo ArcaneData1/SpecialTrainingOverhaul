@@ -85,11 +85,13 @@ function AddSpecialization(name SpecializationName, optional XComGameState Updat
 
 	for (i = 0; i < Specialization.AllowedPrimaryWeapons.Length; i++)
 	{
-		ClassTemplate.AllowedWeapons.Add(1);
-			
+		ClassTemplate.AllowedWeapons.Add(1);			
 		ClassTemplate.AllowedWeapons[ClassTemplate.AllowedWeapons.Length - 1].WeaponType = Specialization.AllowedPrimaryWeapons[i];
 		ClassTemplate.AllowedWeapons[ClassTemplate.AllowedWeapons.Length - 1].SlotType = eInvSlot_PrimaryWeapon;
 	}
+
+	// buy first perk automatically
+	GetParentUnit(UpdateState).BuySoldierProgressionAbility(UpdateState, 0, Row);
 }
 
 function bool CanReceiveTraining()
