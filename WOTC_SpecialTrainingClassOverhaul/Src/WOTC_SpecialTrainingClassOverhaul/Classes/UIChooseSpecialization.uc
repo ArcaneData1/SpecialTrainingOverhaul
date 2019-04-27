@@ -31,7 +31,10 @@ simulated function InitScreen(XComPlayerController InitController, UIMovie InitM
 	PrimaryList.BG.OnMouseEventDelegate = OnChildMouseEvent;
 	SecondaryList.BG.OnMouseEventDelegate = OnChildMouseEvent;
 	
-	List.OnItemDoubleClicked = OnPurchaseClicked;
+	//List.OnItemDoubleClicked = OnPurchaseClicked;
+	PrimaryList.OnItemDoubleClicked = OnPrimarySpecializationSelected;
+	SecondaryList.OnItemDoubleClicked = OnSecondarySpecializationSelected;
+
 	
 	PrimarySpecializations.Remove(0, PrimarySpecializations.Length);
 	PrimarySpecializations = class'X2SpecializationTemplateManager'.static.GetInstance().GetPrimarySpecializationTemplates(true);
@@ -153,46 +156,21 @@ simulated function int GetItemIndex(Commodity Item)
 	return -1;
 }
 
-simulated function bool CanAffordItem(int ItemIndex)
+simulated function bool CanTrainSpecialization(int ItemIndex)
 {
-	if( ItemIndex > -1 && ItemIndex < PrimaryCommodities.Length )
-	{
-		return XComHQ.CanAffordCommodity(PrimaryCommodities[ItemIndex]);
-	}
-	else
-	{
-		return false;
-	}
+	return true;
 }
 
-simulated function bool MeetsItemReqs(int ItemIndex)
-{
-	if( ItemIndex > -1 && ItemIndex < PrimaryCommodities.Length )
-	{
-		return XComHQ.MeetsCommodityRequirements(PrimaryCommodities[ItemIndex]);
-	}
-	else
-	{
-		return false;
-	}
-}
-
-simulated function bool IsItemPurchased(int ItemIndex)
-{
-	// Implement in subclasses
-	return false;
-}
-
-simulated function OnPurchaseClicked(UIList kList, int itemIndex)
+simulated function OnPrimarySpecializationSelected(UIList kList, int itemIndex)
 {
 	if (itemIndex != PrimarySelectedIndex)
 	{
 		PrimarySelectedIndex = itemIndex;
 	}
 
-	if (CanAffordItem(PrimarySelectedIndex))
+	if (CanTrainSpecialization(PrimarySelectedIndex))
 	{
-		if (OnSpecializationSelected(PrimarySelectedIndex))
+		if (BeginTraining(PrimarySpecializations[itemIndex].DataName))
 			Movie.Stack.Pop(self);
 	}
 	else
@@ -201,7 +179,25 @@ simulated function OnPurchaseClicked(UIList kList, int itemIndex)
 	}
 }
 
-function bool OnSpecializationSelected(int iOption)
+simulated function OnSecondarySpecializationSelected(UIList kList, int itemIndex)
+{
+	if (itemIndex != SecondarySelectedIndex)
+	{
+		SecondarySelectedIndex = itemIndex;
+	}
+
+	if (CanTrainSpecialization(SecondarySelectedIndex))
+	{
+		if (BeginTraining(SecondarySpecializations[itemIndex].DataName))
+			Movie.Stack.Pop(self);
+	}
+	else
+	{
+		PlayNegativeSound();
+	}
+}
+
+function bool BeginTraining(name SpecializationName)
 {
 	local XComGameState NewGameState;
 	local XComGameState_FacilityXCom FacilityState;
@@ -222,7 +218,7 @@ function bool OnSpecializationSelected(int iOption)
 		// Find the new Training Project which was just created by filling the staff slot and set the class
 		foreach NewGameState.IterateByClassType(class'XComGameState_HeadquartersProjectSpecialTraining', SpecialTrainingProject)
 		{
-			SpecialTrainingProject.NewSpecializationName = PrimarySpecializations[iOption].DataName;
+			SpecialTrainingProject.NewSpecializationName = SpecializationName;
 			break;
 		}
 		
@@ -255,12 +251,12 @@ simulated function bool OnUnrealCommand(int cmd, int arg)
 	}
 	else
 	{
-		if (`ISCONTROLLERACTIVE && CanAffordItem(PrimarySelectedIndex) && !IsItemPurchased(PrimarySelectedIndex))
+		if (`ISCONTROLLERACTIVE && CanTrainSpecialization(PrimarySelectedIndex))
 		{
 			switch (cmd)
 			{
 			case class'UIUtilities_Input'.const.FXS_BUTTON_A :
-				OnPurchaseClicked(List, PrimarySelectedIndex);
+				OnPrimarySpecializationSelected(List, PrimarySelectedIndex);
 				bHandled = true;
 				break;
 			}
@@ -280,7 +276,7 @@ simulated function UpdateNavHelp()
 	NavHelp.bIsVerticalHelp = `ISCONTROLLERACTIVE;
 	NavHelp.AddBackButton(CloseScreen);
 
-	if(`ISCONTROLLERACTIVE && CanAffordItem(PrimarySelectedIndex) && !IsItemPurchased(PrimarySelectedIndex))
+	if(`ISCONTROLLERACTIVE && CanTrainSpecialization(PrimarySelectedIndex))
 	{
 		NavHelp.AddSelectNavHelp();
 	}
