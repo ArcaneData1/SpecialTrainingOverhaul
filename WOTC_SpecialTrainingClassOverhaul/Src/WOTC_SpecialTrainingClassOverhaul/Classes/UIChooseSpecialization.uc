@@ -30,8 +30,7 @@ simulated function InitScreen(XComPlayerController InitController, UIMovie InitM
 
 	PrimaryList.BG.OnMouseEventDelegate = OnChildMouseEvent;
 	SecondaryList.BG.OnMouseEventDelegate = OnChildMouseEvent;
-	
-	//List.OnItemDoubleClicked = OnPurchaseClicked;
+
 	PrimaryList.OnItemDoubleClicked = OnPrimarySpecializationSelected;
 	SecondaryList.OnItemDoubleClicked = OnSecondarySpecializationSelected;
 
@@ -249,6 +248,7 @@ simulated function bool OnUnrealCommand(int cmd, int arg)
 		if (List.GetSelectedItem() != none)
 			PrimarySelectedIndex = List.GetItemIndex(List.GetSelectedItem());
 	}
+	/* TODO: Fix controller support
 	else
 	{
 		if (`ISCONTROLLERACTIVE && CanTrainSpecialization(PrimarySelectedIndex))
@@ -262,7 +262,7 @@ simulated function bool OnUnrealCommand(int cmd, int arg)
 			}
 		}
 	}
-
+	*/
 	return bHandled;
 }
 

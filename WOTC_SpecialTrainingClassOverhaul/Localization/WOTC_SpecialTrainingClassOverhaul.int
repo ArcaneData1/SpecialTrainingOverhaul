@@ -3,11 +3,19 @@ DisplayName="Trooper"
 
 [STCO_Medic X2SpecializationTemplate]
 DisplayName="Medic"
-Summary="Support and heal squadmates with a GREMLIN."
+Summary="Uses a GREMLIN to heal squadmates."
+
+[STCO_Gunslinger X2SpecializationTemplate]
+DisplayName="Gunslinger"
+Summary="Uses a pistol for quick, versatile strikes."
 
 [STCO_Gunner X2SpecializationTemplate]
 DisplayName="Gunner"
-Summary="Lay down suppressing fire with a heavy cannon."
+Summary="Lays down supressive fire with a heavy cannon."
+
+[STCO_Sniper X2SpecializationTemplate]
+DisplayName="Sniper"
+Summary="Takes out targets at extreme range using a precision rifle."
 
 [UIFacility_SpecialTrainingSlot]
 m_strSpecialTrainingDialogTitle=SPECIAL TRAINING
