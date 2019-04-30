@@ -97,6 +97,29 @@ function AddSpecialization(name SpecializationName, optional XComGameState Updat
 
 	// buy first perk automatically
 	GetParentUnit(UpdateState).BuySoldierProgressionAbility(UpdateState, 0, Row);
+
+	UpdateDisplayName(UpdateState);
+}
+
+function UpdateDisplayName(optional XComGameState UpdateState)
+{
+	local X2SoldierClassTemplate ClassTemplate;
+	local X2SpecializationTemplate Template;
+	local int i;
+	local string NewName;
+
+	ClassTemplate = GetSoldierClassTemplate(UpdateState);
+
+	for (i = 0; i < CurrentSpecializations.Length; i++)
+	{
+		Template = GetSpecializationTemplate(CurrentSpecializations[i]);
+		NewName = NewName $ Template.DisplayName;
+
+		if (i < CurrentSpecializations.Length - 1)
+			NewName = NewName $ " / ";
+	}
+
+	ClassTemplate.DisplayName = NewName;
 }
 
 function bool CanReceiveTraining()
