@@ -1,21 +1,54 @@
 [STCO_Trooper X2SpecializationTemplate]
 DisplayName="Trooper"
 
-[STCO_Medic X2SpecializationTemplate]
-DisplayName="Medic"
-Summary="Uses a GREMLIN to heal squadmates."
+[STCO_Sentinel X2SpecializationTemplate]
+DisplayName="Sentinel"
+Summary="Uses overwatch to protect squadmates."
+
+[STCO_Assault X2SpecializationTemplate]
+DisplayName="Assault"
+Summary="Uses a shotgun to take out enemies at close range."
+
+[STCO_Sniper X2SpecializationTemplate]
+DisplayName="Sharpshooter"
+Summary="Takes out targets at extreme range using a precision rifle."
+
+[STCO_Gunner X2SpecializationTemplate]
+DisplayName="Heavy Gunner"
+Summary="Lays down supressive fire with a heavy cannon."
+
+[STCO_Demolitions X2SpecializationTemplate]
+DisplayName="Demolitions"
+Summary="Uses the grenade launcher to demolish enemy cover and armor."
+
+[STCO_Support X2SpecializationTemplate]
+DisplayName="Support"
+Summary="Uses the grenade launcher to flashbang enemies and smother the battlefield in protective smoke."
+
+[STCO_Ranger X2SpecializationTemplate]
+DisplayName="Ranger"
+Summary="Uses a sword to defend themselves and make opportunistic attacks on enemy squads."
 
 [STCO_Gunslinger X2SpecializationTemplate]
 DisplayName="Gunslinger"
 Summary="Uses a pistol for quick, versatile strikes."
 
-[STCO_Gunner X2SpecializationTemplate]
-DisplayName="Gunner"
-Summary="Lays down supressive fire with a heavy cannon."
+[STCO_Hacker X2SpecializationTemplate]
+DisplayName="Hacker"
+Summary="Uses a GREMLIN to hack objectives and combat mechanized enemies."
 
-[STCO_Sniper X2SpecializationTemplate]
-DisplayName="Sniper"
-Summary="Takes out targets at extreme range using a precision rifle."
+[STCO_Medic X2SpecializationTemplate]
+DisplayName="Field Medic"
+Summary="Uses a GREMLIN to heal and protect squadmates."
+
+[STCO_Scout X2SpecializationTemplate]
+DisplayName="Scout"
+Summary="Stays in concealment and seeks out the enemy."
+
+[STCO_Marauder X2SpecializationTemplate]
+DisplayName="Marauder"
+Summary="Moves fast, stays low, and outflanks the enemy."
+
 
 [UIFacility_SpecialTrainingSlot]
 m_strSpecialTrainingDialogTitle=SPECIAL TRAINING

@@ -37,14 +37,14 @@ simulated function InitScreen(XComPlayerController InitController, UIMovie InitM
 	
 	PrimarySpecializations.Remove(0, PrimarySpecializations.Length);
 	PrimarySpecializations = class'X2SpecializationTemplateManager'.static.GetInstance().GetPrimarySpecializationTemplates(true);
-	PrimarySpecializations.Sort(SortSpecializationsByName);
+	//PrimarySpecializations.Sort(SortSpecializationsByName);
 
 	PrimaryCommodities = ConvertToCommodities(PrimarySpecializations);
 
 		
 	SecondarySpecializations.Remove(0, SecondarySpecializations.Length);
 	SecondarySpecializations = class'X2SpecializationTemplateManager'.static.GetInstance().GetSecondarySpecializationTemplates(true);
-	SecondarySpecializations.Sort(SortSpecializationsByName);
+	//SecondarySpecializations.Sort(SortSpecializationsByName);
 
 	SecondaryCommodities = ConvertToCommodities(SecondarySpecializations);
 
@@ -105,7 +105,7 @@ simulated function array<Commodity> ConvertToCommodities(array<X2SpecializationT
 
 	return Commodities;
 }
-
+/*
 function int SortSpecializationsByName(X2SpecializationTemplate a, X2SpecializationTemplate b)
 {	
 	if (a.DisplayName < b.DisplayName)
@@ -115,7 +115,7 @@ function int SortSpecializationsByName(X2SpecializationTemplate a, X2Specializat
 	else
 		return 0;
 }
-
+*/
 simulated function PopulateData()
 {
 	local Commodity Template;
