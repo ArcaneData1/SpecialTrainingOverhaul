@@ -1,8 +1,7 @@
 class XComGameState_Unit_SpecialTraining extends XComGameState_BaseObject config (SpecialTrainingClassOverhaul);
 
-var config int MaxSpecializations;
+var config int MaxMinorSpecializations;
 var config int NumberOfRanks;
-var config array<name> DefaultSpecializations;
 
 var protected StateObjectReference UnitRef;
 var protected array<name> CurrentSpecializations;
@@ -26,11 +25,6 @@ function Initialize(XComGameState_Unit ParentUnit)
 
 	ParentUnit.AbilityTree.Length = 0;
 	ParentUnit.AbilityTree.Length = default.NumberOfRanks;
-
-	foreach default.DefaultSpecializations(SpecializationName)
-	{
-		AddSpecialization(SpecializationName);
-	}
 }
 
 function XComGameState_Unit GetParentUnit(optional XComGameState UpdateState)
@@ -68,25 +62,24 @@ function AddSpecialization(name SpecializationName, optional XComGameState Updat
 	local int i, Row;
 
 	Specialization = GetSpecializationTemplate(SpecializationName);
+	ClassTemplate = GetSoldierClassTemplate(UpdateState);
 
-	if (Specialization.IsPrimary)
+	if (CurrentSpecializations.Length == 0)
 	{
-		ClearPerksFromRow(0, UpdateState);
-		CurrentSpecializations[0] = SpecializationName;
+		Row = 0;
+		AddPerksToRow(1, Specialization.CoreAbilities, UpdateState);
 	}
 	else
 	{
-		CurrentSpecializations.AddItem(SpecializationName);		
+		Row = 2 + CurrentSpecializations.Length - 1;
 	}
-
-	Row = CurrentSpecializations.Find(SpecializationName);
-	ClassTemplate = GetSoldierClassTemplate(UpdateState);
-
-	LastTrainedSpecialization = Specialization;
 
 	AddPerksToRow(Row, Specialization.Abilities, UpdateState);
 
+	CurrentSpecializations[Row] = SpecializationName;
 	ClassTemplate.AbilityTreeTitles[Row] = Specialization.DisplayName;
+
+	LastTrainedSpecialization = Specialization;
 
 	for (i = 0; i < Specialization.AllowedPrimaryWeapons.Length; i++)
 	{
@@ -94,32 +87,11 @@ function AddSpecialization(name SpecializationName, optional XComGameState Updat
 		ClassTemplate.AllowedWeapons[ClassTemplate.AllowedWeapons.Length - 1].WeaponType = Specialization.AllowedPrimaryWeapons[i];
 		ClassTemplate.AllowedWeapons[ClassTemplate.AllowedWeapons.Length - 1].SlotType = eInvSlot_PrimaryWeapon;
 	}
-
+	
 	// buy first perk automatically
 	GetParentUnit(UpdateState).BuySoldierProgressionAbility(UpdateState, 0, Row);
 
-	UpdateDisplayName(UpdateState);
-}
-
-function UpdateDisplayName(optional XComGameState UpdateState)
-{
-	local X2SoldierClassTemplate ClassTemplate;
-	local X2SpecializationTemplate Template;
-	local int i;
-	local string NewName;
-
-	ClassTemplate = GetSoldierClassTemplate(UpdateState);
-
-	for (i = 0; i < CurrentSpecializations.Length; i++)
-	{
-		Template = GetSpecializationTemplate(CurrentSpecializations[i]);
-		NewName = NewName $ Template.DisplayName;
-
-		if (i < CurrentSpecializations.Length - 1)
-			NewName = NewName $ " / ";
-	}
-
-	ClassTemplate.DisplayName = NewName;
+	ClassTemplate.DisplayName = GetSpecializationAt(0).DisplayName;
 }
 
 function bool CanReceiveTraining()
@@ -129,12 +101,12 @@ function bool CanReceiveTraining()
 
 function bool CanReceivePrimaryTraining()
 {
-	return GetSpecializationAt(0).CanBeReplaced;
+	return true;
 }
 
 function bool CanReceiveSecondaryTraining()
 {
-	return CurrentSpecializations.Length < MaxSpecializations;
+	return CurrentSpecializations.Length < MaxMinorSpecializations + 1;
 }
 
 function array<X2SpecializationTemplate> GetCurrentSpecializations()

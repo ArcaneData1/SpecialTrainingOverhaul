@@ -30,7 +30,7 @@ function array<X2SpecializationTemplate> GetAllSpecializationTemplates(optional 
 	{
 		SpecializationTemplate = X2SpecializationTemplate(Template);
 
-		if (SpecializationTemplate != none && (!TrainableOnly || SpecializationTemplate.CanBeTrained))
+		if (SpecializationTemplate != none)
 		{
 			arrSpecializationTemplates.AddItem(SpecializationTemplate);
 		}
@@ -39,7 +39,7 @@ function array<X2SpecializationTemplate> GetAllSpecializationTemplates(optional 
 	return arrSpecializationTemplates;
 }
 
-function array<X2SpecializationTemplate> GetPrimarySpecializationTemplates(optional bool TrainableOnly = true)
+function array<X2SpecializationTemplate> GetPrimarySpecializationTemplates(optional bool TrainableOnly = false)
 {
 	local array<X2SpecializationTemplate> arrSpecializationTemplates;
 	local X2DataTemplate Template;
@@ -49,7 +49,7 @@ function array<X2SpecializationTemplate> GetPrimarySpecializationTemplates(optio
 	{
 		SpecializationTemplate = X2SpecializationTemplate(Template);
 
-		if (SpecializationTemplate != none && SpecializationTemplate.IsPrimary && (!TrainableOnly || SpecializationTemplate.CanBeTrained))
+		if (SpecializationTemplate != none && SpecializationTemplate.IsPrimary)
 		{
 			arrSpecializationTemplates.AddItem(SpecializationTemplate);
 		}
@@ -58,7 +58,7 @@ function array<X2SpecializationTemplate> GetPrimarySpecializationTemplates(optio
 	return arrSpecializationTemplates;
 }
 
-function array<X2SpecializationTemplate> GetSecondarySpecializationTemplates(optional bool TrainableOnly = true)
+function array<X2SpecializationTemplate> GetSecondarySpecializationTemplates(optional bool TrainableOnly = false)
 {
 	local array<X2SpecializationTemplate> arrSpecializationTemplates;
 	local X2DataTemplate Template;
@@ -68,7 +68,7 @@ function array<X2SpecializationTemplate> GetSecondarySpecializationTemplates(opt
 	{
 		SpecializationTemplate = X2SpecializationTemplate(Template);
 
-		if (SpecializationTemplate != none && !SpecializationTemplate.IsPrimary && (!TrainableOnly || SpecializationTemplate.CanBeTrained))
+		if (SpecializationTemplate != none && !SpecializationTemplate.IsPrimary)
 		{
 			arrSpecializationTemplates.AddItem(SpecializationTemplate);
 		}
