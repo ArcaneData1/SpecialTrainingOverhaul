@@ -20,6 +20,9 @@ var localized string m_strBuy;
 
 simulated function InitScreen(XComPlayerController InitController, UIMovie InitMovie, optional name InitName)
 {
+	local array<X2SpecializationTemplate> Specializations;
+	local int i;
+
 	super.InitScreen(InitController, InitMovie, InitName);
 
 	BuildList(PrimaryList, PrimaryHeader, 'PrimaryList', 'PrimaryHeader',
@@ -34,16 +37,34 @@ simulated function InitScreen(XComPlayerController InitController, UIMovie InitM
 	PrimaryList.OnItemDoubleClicked = OnPrimarySpecializationSelected;
 	SecondaryList.OnItemDoubleClicked = OnSecondarySpecializationSelected;
 
-	
 	PrimarySpecializations.Remove(0, PrimarySpecializations.Length);
-	PrimarySpecializations = class'X2SpecializationTemplateManager'.static.GetInstance().GetPrimarySpecializationTemplates(true);
+	SecondarySpecializations.Remove(0, SecondarySpecializations.Length);
+
+	Specializations = class'X2SpecializationTemplateManager'.static.GetInstance().GetAllSpecializationTemplates();
+
+	// divide specializations into two separate lists
+	for (i = 0; i < Specializations.Length; i++)
+	{
+		if (i % 2 == 0)
+		{
+			PrimarySpecializations.AddItem(Specializations[i]);
+		}
+		else
+		{
+			SecondarySpecializations.AddItem(Specializations[i]);
+		}
+	}
+
+	
+	//PrimarySpecializations.Remove(0, PrimarySpecializations.Length);
+	//PrimarySpecializations = class'X2SpecializationTemplateManager'.static.GetInstance().GetPrimarySpecializationTemplates(true);
 	//PrimarySpecializations.Sort(SortSpecializationsByName);
 
 	PrimaryCommodities = ConvertToCommodities(PrimarySpecializations);
 
 		
-	SecondarySpecializations.Remove(0, SecondarySpecializations.Length);
-	SecondarySpecializations = class'X2SpecializationTemplateManager'.static.GetInstance().GetSecondarySpecializationTemplates(true);
+	//SecondarySpecializations.Remove(0, SecondarySpecializations.Length);
+	//SecondarySpecializations = class'X2SpecializationTemplateManager'.static.GetInstance().GetSecondarySpecializationTemplates(true);
 	//SecondarySpecializations.Sort(SortSpecializationsByName);
 
 	SecondaryCommodities = ConvertToCommodities(SecondarySpecializations);
