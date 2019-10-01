@@ -38,7 +38,7 @@ function array<X2SpecializationTemplate> GetAllSpecializationTemplates(optional 
 
 	return arrSpecializationTemplates;
 }
-
+/*
 function array<X2SpecializationTemplate> GetPrimarySpecializationTemplates(optional bool TrainableOnly = false)
 {
 	local array<X2SpecializationTemplate> arrSpecializationTemplates;
@@ -76,7 +76,7 @@ function array<X2SpecializationTemplate> GetSecondarySpecializationTemplates(opt
 
 	return arrSpecializationTemplates;
 }
-
+*/
 DefaultProperties
 {
 	TemplateDefinitionClass=class'X2Specialization'

@@ -96,6 +96,28 @@ function AddSpecialization(name SpecializationName, optional XComGameState Updat
 
 function bool CanReceiveTraining()
 {
+	return CurrentSpecializations.Length < MaxMinorSpecializations + 1;
+}
+
+function bool HasExcludingSpecializationTo(X2SpecializationTemplate Template)
+{
+	local name ExcludedSpecName, CurrentSpecName;
+
+	foreach Template.DisallowedSpecs(ExcludedSpecName)
+	{
+		foreach CurrentSpecializations(CurrentSpecName)
+		{
+			if (ExcludedSpecName == CurrentSpecName)
+			{
+				return true;
+			}
+		}
+	}
+	return false;
+}
+/*
+function bool CanReceiveTraining()
+{
 	return CanReceivePrimaryTraining() || CanReceiveSecondaryTraining();
 }
 
@@ -108,7 +130,7 @@ function bool CanReceiveSecondaryTraining()
 {
 	return CurrentSpecializations.Length < MaxMinorSpecializations + 1;
 }
-
+*/
 function array<X2SpecializationTemplate> GetCurrentSpecializations()
 {
 	local name SpecializationName;

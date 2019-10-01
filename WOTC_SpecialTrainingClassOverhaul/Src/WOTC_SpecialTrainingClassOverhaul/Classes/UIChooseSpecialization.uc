@@ -55,18 +55,7 @@ simulated function InitScreen(XComPlayerController InitController, UIMovie InitM
 		}
 	}
 
-	
-	//PrimarySpecializations.Remove(0, PrimarySpecializations.Length);
-	//PrimarySpecializations = class'X2SpecializationTemplateManager'.static.GetInstance().GetPrimarySpecializationTemplates(true);
-	//PrimarySpecializations.Sort(SortSpecializationsByName);
-
 	PrimaryCommodities = ConvertToCommodities(PrimarySpecializations);
-
-		
-	//SecondarySpecializations.Remove(0, SecondarySpecializations.Length);
-	//SecondarySpecializations = class'X2SpecializationTemplateManager'.static.GetInstance().GetSecondarySpecializationTemplates(true);
-	//SecondarySpecializations.Sort(SortSpecializationsByName);
-
 	SecondaryCommodities = ConvertToCommodities(SecondarySpecializations);
 
 
@@ -151,10 +140,14 @@ simulated function PopulateData()
 		Item.InitInventoryListCommodity(Template, , m_strBuy, , , 126);
 
 		if (!CanTrainPrimarySpecialization(i))
-			Item.SetDisabled(true, "You already have a primary specialization.");
+		{
+			Item.SetDisabled(true, "You already have a mutually exclusive specialization.");
+		}
 
 		if (GetSpecialTrainingState().HasSpecialization(PrimarySpecializations[i].DataName))
-			Item.ShouldShowGoodState(true, "This is your current primary specialization.");
+		{
+			Item.ShouldShowGoodState(true, "This is your current specialization.");
+		}
 	}
 
 
@@ -164,9 +157,16 @@ simulated function PopulateData()
 		Template = SecondaryCommodities[i];
 		Item = Spawn(class'UIInventory_ClassListItem', SecondaryList.itemContainer);
 		Item.InitInventoryListCommodity(Template, , m_strBuy, , , 126);
-		
+
 		if (!CanTrainSecondarySpecialization(i))
-			Item.SetDisabled(true, "You cannot train any more specializations.");
+		{
+			Item.SetDisabled(true, "You already have a mutually exclusive specialization.");
+		}
+
+		if (GetSpecialTrainingState().HasSpecialization(SecondarySpecializations[i].DataName))
+		{
+			Item.ShouldShowGoodState(true, "This is your current specialization.");
+		}
 	}
 }
 
@@ -196,6 +196,17 @@ simulated function XComGameState_Unit_SpecialTraining GetSpecialTrainingState()
 
 simulated function bool CanTrainPrimarySpecialization(int ItemIndex)
 {
+	return GetSpecialTrainingState().HasExcludingSpecializationTo(PrimarySpecializations[ItemIndex]) == false;
+}
+
+simulated function bool CanTrainSecondarySpecialization(int ItemIndex)
+{
+	return GetSpecialTrainingState().HasExcludingSpecializationTo(SecondarySpecializations[ItemIndex]) == false;
+}
+
+/*
+simulated function bool CanTrainPrimarySpecialization(int ItemIndex)
+{
 	return GetSpecialTrainingState().CanReceivePrimaryTraining();
 }
 
@@ -203,7 +214,7 @@ simulated function bool CanTrainSecondarySpecialization(int ItemIndex)
 {
 	return GetSpecialTrainingState().CanReceiveSecondaryTraining();
 }
-
+*/
 simulated function OnPrimarySpecializationSelected(UIList kList, int itemIndex)
 {
 	if (itemIndex != PrimarySelectedIndex)
@@ -319,7 +330,7 @@ simulated function UpdateNavHelp()
 	NavHelp.ClearButtonHelp();
 	NavHelp.bIsVerticalHelp = `ISCONTROLLERACTIVE;
 	NavHelp.AddBackButton(CloseScreen);
-
+	
 	if(`ISCONTROLLERACTIVE && CanTrainPrimarySpecialization(PrimarySelectedIndex))
 	{
 		NavHelp.AddSelectNavHelp();
