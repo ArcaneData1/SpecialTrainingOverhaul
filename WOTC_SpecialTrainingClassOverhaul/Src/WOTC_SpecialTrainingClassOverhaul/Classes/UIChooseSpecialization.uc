@@ -204,17 +204,6 @@ simulated function bool CanTrainSecondarySpecialization(int ItemIndex)
 	return GetSpecialTrainingState().HasExcludingSpecializationTo(SecondarySpecializations[ItemIndex]) == false;
 }
 
-/*
-simulated function bool CanTrainPrimarySpecialization(int ItemIndex)
-{
-	return GetSpecialTrainingState().CanReceivePrimaryTraining();
-}
-
-simulated function bool CanTrainSecondarySpecialization(int ItemIndex)
-{
-	return GetSpecialTrainingState().CanReceiveSecondaryTraining();
-}
-*/
 simulated function OnPrimarySpecializationSelected(UIList kList, int itemIndex)
 {
 	if (itemIndex != PrimarySelectedIndex)

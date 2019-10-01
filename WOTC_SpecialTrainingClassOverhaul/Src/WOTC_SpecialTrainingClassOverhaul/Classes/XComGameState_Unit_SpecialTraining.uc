@@ -115,22 +115,7 @@ function bool HasExcludingSpecializationTo(X2SpecializationTemplate Template)
 	}
 	return false;
 }
-/*
-function bool CanReceiveTraining()
-{
-	return CanReceivePrimaryTraining() || CanReceiveSecondaryTraining();
-}
 
-function bool CanReceivePrimaryTraining()
-{
-	return true;
-}
-
-function bool CanReceiveSecondaryTraining()
-{
-	return CurrentSpecializations.Length < MaxMinorSpecializations + 1;
-}
-*/
 function array<X2SpecializationTemplate> GetCurrentSpecializations()
 {
 	local name SpecializationName;

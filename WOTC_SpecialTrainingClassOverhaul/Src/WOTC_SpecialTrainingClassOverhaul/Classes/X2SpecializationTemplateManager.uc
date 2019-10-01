@@ -20,7 +20,7 @@ function X2SpecializationTemplate FindSpecializationTemplate(name DataName)
 	return none;
 }
 
-function array<X2SpecializationTemplate> GetAllSpecializationTemplates(optional bool TrainableOnly = false)
+function array<X2SpecializationTemplate> GetAllSpecializationTemplates()
 {
 	local array<X2SpecializationTemplate> arrSpecializationTemplates;
 	local X2DataTemplate Template;
@@ -38,45 +38,7 @@ function array<X2SpecializationTemplate> GetAllSpecializationTemplates(optional 
 
 	return arrSpecializationTemplates;
 }
-/*
-function array<X2SpecializationTemplate> GetPrimarySpecializationTemplates(optional bool TrainableOnly = false)
-{
-	local array<X2SpecializationTemplate> arrSpecializationTemplates;
-	local X2DataTemplate Template;
-	local X2SpecializationTemplate SpecializationTemplate;
 
-	foreach IterateTemplates(Template, none)
-	{
-		SpecializationTemplate = X2SpecializationTemplate(Template);
-
-		if (SpecializationTemplate != none && SpecializationTemplate.IsPrimary)
-		{
-			arrSpecializationTemplates.AddItem(SpecializationTemplate);
-		}
-	}
-
-	return arrSpecializationTemplates;
-}
-
-function array<X2SpecializationTemplate> GetSecondarySpecializationTemplates(optional bool TrainableOnly = false)
-{
-	local array<X2SpecializationTemplate> arrSpecializationTemplates;
-	local X2DataTemplate Template;
-	local X2SpecializationTemplate SpecializationTemplate;
-
-	foreach IterateTemplates(Template, none)
-	{
-		SpecializationTemplate = X2SpecializationTemplate(Template);
-
-		if (SpecializationTemplate != none && !SpecializationTemplate.IsPrimary)
-		{
-			arrSpecializationTemplates.AddItem(SpecializationTemplate);
-		}
-	}
-
-	return arrSpecializationTemplates;
-}
-*/
 DefaultProperties
 {
 	TemplateDefinitionClass=class'X2Specialization'
