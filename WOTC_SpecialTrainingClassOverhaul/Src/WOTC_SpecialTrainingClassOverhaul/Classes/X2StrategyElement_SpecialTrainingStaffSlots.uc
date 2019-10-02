@@ -103,6 +103,6 @@ static function bool STCO_IsUnitValidForOTSSoldierSlot(XComGameState_StaffSlot S
 	return (
 		Unit.CanBeStaffed() &&
 		Unit.IsActive() &&
-		SpecialTraining != None &&
-		SpecialTraining.CanReceiveTraining());
+		((Unit.GetRank() == 0 && Unit.GetTotalNumKills() >= class'X2ExperienceConfig'.static.GetRequiredKills(1)) ||
+		SpecialTraining.CanReceiveTraining()));
 }

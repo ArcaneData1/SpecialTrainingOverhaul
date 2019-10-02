@@ -17,7 +17,7 @@ static function X2EventListenerTemplate CreateSpecializationModifiersTemplate()
 
     Template.RegisterInStrategy = true;
     Template.AddEvent('NewCrewNotification', AddSpecialTrainingComponentToUnit);
-    Template.AddEvent('UnitRankUp',	AddSpecialTrainingComponentToUnit);
+    //Template.AddEvent('UnitRankUp',	AddSpecialTrainingComponentToUnit);
 
     return Template;
 }

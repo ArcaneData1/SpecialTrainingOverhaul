@@ -3,7 +3,7 @@ class SpecialTrainingUtilities extends Object config (SpecialTrainingClassOverha
 var config array<int> DefaultSpecialTrainingDays;
 
 // adds a new training component to a soldier and gives them the initial perks
-static function AddNewSpecialTrainingComponentTo(XComGameState_Unit UnitState, optional XComGameState GameState = none)
+static function XComGameState_Unit_SpecialTraining AddNewSpecialTrainingComponentTo(XComGameState_Unit UnitState, optional XComGameState GameState = none)
 {
 	local XComGameStateContext_ChangeContainer ChangeContainer;
 	local XComGameState_Unit_SpecialTraining TrainingState;
@@ -26,6 +26,8 @@ static function AddNewSpecialTrainingComponentTo(XComGameState_Unit UnitState, o
 		`GAMERULES.SubmitGameState(GameState);
 
 	`log("STCO: Added Special Training component to soldier.");
+
+	return TrainingState;
 }
 
 // gets the special training component of a soldier

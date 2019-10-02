@@ -89,7 +89,16 @@ function OnProjectCompleted()
 	UpdateState = History.CreateNewGameState(true, ChangeContainer);
 	UpdatedUnit = XComGameState_Unit(UpdateState.CreateStateObject(class'XComGameState_Unit', Unit.ObjectID));
 
-	TrainingState = class'SpecialTrainingUtilities'.static.GetSpecialTrainingComponentOf(Unit);
+	if (UpdatedUnit.GetRank() == 0)
+	{
+		UpdatedUnit.RankUpSoldier(UpdateState, 'STCO_Soldier');
+		TrainingState = class'SpecialTrainingUtilities'.static.AddNewSpecialTrainingComponentTo(UpdatedUnit, UpdateState);
+	}
+	else
+	{
+		TrainingState = class'SpecialTrainingUtilities'.static.GetSpecialTrainingComponentOf(Unit);
+	}
+
 	TrainingState = XComGameState_Unit_SpecialTraining(UpdateState.CreateStateObject(class'XComGameState_Unit_SpecialTraining', TrainingState.ObjectID));
 
 	TrainingState.AddSpecialization(NewSpecializationName, UpdateState);
