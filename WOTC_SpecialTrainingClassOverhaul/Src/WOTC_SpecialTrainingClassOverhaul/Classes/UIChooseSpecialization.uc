@@ -292,7 +292,7 @@ simulated function bool OnUnrealCommand(int cmd, int arg)
 		if (List.GetSelectedItem() != none)
 			PrimarySelectedIndex = List.GetItemIndex(List.GetSelectedItem());
 	}
-	/* TODO: Fix controller support
+	/*
 	else
 	{
 		if (`ISCONTROLLERACTIVE && CanTrainSpecialization(PrimarySelectedIndex))

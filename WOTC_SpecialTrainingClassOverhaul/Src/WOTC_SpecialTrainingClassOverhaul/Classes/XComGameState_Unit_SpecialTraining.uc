@@ -9,7 +9,6 @@ var protected X2SpecializationTemplate LastTrainedSpecialization;
 
 function Initialize(XComGameState_Unit ParentUnit)
 {
-	local name SpecializationName;
 	local X2SoldierClassTemplate NewClassTemplate;
 	local XComGameState_DynamicClassTemplatePool TemplatePool;
 	
@@ -59,7 +58,7 @@ function AddSpecialization(name SpecializationName, optional XComGameState Updat
 {
 	local X2SpecializationTemplate Specialization;
 	local X2SoldierClassTemplate ClassTemplate;
-	local int i, Row;
+	local int Row;
 
 	Specialization = GetSpecializationTemplate(SpecializationName);
 	ClassTemplate = GetSoldierClassTemplate(UpdateState);
@@ -81,17 +80,36 @@ function AddSpecialization(name SpecializationName, optional XComGameState Updat
 
 	LastTrainedSpecialization = Specialization;
 
-	for (i = 0; i < Specialization.AllowedPrimaryWeapons.Length; i++)
-	{
-		ClassTemplate.AllowedWeapons.Add(1);			
-		ClassTemplate.AllowedWeapons[ClassTemplate.AllowedWeapons.Length - 1].WeaponType = Specialization.AllowedPrimaryWeapons[i];
-		ClassTemplate.AllowedWeapons[ClassTemplate.AllowedWeapons.Length - 1].SlotType = eInvSlot_PrimaryWeapon;
-	}
-	
+	SetAllowedWeapons(UpdateState);
+
 	// buy first perk automatically
 	GetParentUnit(UpdateState).BuySoldierProgressionAbility(UpdateState, 0, Row);
 
 	ClassTemplate.DisplayName = GetSpecializationAt(0).DisplayName;
+}
+
+function SetAllowedWeapons(optional XComGameState UpdateState)
+{
+	local X2SoldierClassTemplate ClassTemplate;
+	local name SpecializationName;
+	local X2SpecializationTemplate Specialization;
+	local int i;
+
+	ClassTemplate = GetSoldierClassTemplate(UpdateState);
+
+	ClassTemplate.AllowedWeapons.Length = 0;
+
+	foreach CurrentSpecializations(SpecializationName)
+	{
+		Specialization = GetSpecializationTemplate(SpecializationName);
+
+		for (i = 0; i < Specialization.AllowedPrimaryWeapons.Length; i++)
+		{
+			ClassTemplate.AllowedWeapons.Add(1);			
+			ClassTemplate.AllowedWeapons[ClassTemplate.AllowedWeapons.Length - 1].WeaponType = Specialization.AllowedPrimaryWeapons[i];
+			ClassTemplate.AllowedWeapons[ClassTemplate.AllowedWeapons.Length - 1].SlotType = eInvSlot_PrimaryWeapon;
+		}
+	}	
 }
 
 function bool CanReceiveTraining()
