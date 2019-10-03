@@ -24,6 +24,8 @@ static event OnPostTemplatesCreated()
 	DisableAllOtherClasses();
 	ModifyDefaultSoldierTemplate();
 	AddNewStaffSlots();
+	RemoveStaffSlots();
+	RemoveClassUpgradesFromGTS();
 }
 
 static function DisableAllOtherClasses()
@@ -117,5 +119,51 @@ static function FindFacilityTemplateAllDifficulties(name DataName, out array<X2F
 		{
 			FacilityTemplates.AddItem(FacilityTemplate);
 		}
+	}
+}
+
+static function RemoveStaffSlots()
+{
+	local X2FacilityTemplate FacilityTemplate;
+	local array<X2FacilityTemplate> FacilityTemplates;
+	local StaffSlotDefinition StaffSlotDef;
+	local int i, index;
+
+	FindFacilityTemplateAllDifficulties('OfficerTrainingSchool', FacilityTemplates);
+
+	foreach FacilityTemplates(FacilityTemplate)
+	{
+		index = -1;
+
+		for (i = 0; i < FacilityTemplate.StaffSlotDefs.Length; i++)
+		{
+			StaffSlotDef = FacilityTemplate.StaffSlotDefs[i];
+
+			if (StaffSlotDef.StaffSlotTemplateName == 'OTSStaffSlot')
+			{
+				index = i;
+			}
+		}
+
+		if (index != -1)
+		{
+			FacilityTemplate.StaffSlotDefs.Remove(index, 1);
+		}
+	}
+}
+
+static function RemoveClassUpgradesFromGTS()
+{
+	local X2FacilityTemplate FacilityTemplate;
+	local array<X2FacilityTemplate> FacilityTemplates;
+
+	FindFacilityTemplateAllDifficulties('OfficerTrainingSchool', FacilityTemplates);
+
+	foreach FacilityTemplates(FacilityTemplate)
+	{
+		FacilityTemplate.SoldierUnlockTemplates.RemoveItem('HuntersInstinctUnlock');
+		FacilityTemplate.SoldierUnlockTemplates.RemoveItem('HitWhereItHurtsUnlock');
+		FacilityTemplate.SoldierUnlockTemplates.RemoveItem('CoolUnderPressureUnlock');
+		FacilityTemplate.SoldierUnlockTemplates.RemoveItem('BiggestBoomsUnlock');
 	}
 }
