@@ -88,6 +88,83 @@ function AddSpecialization(name SpecializationName, optional XComGameState Updat
 	ClassTemplate.DisplayName = GetSpecializationAt(0).DisplayName;
 }
 
+function UnitHasRankedUp()
+{
+	ApplyStatIncreases();
+}
+
+function ApplyStatIncreases() // do not modify: this code is copied from XComGameState_Unit in order to apply correct stat progression
+{
+	local XComGameState_Unit UnitState;
+	local int SoldierRank, i;
+	local array<SoldierClassStatType> StatProgression;
+
+	local X2SoldierClassTemplate Template;
+	local int RankIndex, MaxStat, NewMaxStat, StatVal, NewCurrentStat, StatCap;
+	local float APReward;
+	local bool bInjured;
+	local XComGameState_HeadquartersXCom XComHQ;
+	local array<SoldierClassAbilityType> RankAbilities;
+
+	UnitState = GetParentUnit();
+	SoldierRank = UnitState.GetRank();
+	StatProgression = GetSpecializationAt(0).StatProgressions[SoldierRank - 1].StatProgressionsForRank;
+
+	if (SoldierRank > 0)
+	{
+		for (i = 0; i < class'X2SoldierClassTemplateManager'.default.GlobalStatProgression.Length; ++i)
+		{
+			StatProgression.AddItem(class'X2SoldierClassTemplateManager'.default.GlobalStatProgression[i]);
+		}
+	}
+
+	for (i = 0; i < StatProgression.Length; ++i)
+	{
+		StatVal = StatProgression[i].StatAmount;
+		//  add random amount if any
+		if (StatProgression[i].RandStatAmount > 0)
+		{
+			StatVal += `SYNC_RAND(StatProgression[i].RandStatAmount);
+		}
+
+		if((StatProgression[i].StatType == eStat_HP) && `SecondWaveEnabled('BetaStrike' ))
+		{
+			StatVal *= class'X2StrategyGameRulesetDataStructures'.default.SecondWaveBetaStrikeHealthMod;
+		}
+
+		MaxStat = UnitState.GetMaxStat(StatProgression[i].StatType);
+		//  cap the new value if required
+		if (StatProgression[i].CapStatAmount > 0)
+		{
+			StatCap = StatProgression[i].CapStatAmount;
+
+			if((i == eStat_HP) && `SecondWaveEnabled('BetaStrike' ))
+			{
+				StatCap *= class'X2StrategyGameRulesetDataStructures'.default.SecondWaveBetaStrikeHealthMod;
+			}
+
+			if (StatVal + MaxStat > StatCap)
+				StatVal = StatCap - MaxStat;
+		}
+
+		// If the Soldier has been shaken, save any will bonus from ranking up to be applied when they recover
+		if (StatProgression[i].StatType == eStat_Will && UnitState.bIsShaken)
+		{
+			UnitState.SavedWillValue += StatVal;
+		}
+		else
+		{				
+			NewMaxStat = MaxStat + StatVal;
+			NewCurrentStat = int(UnitState.GetCurrentStat(StatProgression[i].StatType)) + StatVal;
+			UnitState.SetBaseMaxStat(StatProgression[i].StatType, NewMaxStat);
+			if (StatProgression[i].StatType != eStat_HP || !bInjured)
+			{
+				UnitState.SetCurrentStat(StatProgression[i].StatType, NewCurrentStat);
+			}
+		}
+	}
+}
+
 function SetAllowedWeapons(optional XComGameState UpdateState)
 {
 	local X2SoldierClassTemplate ClassTemplate;

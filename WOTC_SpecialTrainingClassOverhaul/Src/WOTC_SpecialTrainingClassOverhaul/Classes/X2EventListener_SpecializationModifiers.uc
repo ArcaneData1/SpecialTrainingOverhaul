@@ -18,6 +18,7 @@ static function X2EventListenerTemplate CreateSpecializationModifiersTemplate()
     Template.RegisterInStrategy = true;
     Template.AddEvent('NewCrewNotification', AddSpecialTrainingComponentToUnit);
     //Template.AddEvent('UnitRankUp',	AddSpecialTrainingComponentToUnit);
+	Template.AddEvent('UnitRankUp',	NotifySpecialTrainingComponentAboutPromotion);
 
     return Template;
 }
@@ -31,6 +32,22 @@ static protected function EventListenerReturn AddSpecialTrainingComponentToUnit(
 	if (UnitState != None && class'SpecialTrainingUtilities'.static.UnitRequiresSpecialTrainingComponent(UnitState))
 	{
 		class'SpecialTrainingUtilities'.static.AddNewSpecialTrainingComponentTo(UnitState);
+	}
+
+	return ELR_NoInterrupt;
+}
+
+static protected function EventListenerReturn NotifySpecialTrainingComponentAboutPromotion(Object EventData, Object EventSource, XComGameState GameState, Name Event, Object CallbackData)
+{
+    local XComGameState_Unit UnitState;
+	local XComGameState_Unit_SpecialTraining SpecialTraining;
+
+	UnitState = XComGameState_Unit(EventData);
+	SpecialTraining = class'SpecialTrainingUtilities'.static.GetSpecialTrainingComponentOf(UnitState);
+
+	if (SpecialTraining != None)
+	{
+		SpecialTraining.UnitHasRankedUp();
 	}
 
 	return ELR_NoInterrupt;

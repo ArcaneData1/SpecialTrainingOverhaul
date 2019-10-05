@@ -47,13 +47,6 @@ function SetProjectFocus(StateObjectReference FocusRef, optional XComGameState N
 function int CalculatePointsToTrain()
 {
 	return int(class'SpecialTrainingUtilities'.static.GetSpecialTrainingDays() * 24.0);
-	//return int(class'LWOfficerUtilities'.static.GetOfficerTrainingDays(NewRank) * 24.0);
-	//local XComGameStateHistory History;
-	//local XComGameState_HeadquartersXCom XComHQ;
-
-	//History = `XCOMHISTORY;
-	//XComHQ = XComGameState_HeadquartersXCom(History.GetSingleGameStateObjectForClass(class'XComGameState_HeadquartersXCom'));
-	//return XComHQ.GetTrainRookieDays() * 24;
 }
 
 //---------------------------------------------------------------------------------------
@@ -91,7 +84,6 @@ function OnProjectCompleted()
 
 	if (UpdatedUnit.GetRank() == 0)
 	{
-		UpdatedUnit.RankUpSoldier(UpdateState, 'STCO_Soldier');
 		TrainingState = class'SpecialTrainingUtilities'.static.AddNewSpecialTrainingComponentTo(UpdatedUnit, UpdateState);
 	}
 	else
@@ -102,6 +94,12 @@ function OnProjectCompleted()
 	TrainingState = XComGameState_Unit_SpecialTraining(UpdateState.CreateStateObject(class'XComGameState_Unit_SpecialTraining', TrainingState.ObjectID));
 
 	TrainingState.AddSpecialization(NewSpecializationName, UpdateState);
+
+	if (UpdatedUnit.GetRank() == 0) // doing this here rather than earlier so stat progressions are properly applied
+	{
+
+		UpdatedUnit.RankUpSoldier(UpdateState);
+	}
 
 	UpdatedUnit.SetStatus(eStatus_Active);
 
