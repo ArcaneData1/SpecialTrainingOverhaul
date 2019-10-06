@@ -1,10 +1,4 @@
 class X2SpecializationTemplate extends X2DataTemplate config(SpecialTrainingClassOverhaul);
-/*
-enum ESpecializationType
-{
-	Primary, Secondary
-};
-*/
 
 struct SoldierStatProgression
 {
