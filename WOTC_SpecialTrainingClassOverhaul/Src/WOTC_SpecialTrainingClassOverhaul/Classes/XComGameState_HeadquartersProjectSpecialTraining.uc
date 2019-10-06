@@ -84,6 +84,7 @@ function OnProjectCompleted()
 
 	if (UpdatedUnit.GetRank() == 0)
 	{
+		UpdatedUnit.RankUpSoldier(UpdateState);
 		TrainingState = class'SpecialTrainingUtilities'.static.AddNewSpecialTrainingComponentTo(UpdatedUnit, UpdateState);
 	}
 	else
@@ -94,12 +95,6 @@ function OnProjectCompleted()
 	TrainingState = XComGameState_Unit_SpecialTraining(UpdateState.CreateStateObject(class'XComGameState_Unit_SpecialTraining', TrainingState.ObjectID));
 
 	TrainingState.AddSpecialization(NewSpecializationName, UpdateState);
-
-	if (UpdatedUnit.GetRank() == 0) // doing this here rather than earlier so stat progressions are properly applied
-	{
-
-		UpdatedUnit.RankUpSoldier(UpdateState);
-	}
 
 	UpdatedUnit.SetStatus(eStatus_Active);
 
@@ -122,7 +117,6 @@ function OnProjectCompleted()
 			StaffSlotState.EmptySlot(UpdateState);
 		}
 	}
-
 	UpdateState.AddStateObject(UpdatedUnit);
 	UpdateState.AddStateObject(TrainingState);
 	UpdateState.AddStateObject(ProjectState);

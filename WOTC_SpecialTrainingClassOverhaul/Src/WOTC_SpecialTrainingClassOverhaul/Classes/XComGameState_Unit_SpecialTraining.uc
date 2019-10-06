@@ -88,12 +88,12 @@ function AddSpecialization(name SpecializationName, optional XComGameState Updat
 	ClassTemplate.DisplayName = GetSpecializationAt(0).DisplayName;
 }
 
-function UnitHasRankedUp()
+function UnitHasRankedUp(optional XComGameState UpdateState)
 {
-	ApplyStatIncreases();
+	ApplyStatIncreases(UpdateState);
 }
 
-function ApplyStatIncreases() // do not modify: this code is copied from XComGameState_Unit in order to apply correct stat progression
+function ApplyStatIncreases(optional XComGameState UpdateState) // do not modify: this code is copied from XComGameState_Unit in order to apply correct stat progression
 {
 	local XComGameState_Unit UnitState;
 	local int SoldierRank, i;
@@ -106,7 +106,7 @@ function ApplyStatIncreases() // do not modify: this code is copied from XComGam
 	local XComGameState_HeadquartersXCom XComHQ;
 	local array<SoldierClassAbilityType> RankAbilities;
 
-	UnitState = GetParentUnit();
+	UnitState = GetParentUnit(UpdateState);
 	SoldierRank = UnitState.GetRank();
 	StatProgression = GetSpecializationAt(0).StatProgressions[SoldierRank - 1].StatProgressionsForRank;
 

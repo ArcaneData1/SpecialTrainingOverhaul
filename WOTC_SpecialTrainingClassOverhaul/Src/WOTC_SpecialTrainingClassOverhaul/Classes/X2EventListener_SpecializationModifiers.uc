@@ -47,7 +47,7 @@ static protected function EventListenerReturn NotifySpecialTrainingComponentAbou
 
 	if (SpecialTraining != None)
 	{
-		SpecialTraining.UnitHasRankedUp();
+		SpecialTraining.UnitHasRankedUp(GameState);
 	}
 
 	return ELR_NoInterrupt;
