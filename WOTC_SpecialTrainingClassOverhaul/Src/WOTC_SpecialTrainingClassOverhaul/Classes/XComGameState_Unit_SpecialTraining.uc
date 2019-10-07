@@ -101,15 +101,8 @@ function UnitHasRankedUp(optional XComGameState UpdateState)
 function ApplyStatIncreases(optional XComGameState UpdateState) // do not modify: this code is copied from XComGameState_Unit in order to apply correct stat progression
 {
 	local XComGameState_Unit UnitState;
-	local int SoldierRank, i;
 	local array<SoldierClassStatType> StatProgression;
-
-	local X2SoldierClassTemplate Template;
-	local int RankIndex, MaxStat, NewMaxStat, StatVal, NewCurrentStat, StatCap;
-	local float APReward;
-	local bool bInjured;
-	local XComGameState_HeadquartersXCom XComHQ;
-	local array<SoldierClassAbilityType> RankAbilities;
+	local int SoldierRank, i, MaxStat, NewMaxStat, StatVal, NewCurrentStat, StatCap;
 
 	UnitState = GetParentUnit(UpdateState);
 	SoldierRank = UnitState.GetRank();
@@ -162,7 +155,7 @@ function ApplyStatIncreases(optional XComGameState UpdateState) // do not modify
 			NewMaxStat = MaxStat + StatVal;
 			NewCurrentStat = int(UnitState.GetCurrentStat(StatProgression[i].StatType)) + StatVal;
 			UnitState.SetBaseMaxStat(StatProgression[i].StatType, NewMaxStat);
-			if (StatProgression[i].StatType != eStat_HP || !bInjured)
+			if (StatProgression[i].StatType != eStat_HP || !UnitState.IsInjured())
 			{
 				UnitState.SetCurrentStat(StatProgression[i].StatType, NewCurrentStat);
 			}
