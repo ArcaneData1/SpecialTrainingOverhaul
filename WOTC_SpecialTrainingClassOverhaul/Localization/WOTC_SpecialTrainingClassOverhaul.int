@@ -1,7 +1,3 @@
-[STCO_Sentinel X2SpecializationTemplate]
-DisplayName="Sentinel"
-Summary="Uses overwatch to protect squadmates."
-
 [STCO_Assault X2SpecializationTemplate]
 DisplayName="Assault"
 Summary="Uses a shotgun to take out enemies at close range."
@@ -14,13 +10,9 @@ Summary="Takes out targets at extreme range using a precision rifle."
 DisplayName="Heavy Gunner"
 Summary="Lays down suppressive fire with a heavy cannon."
 
-[STCO_Demolitions X2SpecializationTemplate]
-DisplayName="Demolitions"
+[STCO_Grenadier X2SpecializationTemplate]
+DisplayName="Grenadier"
 Summary="Uses the grenade launcher to demolish enemy cover and armor."
-
-[STCO_Support X2SpecializationTemplate]
-DisplayName="Support"
-Summary="Uses the grenade launcher to flashbang enemies and smother the battlefield in protective smoke."
 
 [STCO_Ranger X2SpecializationTemplate]
 DisplayName="Ranger"
@@ -37,14 +29,6 @@ Summary="Uses a GREMLIN to hack objectives and combat mechanized enemies."
 [STCO_Medic X2SpecializationTemplate]
 DisplayName="Field Medic"
 Summary="Uses a GREMLIN to heal and protect squadmates."
-
-[STCO_Scout X2SpecializationTemplate]
-DisplayName="Scout"
-Summary="Stays in concealment and seeks out the enemy."
-
-[STCO_Marauder X2SpecializationTemplate]
-DisplayName="Marauder"
-Summary="Moves fast, stays low, and outflanks the enemy."
 
 
 [UIFacility_SpecialTrainingSlot]
