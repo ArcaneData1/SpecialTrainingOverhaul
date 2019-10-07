@@ -1,34 +1,34 @@
 [STCO_Assault X2SpecializationTemplate]
 DisplayName="Assault"
-Summary="Uses a shotgun to take out enemies at close range."
+Summary="Uses a shotgun to take out enemies at close range. Core training increases HP."
 
 [STCO_Sniper X2SpecializationTemplate]
 DisplayName="Sharpshooter"
-Summary="Takes out targets at extreme range using a precision rifle."
+Summary="Takes out targets at extreme range using a precision rifle. Core training increases aim."
 
 [STCO_Gunner X2SpecializationTemplate]
 DisplayName="Heavy Gunner"
-Summary="Lays down suppressive fire with a heavy cannon."
+Summary="Lays down suppressive fire with a heavy cannon. Core training increases HP."
 
 [STCO_Grenadier X2SpecializationTemplate]
 DisplayName="Grenadier"
-Summary="Uses the grenade launcher to demolish enemy cover and armor."
+Summary="Uses the grenade launcher to demolish enemy cover and support allies. Core training increases HP."
 
 [STCO_Ranger X2SpecializationTemplate]
 DisplayName="Ranger"
-Summary="Uses a sword to defend themselves and make opportunistic attacks on enemy squads."
+Summary="Scouts enemy positions and uses a sword to make opportunistic attacks on enemy squads. Core training increases mobility."
 
 [STCO_Gunslinger X2SpecializationTemplate]
 DisplayName="Gunslinger"
-Summary="Uses a pistol for quick, versatile strikes."
+Summary="Uses a pistol for quick, versatile strikes. Core training increases dodge."
 
 [STCO_Hacker X2SpecializationTemplate]
 DisplayName="Hacker"
-Summary="Uses a GREMLIN to hack objectives and combat mechanized enemies."
+Summary="Uses a GREMLIN to hack objectives and combat mechanized enemies. Core training increases hack."
 
 [STCO_Medic X2SpecializationTemplate]
 DisplayName="Field Medic"
-Summary="Uses a GREMLIN to heal and protect squadmates."
+Summary="Uses a GREMLIN to heal and protect squadmates. Core training increases mobility."
 
 
 [UIFacility_SpecialTrainingSlot]
