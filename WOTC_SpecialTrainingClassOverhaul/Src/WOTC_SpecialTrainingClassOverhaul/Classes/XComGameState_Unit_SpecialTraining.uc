@@ -75,7 +75,7 @@ function AddSpecialization(name SpecializationName, optional XComGameState Updat
 
 	AddPerksToRow(Row, Specialization.Abilities, UpdateState);
 
-	CurrentSpecializations[Row] = SpecializationName;
+	CurrentSpecializations.AddItem(SpecializationName);
 	ClassTemplate.AbilityTreeTitles[Row] = Specialization.DisplayName;
 
 	LastTrainedSpecialization = Specialization;
