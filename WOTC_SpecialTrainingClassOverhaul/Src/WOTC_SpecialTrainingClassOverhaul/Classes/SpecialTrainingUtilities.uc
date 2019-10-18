@@ -1,6 +1,7 @@
 class SpecialTrainingUtilities extends Object config (SpecialTrainingClassOverhaul);
 
 var config array<int> DefaultSpecialTrainingDays;
+var config int ExtraDaysForUnexperiencedRookies;
 
 // adds a new training component to a soldier and gives them the initial perks
 static function XComGameState_Unit_SpecialTraining AddNewSpecialTrainingComponentTo(XComGameState_Unit UnitState, optional XComGameState GameState = none)
@@ -78,7 +79,14 @@ static function XComGameState_HeadquartersProjectSpecialTraining GetSpecialTrain
 	}
 }
 
-static function float GetSpecialTrainingDays()
+static function float GetSpecialTrainingDays(XComGameState_Unit UnitState)
 {
-	return `ScaleStrategyArrayInt(default.DefaultSpecialTrainingDays);
+	if (UnitState.GetRank() == 0 && UnitState.GetTotalNumKills() < class'X2ExperienceConfig'.static.GetRequiredKills(1))
+	{
+		return `ScaleStrategyArrayInt(default.DefaultSpecialTrainingDays) + default.ExtraDaysForUnexperiencedRookies;
+	}
+	else
+	{
+		return `ScaleStrategyArrayInt(default.DefaultSpecialTrainingDays);
+	}
 }

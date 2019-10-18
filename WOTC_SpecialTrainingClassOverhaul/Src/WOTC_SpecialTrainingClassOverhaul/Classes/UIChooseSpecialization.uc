@@ -100,6 +100,9 @@ simulated function array<Commodity> ConvertToCommodities(array<X2SpecializationT
 	local int i;
 	local array<Commodity> Commodities;
 	local Commodity Comm;
+	local XComGameState_Unit UnitState;
+
+	UnitState = XComGameState_Unit(`XCOMHISTORY.GetGameStateForObjectID(m_UnitRef.ObjectID));
 
 	for (i = 0; i < Specializations.Length; i++)
 	{
@@ -108,7 +111,7 @@ simulated function array<Commodity> ConvertToCommodities(array<X2SpecializationT
 		Comm.Title = Template.DisplayName;
 		Comm.Image = Template.IconImage;
 		Comm.Desc = Template.Summary;
-		Comm.OrderHours = class'SpecialTrainingUtilities'.static.GetSpecialTrainingDays() * 24;
+		Comm.OrderHours = class'SpecialTrainingUtilities'.static.GetSpecialTrainingDays(UnitState) * 24;
 
 		Commodities.AddItem(Comm);
 	}

@@ -46,7 +46,11 @@ function SetProjectFocus(StateObjectReference FocusRef, optional XComGameState N
 //---------------------------------------------------------------------------------------
 function int CalculatePointsToTrain()
 {
-	return int(class'SpecialTrainingUtilities'.static.GetSpecialTrainingDays() * 24.0);
+	local XComGameState_Unit UnitState;
+
+	UnitState = XComGameState_Unit(`XCOMHISTORY.GetGameStateForObjectID(ProjectFocus.ObjectID));
+
+	return int(class'SpecialTrainingUtilities'.static.GetSpecialTrainingDays(UnitState) * 24.0);
 }
 
 //---------------------------------------------------------------------------------------
