@@ -26,6 +26,8 @@ static event OnPostTemplatesCreated()
 	AddNewStaffSlots();
 	RemoveStaffSlots();
 	RemoveClassUpgradesFromGTS();
+
+	class'X2StrategyGameRulesetDataStructures'.default.PowerfulAbilities.Length = 0;
 }
 
 static function DisableAllOtherClasses()
