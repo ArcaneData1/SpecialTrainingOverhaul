@@ -73,6 +73,7 @@ static event OnPostTemplatesCreated()
 	RemoveStaffSlots();
 	RemoveClassUpgradesFromGTS();
 	AddAbilitiesToWeapons();
+	PatchAbilities();
 
 	class'X2StrategyGameRulesetDataStructures'.default.PowerfulAbilities.Length = 0;
 }
@@ -280,5 +281,27 @@ static function AddAbilityToWeaponTemplate(X2WeaponTemplate WeaponTemplate, name
 	if (WeaponTemplate.Abilities.Find(AbilityName) == INDEX_NONE)
 	{
 		WeaponTemplate.Abilities.AddItem(AbilityName);
+	}
+}
+
+static function PatchAbilities()
+{
+	local X2AbilityTemplateManager AbilityManager;
+	local array<X2AbilityTemplate> AbilityTemplates;
+	local X2AbilityTemplate AbilityTemplate;
+	local X2Effect_PersistentStatChange	PersistentStatChange;
+
+	AbilityManager = class'X2AbilityTemplateManager'.static.GetAbilityTemplateManager();
+
+	AbilityManager.FindAbilityTemplateAllDifficulties(class'SpecialTrainingUtilities'.default.PerkForHackingBonus, AbilityTemplates);
+
+	PersistentStatChange = new class'X2Effect_PersistentStatChange';
+	PersistentStatChange.BuildPersistentEffect(1, true, false, false);
+	PersistentStatChange.AddPersistentStatChange(eStat_Hacking, class'SpecialTrainingUtilities'.default.HackingBonusAmount);
+
+	foreach AbilityTemplates(AbilityTemplate)
+	{
+		AbilityTemplate.AddTargetEffect(PersistentStatChange);
+		AbilityTemplate.SetUIStatMarkup(class'XLocalizedData'.default.TechLabel, eStat_Hacking, class'SpecialTrainingUtilities'.default.HackingBonusAmount);
 	}
 }

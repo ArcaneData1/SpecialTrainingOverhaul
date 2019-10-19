@@ -2,6 +2,8 @@ class SpecialTrainingUtilities extends Object config (SpecialTrainingClassOverha
 
 var config array<int> DefaultSpecialTrainingDays;
 var config int ExtraDaysForUnexperiencedRookies;
+var config name PerkForHackingBonus;
+var config int HackingBonusAmount;
 
 // adds a new training component to a soldier and gives them the initial perks
 static function XComGameState_Unit_SpecialTraining AddNewSpecialTrainingComponentTo(XComGameState_Unit UnitState, optional XComGameState GameState = none)
