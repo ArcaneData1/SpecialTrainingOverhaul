@@ -18,6 +18,52 @@ static event InstallNewCampaign(XComGameState StartState)
 	ModifyAllSoldiersInBarracks(StartState);
 }
 
+static function FinalizeUnitAbilitiesForInit(XComGameState_Unit UnitState, out array<AbilitySetupData> SetupData, optional XComGameState StartState, optional XComGameState_Player PlayerState, optional bool bMultiplayerDisplay)
+{
+	local int Index;
+	local array<XComGameState_Item> CurrentInventory;
+	local XComGameState_Item InventoryItem;
+	local AbilitySetupData Data, EmptyData;
+	local array<AbilitySetupData> DataToAdd;
+
+	if (!UnitState.IsSoldier())
+		return;
+
+	CurrentInventory = UnitState.GetAllInventoryItems(StartState);
+
+	// allows soldiers to use their launcher - code borrowed from RPG Overhaul
+	for(Index = SetupData.Length; Index >= 0; Index--)
+	{		
+		if (SetupData[Index].Template.bUseLaunchedGrenadeEffects)
+		{
+			Data = EmptyData;
+			Data.TemplateName = SetupData[Index].TemplateName;
+			Data.Template = SetupData[Index].Template;
+			Data.SourceWeaponRef = SetupData[Index].SourceWeaponRef;
+
+			// Remove the original ability
+			SetupData.Remove(Index, 1);
+
+			//  populate a version of the ability for every grenade in the inventory
+			foreach CurrentInventory(InventoryItem)
+			{
+				if (InventoryItem.bMergedOut) 
+					continue;
+
+				if (X2GrenadeTemplate(InventoryItem.GetMyTemplate()) != none)
+				{ 
+					Data.SourceAmmoRef = InventoryItem.GetReference();
+					DataToAdd.AddItem(Data);
+				}
+			}
+		}
+	}
+
+	foreach DataToAdd(Data)
+	{
+		SetupData.AddItem(Data);
+	}
+}
 static event OnPostTemplatesCreated()
 {
 	class'XComGameState_DynamicClassTemplatePool'.static.CreateObjectsForPool();
@@ -26,6 +72,7 @@ static event OnPostTemplatesCreated()
 	AddNewStaffSlots();
 	RemoveStaffSlots();
 	RemoveClassUpgradesFromGTS();
+	AddAbilitiesToWeapons();
 
 	class'X2StrategyGameRulesetDataStructures'.default.PowerfulAbilities.Length = 0;
 }
@@ -167,5 +214,71 @@ static function RemoveClassUpgradesFromGTS()
 		FacilityTemplate.SoldierUnlockTemplates.RemoveItem('HitWhereItHurtsUnlock');
 		FacilityTemplate.SoldierUnlockTemplates.RemoveItem('CoolUnderPressureUnlock');
 		FacilityTemplate.SoldierUnlockTemplates.RemoveItem('BiggestBoomsUnlock');
+	}
+}
+
+static function AddAbilitiesToWeapons()
+{
+	local X2ItemTemplateManager ItemManager;
+	local X2WeaponTemplate WeaponTemplate;
+	local array<name> TemplateNames;
+	local name TemplateName;
+	local array<X2DataTemplate> DifficultyVariants;
+	local X2DataTemplate ItemTemplate;
+
+	ItemManager = class'X2ItemTemplateManager'.static.GetItemTemplateManager();
+
+	ItemManager.GetTemplateNames(TemplateNames);
+
+	foreach TemplateNames(TemplateName)
+	{
+		ItemManager.FindDataTemplateAllDifficulties(TemplateName, DifficultyVariants);
+
+		foreach DifficultyVariants(ItemTemplate)
+		{
+			WeaponTemplate = X2WeaponTemplate(ItemTemplate);
+
+			PatchWeaponTemplate(WeaponTemplate);
+		}
+	}
+}
+
+static function PatchWeaponTemplate(X2WeaponTemplate WeaponTemplate)
+{
+	local X2GremlinTemplate GremlinTemplate;
+
+	switch (WeaponTemplate.WeaponCat)
+	{
+		case 'Gremlin':
+			GremlinTemplate = X2GremlinTemplate(WeaponTemplate);
+			AddAbilityToGremlinTemplate(GremlinTemplate, 'IntrusionProtocol');
+			break;
+		case 'pistol':
+			AddAbilityToWeaponTemplate(WeaponTemplate, 'PistolStandardShot');
+			break;
+		case 'sword':
+			AddAbilityToWeaponTemplate(WeaponTemplate, 'SwordSlice');
+			break;
+		case 'grenade_launcher':
+			AddAbilityToWeaponTemplate(WeaponTemplate, 'LaunchGrenade');
+			break;
+		default:
+			break;
+	}
+}
+
+static function AddAbilityToGremlinTemplate(X2GremlinTemplate GremlinTemplate, name AbilityName)
+{
+	if (GremlinTemplate.Abilities.Find(AbilityName) == INDEX_NONE)
+	{
+		GremlinTemplate.Abilities.AddItem(AbilityName);
+	}
+}
+
+static function AddAbilityToWeaponTemplate(X2WeaponTemplate WeaponTemplate, name AbilityName)
+{
+	if (WeaponTemplate.Abilities.Find(AbilityName) == INDEX_NONE)
+	{
+		WeaponTemplate.Abilities.AddItem(AbilityName);
 	}
 }
