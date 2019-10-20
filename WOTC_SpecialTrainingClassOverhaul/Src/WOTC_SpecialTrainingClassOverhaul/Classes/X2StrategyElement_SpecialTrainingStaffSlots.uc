@@ -101,6 +101,7 @@ static function bool STCO_IsUnitValidForOTSSoldierSlot(XComGameState_StaffSlot S
 	SpecialTraining = class'SpecialTrainingUtilities'.static.GetSpecialTrainingComponentOf(Unit);
 	
 	return (
+		Unit.IsSoldier() && 
 		Unit.CanBeStaffed() &&
 		Unit.IsActive() &&
 		(Unit.GetRank() == 0 || SpecialTraining.CanReceiveTraining()));
