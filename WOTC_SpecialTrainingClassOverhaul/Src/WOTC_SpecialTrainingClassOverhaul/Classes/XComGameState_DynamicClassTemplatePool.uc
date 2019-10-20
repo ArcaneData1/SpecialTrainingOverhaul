@@ -10,29 +10,17 @@ static function XComGameState_DynamicClassTemplatePool GetDynamicClassTemplatePo
 	return XComGameState_DynamicClassTemplatePool(`XCOMHISTORY.GetSingleGameStateObjectForClass(class'XComGameState_DynamicClassTemplatePool', AllowNull));
 }
 
-static function CreateDynamicClassTemplatePool(optional XComGameState StartState)
+static function CreateDynamicClassTemplatePool(XComGameState StartState)
 {
 	local XComGameState_DynamicClassTemplatePool TemplatePool;
-	local XComGameState NewGameState;
 
 	//first check that there isn't already a singleton instance of the template pool
 	if (GetDynamicClassTemplatePool(true) != none)
 		return;
 
-	if (StartState != none)
-	{
-		TemplatePool = XComGameState_DynamicClassTemplatePool(StartState.CreateStateObject(class'XComGameState_DynamicClassTemplatePool'));
-		TemplatePool.PopulateAvailableTemplates();
-		StartState.AddStateObject(TemplatePool);
-	}
-	else
-	{
-		NewGameState = class'XComGameStateContext_ChangeContainer'.static.CreateChangeState("Creating Dynamic Class Template Pool Singleton");
-		TemplatePool = XComGameState_DynamicClassTemplatePool(NewGameState.CreateStateObject(class'XComGameState_DynamicClassTemplatePool'));
-		TemplatePool.PopulateAvailableTemplates();
-		NewGameState.AddStateObject(TemplatePool);
-		`XCOMHISTORY.AddGameStateToHistory(NewGameState);
-	}
+	TemplatePool = XComGameState_DynamicClassTemplatePool(StartState.CreateStateObject(class'XComGameState_DynamicClassTemplatePool'));
+	TemplatePool.PopulateAvailableTemplates();
+	StartState.AddStateObject(TemplatePool);
 }
 
 static function CreateObjectsForPool()

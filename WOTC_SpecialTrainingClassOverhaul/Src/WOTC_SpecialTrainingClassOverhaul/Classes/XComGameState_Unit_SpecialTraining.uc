@@ -7,7 +7,7 @@ var protected StateObjectReference UnitRef;
 var protected array<name> CurrentSpecializations;
 var protected X2SpecializationTemplate LastTrainedSpecialization;
 
-function Initialize(XComGameState_Unit ParentUnit)
+function Initialize(XComGameState UpdateState, XComGameState_Unit ParentUnit)
 {
 	local X2SoldierClassTemplate NewClassTemplate;
 	local XComGameState_DynamicClassTemplatePool TemplatePool;
@@ -15,11 +15,13 @@ function Initialize(XComGameState_Unit ParentUnit)
 	UnitRef = ParentUnit.GetReference();
 
 	TemplatePool = class'XComGameState_DynamicClassTemplatePool'.static.GetDynamicClassTemplatePool(true);
+	TemplatePool = XComGameState_DynamicClassTemplatePool(UpdateState.CreateStateObject(class'XComGameState_DynamicClassTemplatePool', TemplatePool.ObjectID));
 
 	if (TemplatePool != None)
 	{
 		NewClassTemplate = TemplatePool.GetTemplateFromPool();
 		ParentUnit.SetSoldierClassTemplate(NewClassTemplate.DataName);
+		UpdateState.AddStateObject(TemplatePool);
 	}
 
 	ParentUnit.AbilityTree.Length = 0;
