@@ -14,8 +14,13 @@ static event OnLoadedSavedGame()
 static event InstallNewCampaign(XComGameState StartState)
 {	
 	class'XComGameState_DynamicClassTemplatePool'.static.CreateDynamicClassTemplatePool(StartState);
-
+	 
 	ModifyAllSoldiersInBarracks(StartState);
+}
+
+static event OnLoadedSavedGameToStrategy()
+{
+	UpdateAllSoldiersInBarracks();
 }
 
 static function FinalizeUnitAbilitiesForInit(XComGameState_Unit UnitState, out array<AbilitySetupData> SetupData, optional XComGameState StartState, optional XComGameState_Player PlayerState, optional bool bMultiplayerDisplay)
@@ -112,6 +117,28 @@ static function ModifyDefaultSoldierTemplate()
 	Template = CharacterManager.FindCharacterTemplate('Soldier');
 
 	Template.bIsResistanceHero = true; // allows alternate style of ranking up
+}
+
+static function UpdateAllSoldiersInBarracks()
+{
+	local XComGameStateHistory History;
+	local XComGameState_HeadquartersXCom XComHQ;
+	local array<XComGameState_Unit> Soldiers;
+	local XComGameState_Unit UnitState;
+
+	History = `XCOMHISTORY;
+
+	XComHQ = XComGameState_HeadquartersXCom(History.GetSingleGameStateObjectForClass(class'XComGameState_HeadquartersXCom'));
+
+	Soldiers = XComHQ.GetSoldiers();
+
+	foreach Soldiers(UnitState)
+	{
+		if (class'SpecialTrainingUtilities'.static.DoesUnitHaveSpecialTrainingComponent(UnitState))
+		{			
+			class'SpecialTrainingUtilities'.static.GetSpecialTrainingComponentOf(UnitState).UpdateClassTemplate();
+		}
+	}
 }
 
 static function ModifyAllSoldiersInBarracks(XComGameState StartState)

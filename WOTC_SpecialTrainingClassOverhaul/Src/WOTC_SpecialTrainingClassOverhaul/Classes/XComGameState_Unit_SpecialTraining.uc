@@ -70,9 +70,6 @@ function AddSpecialization(name SpecializationName, optional XComGameState Updat
 	{
 		Row = 0;
 		AddPerksToRow(1, Specialization.CoreAbilities, UpdateState);
-		
-		ClassTemplate.IconImage = Specialization.IconImage;
-		ClassTemplate.DisplayName = Specialization.DisplayName;
 	}
 	else
 	{
@@ -82,7 +79,6 @@ function AddSpecialization(name SpecializationName, optional XComGameState Updat
 	AddPerksToRow(Row, Specialization.Abilities, UpdateState);
 
 	CurrentSpecializations.AddItem(SpecializationName);
-	ClassTemplate.AbilityTreeTitles[Row] = Specialization.DisplayName;
 
 	LastTrainedSpecialization = Specialization;
 
@@ -95,6 +91,50 @@ function AddSpecialization(name SpecializationName, optional XComGameState Updat
 
 	// buy first perk automatically
 	GetParentUnit(UpdateState).BuySoldierProgressionAbility(UpdateState, 0, Row);
+
+	UpdateClassTemplate(UpdateState);
+}
+
+function UpdateClassTemplate(optional XComGameState UpdateState)
+{
+	local X2SoldierClassTemplate ClassTemplate;
+	local int i;
+	local array<X2SpecializationTemplate> SpecializationTemplates;
+	local X2SpecializationTemplate Specialization;
+	local array<SoldierClassWeaponType> AllowedWeapons;
+	local SoldierClassWeaponType AllowedWeapon;
+
+	ClassTemplate = GetSoldierClassTemplate(UpdateState);
+		
+	ClassTemplate.IconImage = GetSpecializationAt(0).IconImage;
+	ClassTemplate.DisplayName = GetSpecializationAt(0).DisplayName;
+	ClassTemplate.AbilityTreeTitles[0] = GetSpecializationAt(0).DisplayName;
+
+	for (i = 1; i < CurrentSpecializations.Length; i++)
+	{
+		ClassTemplate.AbilityTreeTitles[i + 1] = GetSpecializationAt(i).DisplayName;
+	}
+
+	foreach ClassTemplate.AllowedWeapons(AllowedWeapon)
+	{
+		if (AllowedWeapon.SlotType != eInvSlot_PrimaryWeapon)
+		{
+			AllowedWeapons.AddItem(AllowedWeapon);
+		}
+	}
+
+	SpecializationTemplates = GetCurrentSpecializations();
+	foreach SpecializationTemplates(Specialization)
+	{
+		for (i = 0; i < Specialization.AllowedPrimaryWeapons.Length; i++)
+		{
+			AllowedWeapons.Add(1);			
+			AllowedWeapons[AllowedWeapons.Length - 1].WeaponType = Specialization.AllowedPrimaryWeapons[i];
+			AllowedWeapons[AllowedWeapons.Length - 1].SlotType = eInvSlot_PrimaryWeapon;
+		}
+	}
+
+	ClassTemplate.AllowedWeapons = AllowedWeapons;
 }
 
 function UnitHasRankedUp(optional XComGameState UpdateState)
