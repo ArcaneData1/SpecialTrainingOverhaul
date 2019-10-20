@@ -63,10 +63,14 @@ function AddSpecialization(name SpecializationName, optional XComGameState Updat
 	Specialization = GetSpecializationTemplate(SpecializationName);
 	ClassTemplate = GetSoldierClassTemplate(UpdateState);
 
+	// if training core:
 	if (CurrentSpecializations.Length == 0)
 	{
 		Row = 0;
 		AddPerksToRow(1, Specialization.CoreAbilities, UpdateState);
+		
+		ClassTemplate.IconImage = Specialization.IconImage;
+		ClassTemplate.DisplayName = Specialization.DisplayName;
 	}
 	else
 	{
@@ -89,8 +93,6 @@ function AddSpecialization(name SpecializationName, optional XComGameState Updat
 
 	// buy first perk automatically
 	GetParentUnit(UpdateState).BuySoldierProgressionAbility(UpdateState, 0, Row);
-
-	ClassTemplate.DisplayName = GetSpecializationAt(0).DisplayName;
 }
 
 function UnitHasRankedUp(optional XComGameState UpdateState)
