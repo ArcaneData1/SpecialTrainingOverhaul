@@ -231,6 +231,14 @@ function bool HasExcludingSpecializationTo(X2SpecializationTemplate Template)
 {
 	local name ExcludedSpecName, CurrentSpecName;
 
+	foreach CurrentSpecializations(CurrentSpecName)
+	{
+		if (Template.DataName == CurrentSpecName)
+		{
+			return true;
+		}
+	}
+
 	foreach Template.DisallowedSpecs(ExcludedSpecName)
 	{
 		foreach CurrentSpecializations(CurrentSpecName)
