@@ -3,6 +3,8 @@ class XComGameState_Unit_SpecialTraining extends XComGameState_BaseObject config
 var config int MaxMinorSpecializations;
 var config int NumberOfRanks;
 
+var localized string MinorSpecSymbol;
+
 var protected StateObjectReference UnitRef;
 var protected array<name> CurrentSpecializations;
 var protected X2SpecializationTemplate LastTrainedSpecialization;
@@ -59,11 +61,9 @@ function bool HasSpecialization(name SpecializationName)
 function AddSpecialization(name SpecializationName, optional XComGameState UpdateState)
 {
 	local X2SpecializationTemplate Specialization;
-	local X2SoldierClassTemplate ClassTemplate;
-	local int i, Row;
+	local int Row;
 
 	Specialization = GetSpecializationTemplate(SpecializationName);
-	ClassTemplate = GetSoldierClassTemplate(UpdateState);
 
 	// if training core:
 	if (CurrentSpecializations.Length == 0)
@@ -82,16 +82,9 @@ function AddSpecialization(name SpecializationName, optional XComGameState Updat
 
 	LastTrainedSpecialization = Specialization;
 
-	for (i = 0; i < Specialization.AllowedPrimaryWeapons.Length; i++)
-	{
-		ClassTemplate.AllowedWeapons.Add(1);			
-		ClassTemplate.AllowedWeapons[ClassTemplate.AllowedWeapons.Length - 1].WeaponType = Specialization.AllowedPrimaryWeapons[i];
-		ClassTemplate.AllowedWeapons[ClassTemplate.AllowedWeapons.Length - 1].SlotType = eInvSlot_PrimaryWeapon;
-	}
-
 	// buy first perk automatically
 	GetParentUnit(UpdateState).BuySoldierProgressionAbility(UpdateState, 0, Row);
-
+		
 	UpdateClassTemplate(UpdateState);
 }
 
@@ -107,15 +100,24 @@ function UpdateClassTemplate(optional XComGameState UpdateState)
 
 	ClassTemplate = GetSoldierClassTemplate(UpdateState);
 		
+	// set variables from core specialization
 	ClassTemplate.IconImage = GetSpecializationAt(0).IconImage;
 	ClassTemplate.DisplayName = GetSpecializationAt(0).DisplayName;
 	ClassTemplate.AbilityTreeTitles[0] = GetSpecializationAt(0).DisplayName;
 
+	// add symbols to class name to indicate extra specs
+	for (i = 0; i < CurrentSpecializations.Length - 1; i++)
+	{
+		ClassTemplate.DisplayName = ClassTemplate.DisplayName $ default.MinorSpecSymbol;
+	}
+
+	// add other ability tree titles
 	for (i = 1; i < CurrentSpecializations.Length; i++)
 	{
 		ClassTemplate.AbilityTreeTitles[i + 1] = GetSpecializationAt(i).DisplayName;
 	}
 
+	// make a copy of class's allowed weapons without the primaries
 	foreach ClassTemplate.AllowedWeapons(AllowedWeapon)
 	{
 		if (AllowedWeapon.SlotType != eInvSlot_PrimaryWeapon)
@@ -124,6 +126,7 @@ function UpdateClassTemplate(optional XComGameState UpdateState)
 		}
 	}
 
+	// add all primary weapons allowed by trained specs to the allowed weapons
 	HasAddedPrimary = false;
 	SpecializationTemplates = GetCurrentSpecializations();
 	foreach SpecializationTemplates(Specialization)
@@ -137,6 +140,7 @@ function UpdateClassTemplate(optional XComGameState UpdateState)
 		}
 	}
 
+	// if no other primary weapon has been granted, allow soldier to use rifle
 	if (!HasAddedPrimary)
 	{
 		AllowedWeapons.Add(1);
@@ -144,6 +148,7 @@ function UpdateClassTemplate(optional XComGameState UpdateState)
 		AllowedWeapons[AllowedWeapons.Length - 1].SlotType = eInvSlot_PrimaryWeapon;
 	}
 
+	// replace the original list with the new one
 	ClassTemplate.AllowedWeapons = AllowedWeapons;
 }
 

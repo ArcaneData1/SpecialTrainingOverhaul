@@ -44,3 +44,6 @@ m_strNewSpecializationLabel=NEW ABILITIES AVAILABLE
 
 [UIChooseSpecialization]
 m_strBuy=BEGIN TRAINING
+
+[XComGameState_Unit_SpecialTraining]
+MinorSpecSymbol="+"
