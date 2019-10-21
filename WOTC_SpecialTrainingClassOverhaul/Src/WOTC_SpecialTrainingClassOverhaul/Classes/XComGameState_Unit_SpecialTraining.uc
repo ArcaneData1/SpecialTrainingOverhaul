@@ -103,6 +103,7 @@ function UpdateClassTemplate(optional XComGameState UpdateState)
 	local X2SpecializationTemplate Specialization;
 	local array<SoldierClassWeaponType> AllowedWeapons;
 	local SoldierClassWeaponType AllowedWeapon;
+	local bool HasAddedPrimary;
 
 	ClassTemplate = GetSoldierClassTemplate(UpdateState);
 		
@@ -123,6 +124,7 @@ function UpdateClassTemplate(optional XComGameState UpdateState)
 		}
 	}
 
+	HasAddedPrimary = false;
 	SpecializationTemplates = GetCurrentSpecializations();
 	foreach SpecializationTemplates(Specialization)
 	{
@@ -131,7 +133,15 @@ function UpdateClassTemplate(optional XComGameState UpdateState)
 			AllowedWeapons.Add(1);			
 			AllowedWeapons[AllowedWeapons.Length - 1].WeaponType = Specialization.AllowedPrimaryWeapons[i];
 			AllowedWeapons[AllowedWeapons.Length - 1].SlotType = eInvSlot_PrimaryWeapon;
+			HasAddedPrimary = true;
 		}
+	}
+
+	if (!HasAddedPrimary)
+	{
+		AllowedWeapons.Add(1);
+		AllowedWeapons[AllowedWeapons.Length - 1].WeaponType = 'rifle';
+		AllowedWeapons[AllowedWeapons.Length - 1].SlotType = eInvSlot_PrimaryWeapon;
 	}
 
 	ClassTemplate.AllowedWeapons = AllowedWeapons;
