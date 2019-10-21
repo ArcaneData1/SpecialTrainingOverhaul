@@ -87,12 +87,20 @@ static function XComGameState_HeadquartersProjectSpecialTraining GetSpecialTrain
 
 static function float GetSpecialTrainingDays(XComGameState_Unit UnitState)
 {
-	if (UnitState.GetRank() == 0 && UnitState.GetTotalNumKills() < class'X2ExperienceConfig'.static.GetRequiredKills(1))
+	if (IsRookieWaitingToTrain(UnitState))
 	{
 		return `ScaleStrategyArrayInt(default.DefaultSpecialTrainingDays) + default.ExtraDaysForUnexperiencedRookies;
 	}
 	else
 	{
 		return `ScaleStrategyArrayInt(default.DefaultSpecialTrainingDays);
+	}
+}
+
+static function bool IsRookieWaitingToTrain(XComGameState_Unit UnitState)
+{
+	if (UnitState.IsSoldier() && UnitState.GetRank() == 0 && UnitState.GetTotalNumKills() >= class'X2ExperienceConfig'.static.GetRequiredKills(1))
+	{
+		return true;
 	}
 }

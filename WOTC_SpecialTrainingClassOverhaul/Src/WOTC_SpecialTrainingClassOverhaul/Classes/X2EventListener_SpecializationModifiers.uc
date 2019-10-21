@@ -5,6 +5,7 @@ static function array<X2DataTemplate> CreateTemplates()
     local array<X2DataTemplate> Templates;
 
     Templates.AddItem(CreateSpecializationModifiersTemplate());
+	Templates.AddItem(CreateStrategyListeners());
 
     return Templates;
 }
@@ -49,6 +50,36 @@ static protected function EventListenerReturn NotifySpecialTrainingComponentAbou
 	{
 		SpecialTraining.UnitHasRankedUp(GameState);
 	}
+
+	return ELR_NoInterrupt;
+}
+
+static function CHEventListenerTemplate CreateStrategyListeners()
+{
+	local CHEventListenerTemplate Template;
+
+	`CREATE_X2TEMPLATE(class'CHEventListenerTemplate', Template, 'STCO_StrategyListeners');
+
+	Template.AddCHEvent('OverrideShowPromoteIcon', OverrideShowPromoteIcon, ELD_Immediate);
+
+	Template.RegisterInStrategy = true;
+
+	return Template;
+}
+
+static protected function EventListenerReturn OverrideShowPromoteIcon(Object EventData, Object EventSource, XComGameState GameState, Name EventID, Object CallbackData)
+{
+	local XComGameState_Unit Unit;
+	local XComLWTuple Tuple;
+
+	Unit = XComGameState_Unit(EventSource);
+	Tuple = XComLWTuple(EventData);
+
+	if (Unit.IsAlive() && class'SpecialTrainingUtilities'.static.IsRookieWaitingToTrain(Unit))
+	{
+		Tuple.Data[0].b = true; //bOverrideShowPromoteIcon;
+		Tuple.Data[1].b = true; //bShowPromoteIcon;
+	}	
 
 	return ELR_NoInterrupt;
 }

@@ -273,7 +273,7 @@ protected function X2SpecializationTemplate GetSpecializationTemplate(name Speci
 	SpecializationTemplateManager = class'X2SpecializationTemplateManager'.static.GetInstance();
 	return SpecializationTemplateManager.FindSpecializationTemplate(SpecializationName);
 }
-
+/*
 protected function ClearPerksFromRow(int row, optional XComGameState UpdateState)
 {
 	local XComGameState_Unit ParentUnit;
@@ -297,7 +297,7 @@ protected function ClearPerksFromRow(int row, optional XComGameState UpdateState
 		`XEVENTMGR.TriggerEvent('AbilityPointsChange', self, , UpdateState);
 	}
 }
-
+*/
 protected function AddPerksToRow(int row, array<SoldierClassAbilityType> Abilities, optional XComGameState UpdateState)
 {
 	local XComGameState_Unit ParentUnit;
