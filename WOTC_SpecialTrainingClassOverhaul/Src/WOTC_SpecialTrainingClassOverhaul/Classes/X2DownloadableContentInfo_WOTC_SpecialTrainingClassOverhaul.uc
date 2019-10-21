@@ -281,6 +281,8 @@ static function PatchWeaponTemplate(X2WeaponTemplate WeaponTemplate)
 			GremlinTemplate = X2GremlinTemplate(WeaponTemplate);
 			AddAbilityToGremlinTemplate(GremlinTemplate, 'IntrusionProtocol');
 			break;
+		case 'sniper_rifle':
+			AddAbilityToWeaponTemplate(WeaponTemplate, 'Squadsight');
 		case 'pistol':
 			AddAbilityToWeaponTemplate(WeaponTemplate, 'PistolStandardShot');
 			break;
