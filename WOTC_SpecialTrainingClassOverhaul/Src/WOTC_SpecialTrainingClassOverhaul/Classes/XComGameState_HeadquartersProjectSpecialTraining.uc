@@ -71,8 +71,7 @@ function OnProjectCompleted()
 	local XComGameStateHistory History;
 	local XComHeadquartersCheatManager CheatMgr;
 	local XComGameState_HeadquartersXCom XComHQ, NewXComHQ;
-	local XComGameState_Unit Unit;
-	local XComGameState_Unit UpdatedUnit;
+	local XComGameState_Unit UnitState;
 	local XComGameState_Unit_SpecialTraining TrainingState;
 	local XComGameState UpdateState;
 	local XComGameStateContext_ChangeContainer ChangeContainer;
@@ -80,27 +79,26 @@ function OnProjectCompleted()
 	local XComGameState_StaffSlot StaffSlotState;
 
 	History = `XCOMHISTORY;
-	Unit = XComGameState_Unit(`XCOMHISTORY.GetGameStateForObjectID(ProjectFocus.ObjectID));
+	UnitState = XComGameState_Unit(`XCOMHISTORY.GetGameStateForObjectID(ProjectFocus.ObjectID));
 	
 	ChangeContainer = class'XComGameStateContext_ChangeContainer'.static.CreateEmptyChangeContainer("Special Training Complete");
 	UpdateState = History.CreateNewGameState(true, ChangeContainer);
-	UpdatedUnit = XComGameState_Unit(UpdateState.CreateStateObject(class'XComGameState_Unit', Unit.ObjectID));
+	UnitState = XComGameState_Unit(UpdateState.CreateStateObject(class'XComGameState_Unit', UnitState.ObjectID));
 
-	if (UpdatedUnit.GetRank() == 0)
+	if (UnitState.GetRank() == 0)
 	{
-		UpdatedUnit.RankUpSoldier(UpdateState);
-		TrainingState = class'SpecialTrainingUtilities'.static.AddNewSpecialTrainingComponentTo(UpdatedUnit, UpdateState);
+		UnitState.RankUpSoldier(UpdateState);
+		TrainingState = class'SpecialTrainingUtilities'.static.AddNewSpecialTrainingComponentTo(UnitState, UpdateState);
 	}
 	else
 	{
-		TrainingState = class'SpecialTrainingUtilities'.static.GetSpecialTrainingComponentOf(Unit);
+		TrainingState = class'SpecialTrainingUtilities'.static.GetSpecialTrainingComponentOf(UnitState);
+		TrainingState = XComGameState_Unit_SpecialTraining(UpdateState.CreateStateObject(class'XComGameState_Unit_SpecialTraining', TrainingState.ObjectID));
 	}
-
-	TrainingState = XComGameState_Unit_SpecialTraining(UpdateState.CreateStateObject(class'XComGameState_Unit_SpecialTraining', TrainingState.ObjectID));
 
 	TrainingState.AddSpecialization(NewSpecializationName, UpdateState);
 
-	UpdatedUnit.SetStatus(eStatus_Active);
+	UnitState.SetStatus(eStatus_Active);
 
 	ProjectState = XComGameState_HeadquartersProjectSpecialTraining(`XCOMHISTORY.GetGameStateForObjectID(GetReference().ObjectID));
 	if (ProjectState != none)
@@ -115,13 +113,13 @@ function OnProjectCompleted()
 		}
 
 		// Remove the soldier from the staff slot
-		StaffSlotState = UpdatedUnit.GetStaffSlot();
+		StaffSlotState = UnitState.GetStaffSlot();
 		if (StaffSlotState != none)
 		{
 			StaffSlotState.EmptySlot(UpdateState);
 		}
 	}
-	UpdateState.AddStateObject(UpdatedUnit);
+	UpdateState.AddStateObject(UnitState);
 	UpdateState.AddStateObject(TrainingState);
 	UpdateState.AddStateObject(ProjectState);
 	`GAMERULES.SubmitGameState(UpdateState);

@@ -61,7 +61,7 @@ function bool HasSpecialization(name SpecializationName)
 function AddSpecialization(name SpecializationName, optional XComGameState UpdateState)
 {
 	local X2SpecializationTemplate Specialization;
-	local int Row, i;
+	local int Row;
 
 	Specialization = GetSpecializationTemplate(SpecializationName);
 
@@ -168,15 +168,7 @@ function ApplyStatIncreasesForRank(int SoldierRank, optional XComGameState Updat
 	UnitState = GetParentUnit(UpdateState);
 	SoldierRank = UnitState.GetRank();
 	StatProgression = GetSpecializationAt(0).StatProgressions[SoldierRank - 1].StatProgressionsForRank;
-	/*
-	if (SoldierRank > 0)
-	{
-		for (i = 0; i < class'X2SoldierClassTemplateManager'.default.GlobalStatProgression.Length; ++i)
-		{
-			StatProgression.AddItem(class'X2SoldierClassTemplateManager'.default.GlobalStatProgression[i]);
-		}
-	}
-	*/
+
 	for (i = 0; i < StatProgression.Length; ++i)
 	{
 		StatVal = StatProgression[i].StatAmount;

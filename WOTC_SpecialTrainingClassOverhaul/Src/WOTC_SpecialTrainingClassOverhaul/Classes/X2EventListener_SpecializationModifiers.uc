@@ -4,58 +4,48 @@ static function array<X2DataTemplate> CreateTemplates()
 {
     local array<X2DataTemplate> Templates;
 
-    Templates.AddItem(CreateSpecializationModifiersTemplate());
 	Templates.AddItem(CreateStrategyListeners());
 
     return Templates;
 }
 
-static function X2EventListenerTemplate CreateSpecializationModifiersTemplate()
+static function CHEventListenerTemplate CreateStrategyListeners()
 {
-    local X2EventListenerTemplate Template;
+	local CHEventListenerTemplate Template;
 
-    `CREATE_X2TEMPLATE(class'X2EventListenerTemplate', Template, 'STCO_SpecializationModifiers');
+	`CREATE_X2TEMPLATE(class'CHEventListenerTemplate', Template, 'STCO_StrategyListeners');
 
-    Template.RegisterInStrategy = true;
-    Template.AddEvent('NewCrewNotification', AddSpecialTrainingComponentToUnit);
-	Template.AddEvent('UnitRankUp',	NotifySpecialTrainingComponentAboutPromotion);
+	Template.AddCHEvent('OverrideShowPromoteIcon', OverrideShowPromoteIcon, ELD_Immediate);
+	Template.AddCHEvent('RewardUnitGenerated', RewardUnitGenerated);
+	Template.AddCHEvent('UnitRankUp', UnitRankUp);
 
-    return Template;
+	Template.RegisterInStrategy = true;
+
+	return Template;
 }
 
-static protected function EventListenerReturn AddSpecialTrainingComponentToUnit(Object EventData, Object EventSource, XComGameState GameState, Name Event, Object CallbackData)
+// override promotion icon to display when rookies will get reduced special training time in GTS
+static protected function EventListenerReturn OverrideShowPromoteIcon(Object EventData, Object EventSource, XComGameState GameState, Name EventID, Object CallbackData)
 {
-    local XComGameState_Unit UnitState;
+	local XComGameState_Unit Unit;
+	local XComLWTuple Tuple;
 
-	UnitState = XComGameState_Unit(EventData);
+	Unit = XComGameState_Unit(EventSource);
+	Tuple = XComLWTuple(EventData);
 
-	if (UnitState != None && class'SpecialTrainingUtilities'.static.UnitRequiresSpecialTrainingComponent(UnitState))
+	if (Unit.IsAlive() && class'SpecialTrainingUtilities'.static.IsRookieWaitingToTrain(Unit))
 	{
-		class'SpecialTrainingUtilities'.static.AddNewSpecialTrainingComponentTo(UnitState);
-	}
+		Tuple.Data[0].b = true; //bOverrideShowPromoteIcon;
+		Tuple.Data[1].b = true; //bShowPromoteIcon;
+	}	
 
 	return ELR_NoInterrupt;
 }
 
-static protected function EventListenerReturn NotifySpecialTrainingComponentAboutPromotion(Object EventData, Object EventSource, XComGameState GameState, Name Event, Object CallbackData)
-{
-    local XComGameState_Unit UnitState;
-	local XComGameState_Unit_SpecialTraining SpecialTraining;
-
-	UnitState = XComGameState_Unit(EventData);
-	SpecialTraining = class'SpecialTrainingUtilities'.static.GetSpecialTrainingComponentOf(UnitState);
-
-	if (SpecialTraining != None)
-	{
-		SpecialTraining.UnitHasRankedUp(GameState);
-	}
-
-	return ELR_NoInterrupt;
-}
-
+// give reward unit special training component and random specializations
 static protected function EventListenerReturn RewardUnitGenerated(Object EventData, Object EventSource, XComGameState GameState, Name Event, Object CallbackData)
 {
-    local XComGameState_Unit UnitState, UpdatedUnit;
+    local XComGameState_Unit UnitState;
 	local XComGameState_Unit_SpecialTraining TrainingState;
 	local int i;
 
@@ -90,33 +80,19 @@ static protected function EventListenerReturn RewardUnitGenerated(Object EventDa
 	return ELR_NoInterrupt;
 }
 
-static function CHEventListenerTemplate CreateStrategyListeners()
+// notify special training component about ranking up
+static protected function EventListenerReturn UnitRankUp(Object EventData, Object EventSource, XComGameState GameState, Name Event, Object CallbackData)
 {
-	local CHEventListenerTemplate Template;
+    local XComGameState_Unit UnitState;
+	local XComGameState_Unit_SpecialTraining SpecialTraining;
 
-	`CREATE_X2TEMPLATE(class'CHEventListenerTemplate', Template, 'STCO_StrategyListeners');
+	UnitState = XComGameState_Unit(EventData);
+	SpecialTraining = class'SpecialTrainingUtilities'.static.GetSpecialTrainingComponentOf(UnitState);
 
-	Template.AddCHEvent('OverrideShowPromoteIcon', OverrideShowPromoteIcon, ELD_Immediate);
-	Template.AddCHEvent('RewardUnitGenerated', RewardUnitGenerated);
-
-	Template.RegisterInStrategy = true;
-
-	return Template;
-}
-
-static protected function EventListenerReturn OverrideShowPromoteIcon(Object EventData, Object EventSource, XComGameState GameState, Name EventID, Object CallbackData)
-{
-	local XComGameState_Unit Unit;
-	local XComLWTuple Tuple;
-
-	Unit = XComGameState_Unit(EventSource);
-	Tuple = XComLWTuple(EventData);
-
-	if (Unit.IsAlive() && class'SpecialTrainingUtilities'.static.IsRookieWaitingToTrain(Unit))
+	if (SpecialTraining != None)
 	{
-		Tuple.Data[0].b = true; //bOverrideShowPromoteIcon;
-		Tuple.Data[1].b = true; //bShowPromoteIcon;
-	}	
+		SpecialTraining.UnitHasRankedUp(GameState);
+	}
 
 	return ELR_NoInterrupt;
 }
