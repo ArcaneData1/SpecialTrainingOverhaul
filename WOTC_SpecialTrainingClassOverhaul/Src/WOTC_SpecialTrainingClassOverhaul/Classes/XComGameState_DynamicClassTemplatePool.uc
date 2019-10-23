@@ -37,6 +37,9 @@ static function CreateObjectsForPool()
 		ClonedTemplate = new class'X2SoldierClassTemplate' (ParentTemplate);
 		ClonedTemplate.SetTemplateName(name(ParentTemplate.DataName $ "_Instance" $ i));
 
+		ClonedTemplate.NumInForcedDeck = 0;
+		ClonedTemplate.NumInDeck = 0;
+
 		TemplateManager.AddSoldierClassTemplate(ClonedTemplate);
 	}
 }

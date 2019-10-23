@@ -11,7 +11,7 @@ static function XComGameState_Unit_SpecialTraining AddNewSpecialTrainingComponen
 	local XComGameStateContext_ChangeContainer ChangeContainer;
 	local XComGameState_Unit_SpecialTraining TrainingState;
 	local bool ShouldAddStateToHistory;
-	local XComGameState_Unit UpdatedUnit;
+	//local XComGameState_Unit UpdatedUnit;
 
 	ShouldAddStateToHistory = (GameState == none);
 
@@ -20,14 +20,14 @@ static function XComGameState_Unit_SpecialTraining AddNewSpecialTrainingComponen
 		ChangeContainer = class'XComGameStateContext_ChangeContainer'.static.CreateEmptyChangeContainer("Add Special Training Component");
 		GameState = `XCOMHISTORY.CreateNewGameState(true, ChangeContainer);
 	}
-	
-	UpdatedUnit = XComGameState_Unit(GameState.CreateStateObject(class'XComGameState_Unit', UnitState.ObjectID));
+
+	//UpdatedUnit = XComGameState_Unit(GameState.CreateStateObject(class'XComGameState_Unit', UnitState.ObjectID));
 
 	TrainingState = XComGameState_Unit_SpecialTraining(GameState.CreateStateObject(class'XComGameState_Unit_SpecialTraining'));
 	TrainingState.Initialize(GameState, UnitState);
 	
 	GameState.AddStateObject(TrainingState);
-	GameState.AddStateObject(UpdatedUnit);
+	//GameState.AddStateObject(UpdatedUnit);
 
 	if (ShouldAddStateToHistory)
 		`GAMERULES.SubmitGameState(GameState);

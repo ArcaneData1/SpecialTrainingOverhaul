@@ -283,6 +283,7 @@ static function PatchWeaponTemplate(X2WeaponTemplate WeaponTemplate)
 			break;
 		case 'sniper_rifle':
 			AddAbilityToWeaponTemplate(WeaponTemplate, 'Squadsight');
+			break;
 		case 'pistol':
 			AddAbilityToWeaponTemplate(WeaponTemplate, 'PistolStandardShot');
 			break;

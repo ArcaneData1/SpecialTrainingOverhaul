@@ -18,7 +18,6 @@ static function X2EventListenerTemplate CreateSpecializationModifiersTemplate()
 
     Template.RegisterInStrategy = true;
     Template.AddEvent('NewCrewNotification', AddSpecialTrainingComponentToUnit);
-    //Template.AddEvent('UnitRankUp',	AddSpecialTrainingComponentToUnit);
 	Template.AddEvent('UnitRankUp',	NotifySpecialTrainingComponentAboutPromotion);
 
     return Template;
@@ -54,6 +53,37 @@ static protected function EventListenerReturn NotifySpecialTrainingComponentAbou
 	return ELR_NoInterrupt;
 }
 
+static protected function EventListenerReturn RewardUnitGenerated(Object EventData, Object EventSource, XComGameState GameState, Name Event, Object CallbackData)
+{
+    local XComGameState_Unit UnitState, UpdatedUnit;
+	local XComGameState_Unit_SpecialTraining TrainingState;
+
+	UnitState = XComGameState_Unit(EventData);
+
+	if (UnitState != None && UnitState.GetRank() > 0)
+	{
+		UpdatedUnit = XComGameState_Unit(GameState.CreateStateObject(class'XComGameState_Unit', UnitState.ObjectID));
+
+		if (class'SpecialTrainingUtilities'.static.UnitRequiresSpecialTrainingComponent(UnitState))
+		{
+			TrainingState = class'SpecialTrainingUtilities'.static.AddNewSpecialTrainingComponentTo(UpdatedUnit, GameState);
+		}
+		else
+		{
+			TrainingState = class'SpecialTrainingUtilities'.static.GetSpecialTrainingComponentOf(UnitState);
+		}
+
+		TrainingState = XComGameState_Unit_SpecialTraining(GameState.CreateStateObject(class'XComGameState_Unit_SpecialTraining', TrainingState.ObjectID));
+
+		TrainingState.AddSpecialization('STCO_Gunslinger', GameState);
+		
+		GameState.AddStateObject(UpdatedUnit);
+		GameState.AddStateObject(TrainingState);
+	}
+
+	return ELR_NoInterrupt;
+}
+
 static function CHEventListenerTemplate CreateStrategyListeners()
 {
 	local CHEventListenerTemplate Template;
@@ -61,6 +91,7 @@ static function CHEventListenerTemplate CreateStrategyListeners()
 	`CREATE_X2TEMPLATE(class'CHEventListenerTemplate', Template, 'STCO_StrategyListeners');
 
 	Template.AddCHEvent('OverrideShowPromoteIcon', OverrideShowPromoteIcon, ELD_Immediate);
+	Template.AddCHEvent('RewardUnitGenerated', RewardUnitGenerated);
 
 	Template.RegisterInStrategy = true;
 

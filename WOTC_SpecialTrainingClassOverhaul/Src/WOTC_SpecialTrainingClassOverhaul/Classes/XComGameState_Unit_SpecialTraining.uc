@@ -61,7 +61,7 @@ function bool HasSpecialization(name SpecializationName)
 function AddSpecialization(name SpecializationName, optional XComGameState UpdateState)
 {
 	local X2SpecializationTemplate Specialization;
-	local int Row;
+	local int Row, i;
 
 	Specialization = GetSpecializationTemplate(SpecializationName);
 
@@ -70,6 +70,12 @@ function AddSpecialization(name SpecializationName, optional XComGameState Updat
 	{
 		Row = 0;
 		AddPerksToRow(1, Specialization.CoreAbilities, UpdateState);
+
+		// update stats retroactively
+		for (i = 1; i <= GetParentUnit(UpdateState).GetRank(); i++)
+		{
+			ApplyStatIncreasesForRank(i, UpdateState);
+		}
 	}
 	else
 	{
@@ -154,19 +160,21 @@ function UpdateClassTemplate(optional XComGameState UpdateState)
 
 function UnitHasRankedUp(optional XComGameState UpdateState)
 {
-	ApplyStatIncreases(UpdateState);
+	//ApplyStatIncreases(UpdateState);
+	ApplyStatIncreasesForRank(GetParentUnit(UpdateState).GetRank(), UpdateState);
 }
 
-function ApplyStatIncreases(optional XComGameState UpdateState) // do not modify: this code is copied from XComGameState_Unit in order to apply correct stat progression
+// apply stat increases from core specialization
+function ApplyStatIncreasesForRank(int SoldierRank, optional XComGameState UpdateState)
 {
 	local XComGameState_Unit UnitState;
 	local array<SoldierClassStatType> StatProgression;
-	local int SoldierRank, i, MaxStat, NewMaxStat, StatVal, NewCurrentStat, StatCap;
+	local int i, MaxStat, NewMaxStat, StatVal, NewCurrentStat, StatCap;
 
 	UnitState = GetParentUnit(UpdateState);
 	SoldierRank = UnitState.GetRank();
 	StatProgression = GetSpecializationAt(0).StatProgressions[SoldierRank - 1].StatProgressionsForRank;
-
+	/*
 	if (SoldierRank > 0)
 	{
 		for (i = 0; i < class'X2SoldierClassTemplateManager'.default.GlobalStatProgression.Length; ++i)
@@ -174,7 +182,7 @@ function ApplyStatIncreases(optional XComGameState UpdateState) // do not modify
 			StatProgression.AddItem(class'X2SoldierClassTemplateManager'.default.GlobalStatProgression[i]);
 		}
 	}
-
+	*/
 	for (i = 0; i < StatProgression.Length; ++i)
 	{
 		StatVal = StatProgression[i].StatAmount;
