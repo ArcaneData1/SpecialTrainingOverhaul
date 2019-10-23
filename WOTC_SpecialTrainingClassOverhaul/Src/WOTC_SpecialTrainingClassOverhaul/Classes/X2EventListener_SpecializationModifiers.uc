@@ -57,27 +57,33 @@ static protected function EventListenerReturn RewardUnitGenerated(Object EventDa
 {
     local XComGameState_Unit UnitState, UpdatedUnit;
 	local XComGameState_Unit_SpecialTraining TrainingState;
+	local int i;
 
 	UnitState = XComGameState_Unit(EventData);
 
 	if (UnitState != None && UnitState.GetRank() > 0)
 	{
-		UpdatedUnit = XComGameState_Unit(GameState.CreateStateObject(class'XComGameState_Unit', UnitState.ObjectID));
+		UnitState = XComGameState_Unit(GameState.CreateStateObject(class'XComGameState_Unit', UnitState.ObjectID));
 
 		if (class'SpecialTrainingUtilities'.static.UnitRequiresSpecialTrainingComponent(UnitState))
 		{
-			TrainingState = class'SpecialTrainingUtilities'.static.AddNewSpecialTrainingComponentTo(UpdatedUnit, GameState);
+			TrainingState = class'SpecialTrainingUtilities'.static.AddNewSpecialTrainingComponentTo(UnitState, GameState);
 		}
 		else
 		{
 			TrainingState = class'SpecialTrainingUtilities'.static.GetSpecialTrainingComponentOf(UnitState);
+			TrainingState = XComGameState_Unit_SpecialTraining(GameState.CreateStateObject(class'XComGameState_Unit_SpecialTraining', TrainingState.ObjectID));
 		}
 
-		TrainingState = XComGameState_Unit_SpecialTraining(GameState.CreateStateObject(class'XComGameState_Unit_SpecialTraining', TrainingState.ObjectID));
+		TrainingState.AddSpecialization('STCO_Gunslinger', GameState);		
 
-		TrainingState.AddSpecialization('STCO_Gunslinger', GameState);
+		// update stats retroactively
+		for (i = 1; i <= UnitState.GetRank(); i++)
+		{
+			TrainingState.ApplyStatIncreasesForRank(i, GameState);
+		}
 		
-		GameState.AddStateObject(UpdatedUnit);
+		GameState.AddStateObject(UnitState);
 		GameState.AddStateObject(TrainingState);
 	}
 

@@ -69,13 +69,7 @@ function AddSpecialization(name SpecializationName, optional XComGameState Updat
 	if (CurrentSpecializations.Length == 0)
 	{
 		Row = 0;
-		AddPerksToRow(1, Specialization.CoreAbilities, UpdateState);
-
-		// update stats retroactively
-		for (i = 1; i <= GetParentUnit(UpdateState).GetRank(); i++)
-		{
-			ApplyStatIncreasesForRank(i, UpdateState);
-		}
+		AddPerksToRow(1, Specialization.CoreAbilities, UpdateState);		
 	}
 	else
 	{
