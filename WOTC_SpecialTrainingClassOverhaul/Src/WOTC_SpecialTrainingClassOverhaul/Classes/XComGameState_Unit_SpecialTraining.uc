@@ -346,3 +346,34 @@ function int GetAbilityPointCost(int Rank, int Branch, optional XComGameState Up
 	
 	return class'X2StrategyGameRulesetDataStructures'.default.AbilityPointCosts[Rank];
 }
+
+function TrainRandomSpecializations(optional XComGameState UpdateState)
+{
+	local array<X2SpecializationTemplate> AllowedSpecializations;
+	local X2SpecializationTemplate Specialization;
+	local int RandomIndex;
+
+	AllowedSpecializations = GetAllowedSpecializations();
+	RandomIndex = `SYNC_RAND(AllowedSpecializations.Length);
+	Specialization = AllowedSpecializations[RandomIndex];
+
+	AddSpecialization(Specialization.DataName, UpdateState);
+}
+
+function array<X2SpecializationTemplate> GetAllowedSpecializations()
+{
+	local array<X2SpecializationTemplate> AllSpecs, AllowedSpecs;
+	local X2SpecializationTemplate Specialization;
+
+	AllSpecs = class'X2SpecializationTemplateManager'.static.GetInstance().GetAllSpecializationTemplates();
+
+	foreach AllSpecs(Specialization)
+	{
+		if (!HasExcludingSpecializationTo(Specialization))
+		{
+			AllowedSpecs.AddItem(Specialization);
+		}
+	}
+
+	return AllowedSpecs;
+}

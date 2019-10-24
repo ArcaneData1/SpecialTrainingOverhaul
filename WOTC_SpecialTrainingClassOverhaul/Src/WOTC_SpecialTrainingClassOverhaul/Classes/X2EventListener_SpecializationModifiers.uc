@@ -69,7 +69,7 @@ static protected function EventListenerReturn RewardUnitGenerated(Object EventDa
 			TrainingState = XComGameState_Unit_SpecialTraining(UpdateState.CreateStateObject(class'XComGameState_Unit_SpecialTraining', TrainingState.ObjectID));
 		}
 
-		TrainingState.AddSpecialization('STCO_Grenadier', UpdateState);
+		TrainingState.TrainRandomSpecializations(UpdateState);
 
 		// update stats retroactively
 		for (i = 1; i <= UnitState.GetRank(); i++)
