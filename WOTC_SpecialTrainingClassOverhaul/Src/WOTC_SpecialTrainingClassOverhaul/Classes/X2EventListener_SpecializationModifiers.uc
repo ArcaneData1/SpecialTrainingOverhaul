@@ -29,11 +29,14 @@ static protected function EventListenerReturn OverrideShowPromoteIcon(Object Eve
 {
 	local XComGameState_Unit Unit;
 	local XComLWTuple Tuple;
+	local UIScreenStack ScreenStack;
+
+	ScreenStack = `SCREENSTACK;
 
 	Unit = XComGameState_Unit(EventSource);
 	Tuple = XComLWTuple(EventData);
 
-	if (Unit.IsAlive() && class'SpecialTrainingUtilities'.static.IsRookieWaitingToTrain(Unit))
+	if (UIPersonnel(ScreenStack.GetCurrentScreen()) != none && Unit.IsAlive() && class'SpecialTrainingUtilities'.static.IsRookieWaitingToTrain(Unit))
 	{
 		Tuple.Data[0].b = true; //bOverrideShowPromoteIcon;
 		Tuple.Data[1].b = true; //bShowPromoteIcon;
