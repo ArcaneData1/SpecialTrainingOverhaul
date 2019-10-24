@@ -326,6 +326,7 @@ static function PatchAbilities()
 
 	AbilityManager = class'X2AbilityTemplateManager'.static.GetAbilityTemplateManager();
 
+	// add bonus hack to a specified perk
 	AbilityManager.FindAbilityTemplateAllDifficulties(class'SpecialTrainingUtilities'.default.PerkForHackingBonus, AbilityTemplates);
 
 	PersistentStatChange = new class'X2Effect_PersistentStatChange';
@@ -336,5 +337,13 @@ static function PatchAbilities()
 	{
 		AbilityTemplate.AddTargetEffect(PersistentStatChange);
 		AbilityTemplate.SetUIStatMarkup(class'XLocalizedData'.default.TechLabel, eStat_Hacking, class'SpecialTrainingUtilities'.default.HackingBonusAmount);
+	}
+
+	// allow launch grenade to work with modified version of Salvo
+	AbilityManager.FindAbilityTemplateAllDifficulties('LaunchGrenade', AbilityTemplates);
+
+	foreach AbilityTemplates(AbilityTemplate)
+	{
+		X2AbilityCost_ActionPoints(AbilityTemplate.AbilityCosts[0]).DoNotConsumeAllSoldierAbilities.AddItem('STCO_Salvo');
 	}
 }
