@@ -48,33 +48,39 @@ static protected function EventListenerReturn RewardUnitGenerated(Object EventDa
     local XComGameState_Unit UnitState;
 	local XComGameState_Unit_SpecialTraining TrainingState;
 	local int i;
+	local XComGameStateContext_ChangeContainer ChangeContainer;
+	local XComGameState UpdateState;
 
 	UnitState = XComGameState_Unit(EventData);
 
 	if (UnitState != None && UnitState.GetRank() > 0)
 	{
-		//UnitState = XComGameState_Unit(GameState.CreateStateObject(class'XComGameState_Unit', UnitState.ObjectID));
+		ChangeContainer = class'XComGameStateContext_ChangeContainer'.static.CreateEmptyChangeContainer("Modify Reward Soldier");
+		UpdateState = `XCOMHISTORY.CreateNewGameState(true, ChangeContainer);
+		UnitState = XComGameState_Unit(UpdateState.CreateStateObject(class'XComGameState_Unit', UnitState.ObjectID));
 
 		if (class'SpecialTrainingUtilities'.static.UnitRequiresSpecialTrainingComponent(UnitState))
 		{
-			TrainingState = class'SpecialTrainingUtilities'.static.AddNewSpecialTrainingComponentTo(UnitState, GameState);
+			TrainingState = class'SpecialTrainingUtilities'.static.AddNewSpecialTrainingComponentTo(UnitState, UpdateState);
 		}
 		else
 		{
 			TrainingState = class'SpecialTrainingUtilities'.static.GetSpecialTrainingComponentOf(UnitState);
-			TrainingState = XComGameState_Unit_SpecialTraining(GameState.CreateStateObject(class'XComGameState_Unit_SpecialTraining', TrainingState.ObjectID));
+			TrainingState = XComGameState_Unit_SpecialTraining(UpdateState.CreateStateObject(class'XComGameState_Unit_SpecialTraining', TrainingState.ObjectID));
 		}
 
-		TrainingState.AddSpecialization('STCO_Grenadier', GameState);
+		TrainingState.AddSpecialization('STCO_Grenadier', UpdateState);
 
 		// update stats retroactively
 		for (i = 1; i <= UnitState.GetRank(); i++)
 		{
-			TrainingState.ApplyStatIncreasesForRank(i, GameState);
+			TrainingState.ApplyStatIncreasesForRank(i, UpdateState);
 		}
 		
-		//GameState.AddStateObject(UnitState);
-		GameState.AddStateObject(TrainingState);
+		UpdateState.AddStateObject(UnitState);
+		UpdateState.AddStateObject(TrainingState);
+
+		`GAMERULES.SubmitGameState(UpdateState);
 	}
 
 	return ELR_NoInterrupt;
