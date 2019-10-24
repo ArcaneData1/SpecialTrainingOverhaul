@@ -1,4 +1,4 @@
-class X2Ability_STCOAbilitySet extends X2Ability config(SpecialTrainingClassOverhaul);
+class X2Ability_STCO_AbilitySet extends X2Ability config(SpecialTrainingClassOverhaul);
 
 var config int DeepPocketsBonus;
 

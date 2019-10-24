@@ -1,4 +1,4 @@
-class X2EventListener_SpecializationModifiers extends X2EventListener;
+class X2EventListener_STCO extends X2EventListener;
 
 static function array<X2DataTemplate> CreateTemplates()
 {
