@@ -79,3 +79,8 @@ function ReturnTemplateToPool(X2SoldierClassTemplate Template)
 {
 	AvailableTemplates.AddItem(Template.DataName);
 }
+
+function int GetRemainingTemplateCount()
+{
+	return AvailableTemplates.Length;
+}

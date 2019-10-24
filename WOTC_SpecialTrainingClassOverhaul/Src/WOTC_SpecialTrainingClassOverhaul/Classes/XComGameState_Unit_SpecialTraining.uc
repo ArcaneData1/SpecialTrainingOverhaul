@@ -9,6 +9,10 @@ var protected StateObjectReference UnitRef;
 var protected array<name> CurrentSpecializations;
 var protected X2SpecializationTemplate LastTrainedSpecialization;
 
+//-------------------------------------------------------------------------
+// CONSTRUCTOR
+//-------------------------------------------------------------------------
+
 function Initialize(XComGameState UpdateState, XComGameState_Unit ParentUnit)
 {
 	local X2SoldierClassTemplate NewClassTemplate;
@@ -24,11 +28,16 @@ function Initialize(XComGameState UpdateState, XComGameState_Unit ParentUnit)
 		NewClassTemplate = TemplatePool.GetTemplateFromPool();
 		ParentUnit.SetSoldierClassTemplate(NewClassTemplate.DataName);
 		UpdateState.AddStateObject(TemplatePool);
+		`log("STCO: Template assigned to " $ ParentUnit.GetFullName() $ " from dynamic class template pool. Templates remaining: " $ TemplatePool.GetRemainingTemplateCount() $ ".");
 	}
 
 	ParentUnit.AbilityTree.Length = 0;
 	ParentUnit.AbilityTree.Length = default.NumberOfRanks;
 }
+
+//-------------------------------------------------------------------------
+// GETTERS
+//-------------------------------------------------------------------------
 
 function XComGameState_Unit GetParentUnit(optional XComGameState UpdateState)
 {
@@ -36,11 +45,6 @@ function XComGameState_Unit GetParentUnit(optional XComGameState UpdateState)
 		return XComGameState_Unit(`XCOMHISTORY.GetGameStateForObjectID(UnitRef.ObjectID));
 	else
 		return XComGameState_Unit(UpdateState.GetGameStateForObjectID(UnitRef.ObjectID));
-}
-
-function X2SoldierClassTemplate GetSoldierClassTemplate(optional XComGameState UpdateState)
-{
-	return GetParentUnit(UpdateState).GetSoldierClassTemplate();
 }
 
 function bool ParentUnitIs(XComGameState_Unit UnitState)
@@ -53,9 +57,107 @@ function X2SpecializationTemplate GetLastTrainedSpecialization()
 	return LastTrainedSpecialization;
 }
 
+function bool CanReceiveTraining()
+{
+	return CurrentSpecializations.Length < MaxMinorSpecializations + 1;
+}
+
+function array<X2SpecializationTemplate> GetCurrentSpecializations()
+{
+	local name SpecializationName;
+	local array<X2SpecializationTemplate> Specializations;
+
+	foreach CurrentSpecializations(SpecializationName)
+	{
+		Specializations.AddItem(GetSpecializationTemplate(SpecializationName));
+	}
+
+	return Specializations;
+}
+
+function X2SpecializationTemplate GetSpecializationAt(int index)
+{
+	return GetSpecializationTemplate(CurrentSpecializations[index]);
+}
+
 function bool HasSpecialization(name SpecializationName)
 {
 	return CurrentSpecializations.Find(SpecializationName) != INDEX_NONE;
+}
+
+function array<X2SpecializationTemplate> GetAllowedSpecializations()
+{
+	local array<X2SpecializationTemplate> AllSpecs, AllowedSpecs;
+	local X2SpecializationTemplate Specialization;
+
+	AllSpecs = class'X2SpecializationTemplateManager'.static.GetInstance().GetAllSpecializationTemplates();
+
+	foreach AllSpecs(Specialization)
+	{
+		if (!HasExcludingSpecializationTo(Specialization))
+		{
+			AllowedSpecs.AddItem(Specialization);
+		}
+	}
+
+	return AllowedSpecs;
+}
+
+function bool HasExcludingSpecializationTo(X2SpecializationTemplate Template)
+{
+	local name ExcludedSpecName, CurrentSpecName;
+
+	if (HasSpecialization(Template.DataName))
+		return true;
+
+	foreach Template.DisallowedSpecs(ExcludedSpecName)
+	{
+		foreach CurrentSpecializations(CurrentSpecName)
+		{
+			if (ExcludedSpecName == CurrentSpecName)
+			{
+				return true;
+			}
+		}
+	}
+	return false;
+}
+
+function array<name> GetAllowedSlots()
+{
+	local name SpecializationName;
+	local X2SpecializationTemplate Template;
+	local name SlotName;
+	local array<name> AllowedSlots;
+
+	foreach CurrentSpecializations(SpecializationName)
+	{
+		Template = GetSpecializationTemplate(SpecializationName);
+
+		foreach Template.AllowedSlots(SlotName)
+		{
+			AllowedSlots.AddItem(SlotName);
+		}
+	}
+
+	return AllowedSlots;
+}
+
+//-------------------------------------------------------------------------
+// PUBLIC FUNCTIONS
+//-------------------------------------------------------------------------
+
+function TrainRandomSpecializations(optional XComGameState UpdateState)
+{
+	local array<X2SpecializationTemplate> AllowedSpecializations;
+	local X2SpecializationTemplate Specialization;
+	local int RandomIndex;
+
+	AllowedSpecializations = GetAllowedSpecializations();
+	RandomIndex = `SYNC_RAND(AllowedSpecializations.Length);
+	Specialization = AllowedSpecializations[RandomIndex];
+
+	AddSpecialization(Specialization.DataName, UpdateState);
 }
 
 function AddSpecialization(name SpecializationName, optional XComGameState UpdateState)
@@ -98,7 +200,7 @@ function UpdateClassTemplate(optional XComGameState UpdateState)
 	local SoldierClassWeaponType AllowedWeapon;
 	local bool HasAddedPrimary;
 
-	ClassTemplate = GetSoldierClassTemplate(UpdateState);
+	ClassTemplate = GetParentUnit(UpdateState).GetSoldierClassTemplate();
 		
 	// set variables from core specialization
 	ClassTemplate.IconImage = GetSpecializationAt(0).IconImage;
@@ -154,7 +256,6 @@ function UpdateClassTemplate(optional XComGameState UpdateState)
 
 function UnitHasRankedUp(optional XComGameState UpdateState)
 {
-	//ApplyStatIncreases(UpdateState);
 	ApplyStatIncreasesForRank(GetParentUnit(UpdateState).GetRank(), UpdateState);
 }
 
@@ -216,79 +317,28 @@ function ApplyStatIncreasesForRank(int SoldierRank, optional XComGameState Updat
 	}
 }
 
-function bool CanReceiveTraining()
-{
-	return CurrentSpecializations.Length < MaxMinorSpecializations + 1;
-}
-
-function bool HasExcludingSpecializationTo(X2SpecializationTemplate Template)
-{
-	local name ExcludedSpecName, CurrentSpecName;
-
-	foreach CurrentSpecializations(CurrentSpecName)
-	{
-		if (Template.DataName == CurrentSpecName)
-		{
-			return true;
-		}
-	}
-
-	foreach Template.DisallowedSpecs(ExcludedSpecName)
-	{
-		foreach CurrentSpecializations(CurrentSpecName)
-		{
-			if (ExcludedSpecName == CurrentSpecName)
-			{
-				return true;
-			}
-		}
-	}
-	return false;
-}
-
-function array<X2SpecializationTemplate> GetCurrentSpecializations()
-{
-	local name SpecializationName;
-	local array<X2SpecializationTemplate> Specializations;
-
-	foreach CurrentSpecializations(SpecializationName)
-	{
-		Specializations.AddItem(GetSpecializationTemplate(SpecializationName));
-	}
-
-	return Specializations;
-}
-
-function X2SpecializationTemplate GetSpecializationAt(int index)
-{
-	return GetSpecializationTemplate(CurrentSpecializations[index]);
-}
-
-function array<name> GetAllowedSlots()
-{
-	local name SpecializationName;
-	local X2SpecializationTemplate Template;
-	local name SlotName;
-	local array<name> AllowedSlots;
-
-	foreach CurrentSpecializations(SpecializationName)
-	{
-		Template = GetSpecializationTemplate(SpecializationName);
-
-		foreach Template.AllowedSlots(SlotName)
-		{
-			AllowedSlots.AddItem(SlotName);
-		}
-	}
-
-	return AllowedSlots;
-}
+//-------------------------------------------------------------------------
+// PROTECTED FUNCTIONS
+//-------------------------------------------------------------------------
 
 protected function X2SpecializationTemplate GetSpecializationTemplate(name SpecializationName)
 {
 	local X2SpecializationTemplateManager SpecializationTemplateManager;
 	SpecializationTemplateManager = class'X2SpecializationTemplateManager'.static.GetInstance();
 	return SpecializationTemplateManager.FindSpecializationTemplate(SpecializationName);
+}
+
+protected function AddPerksToRow(int row, array<SoldierClassAbilityType> Abilities, optional XComGameState UpdateState)
+{
+	local XComGameState_Unit ParentUnit;
+	local int i;
+
+	ParentUnit = GetParentUnit(UpdateState);
+
+	for (i = 0; i < default.NumberOfRanks; i++)
+	{
+		ParentUnit.AbilityTree[i].Abilities[row] = Abilities[i];
+	}
 }
 /*
 protected function ClearPerksFromRow(int row, optional XComGameState UpdateState)
@@ -314,19 +364,6 @@ protected function ClearPerksFromRow(int row, optional XComGameState UpdateState
 		`XEVENTMGR.TriggerEvent('AbilityPointsChange', self, , UpdateState);
 	}
 }
-*/
-protected function AddPerksToRow(int row, array<SoldierClassAbilityType> Abilities, optional XComGameState UpdateState)
-{
-	local XComGameState_Unit ParentUnit;
-	local int i;
-
-	ParentUnit = GetParentUnit(UpdateState);
-
-	for (i = 0; i < default.NumberOfRanks; i++)
-	{
-		ParentUnit.AbilityTree[i].Abilities[row] = Abilities[i];
-	}
-}
 
 // Do not modify: this is copied from UIArmory_PromotionHero in order to refund the correct amount of points
 function int GetAbilityPointCost(int Rank, int Branch, optional XComGameState UpdateState)
@@ -346,34 +383,4 @@ function int GetAbilityPointCost(int Rank, int Branch, optional XComGameState Up
 	
 	return class'X2StrategyGameRulesetDataStructures'.default.AbilityPointCosts[Rank];
 }
-
-function TrainRandomSpecializations(optional XComGameState UpdateState)
-{
-	local array<X2SpecializationTemplate> AllowedSpecializations;
-	local X2SpecializationTemplate Specialization;
-	local int RandomIndex;
-
-	AllowedSpecializations = GetAllowedSpecializations();
-	RandomIndex = `SYNC_RAND(AllowedSpecializations.Length);
-	Specialization = AllowedSpecializations[RandomIndex];
-
-	AddSpecialization(Specialization.DataName, UpdateState);
-}
-
-function array<X2SpecializationTemplate> GetAllowedSpecializations()
-{
-	local array<X2SpecializationTemplate> AllSpecs, AllowedSpecs;
-	local X2SpecializationTemplate Specialization;
-
-	AllSpecs = class'X2SpecializationTemplateManager'.static.GetInstance().GetAllSpecializationTemplates();
-
-	foreach AllSpecs(Specialization)
-	{
-		if (!HasExcludingSpecializationTo(Specialization))
-		{
-			AllowedSpecs.AddItem(Specialization);
-		}
-	}
-
-	return AllowedSpecs;
-}
+*/
