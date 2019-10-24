@@ -38,8 +38,29 @@ static function XComGameState_Unit_SpecialTraining AddNewSpecialTrainingComponen
 }
 
 // gets the special training component of a soldier
-static function XComGameState_Unit_SpecialTraining GetSpecialTrainingComponentOf(XComGameState_Unit UnitState)
+static function XComGameState_Unit_SpecialTraining GetSpecialTrainingComponentOf(XComGameState_Unit UnitState, optional XComGameState UpdateState)
 {
+	local XComGameState_Unit_SpecialTraining TrainingState;
+
+	if (UpdateState == none)
+	{
+		foreach `XCOMHISTORY.IterateByClassType(class'XComGameState_Unit_SpecialTraining', TrainingState)
+		{
+			if (TrainingState.ParentUnitIs(UnitState))
+				return TrainingState;
+		}
+	}
+	else
+	{
+		foreach UpdateState.IterateByClassType(class'XComGameState_Unit_SpecialTraining', TrainingState)
+		{
+			if (TrainingState.ParentUnitIs(UnitState))
+				return TrainingState;
+		}
+	}
+
+	return none;
+/*
 	local XComGameState_Unit_SpecialTraining TrainingState;
 
 	foreach `XCOMHISTORY.IterateByClassType(class'XComGameState_Unit_SpecialTraining', TrainingState)
@@ -48,6 +69,7 @@ static function XComGameState_Unit_SpecialTraining GetSpecialTrainingComponentOf
 			return TrainingState;
 	}
 	return none;
+	*/
 }
 
 // runs checks to see if unit should have AddNewSpecialTrainingComponentTo called on it
@@ -99,8 +121,5 @@ static function float GetSpecialTrainingDays(XComGameState_Unit UnitState)
 
 static function bool IsRookieWaitingToTrain(XComGameState_Unit UnitState)
 {
-	if (UnitState.IsSoldier() && UnitState.GetRank() == 0 && UnitState.GetTotalNumKills() >= class'X2ExperienceConfig'.static.GetRequiredKills(1))
-	{
-		return true;
-	}
+	return UnitState.IsSoldier() && UnitState.GetRank() == 0 && UnitState.GetTotalNumKills() >= class'X2ExperienceConfig'.static.GetRequiredKills(1);
 }

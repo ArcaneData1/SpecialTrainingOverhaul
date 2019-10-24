@@ -53,7 +53,7 @@ static protected function EventListenerReturn RewardUnitGenerated(Object EventDa
 
 	if (UnitState != None && UnitState.GetRank() > 0)
 	{
-		UnitState = XComGameState_Unit(GameState.CreateStateObject(class'XComGameState_Unit', UnitState.ObjectID));
+		//UnitState = XComGameState_Unit(GameState.CreateStateObject(class'XComGameState_Unit', UnitState.ObjectID));
 
 		if (class'SpecialTrainingUtilities'.static.UnitRequiresSpecialTrainingComponent(UnitState))
 		{
@@ -65,7 +65,7 @@ static protected function EventListenerReturn RewardUnitGenerated(Object EventDa
 			TrainingState = XComGameState_Unit_SpecialTraining(GameState.CreateStateObject(class'XComGameState_Unit_SpecialTraining', TrainingState.ObjectID));
 		}
 
-		TrainingState.AddSpecialization('STCO_Gunslinger', GameState);		
+		TrainingState.AddSpecialization('STCO_Grenadier', GameState);
 
 		// update stats retroactively
 		for (i = 1; i <= UnitState.GetRank(); i++)
@@ -73,7 +73,7 @@ static protected function EventListenerReturn RewardUnitGenerated(Object EventDa
 			TrainingState.ApplyStatIncreasesForRank(i, GameState);
 		}
 		
-		GameState.AddStateObject(UnitState);
+		//GameState.AddStateObject(UnitState);
 		GameState.AddStateObject(TrainingState);
 	}
 

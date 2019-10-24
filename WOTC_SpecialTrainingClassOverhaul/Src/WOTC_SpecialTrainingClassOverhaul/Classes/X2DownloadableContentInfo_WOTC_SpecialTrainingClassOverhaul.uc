@@ -266,7 +266,10 @@ static function AddAbilitiesToWeapons()
 		{
 			WeaponTemplate = X2WeaponTemplate(ItemTemplate);
 
-			PatchWeaponTemplate(WeaponTemplate);
+			if (WeaponTemplate != none)
+			{
+				PatchWeaponTemplate(WeaponTemplate);
+			}
 		}
 	}
 }

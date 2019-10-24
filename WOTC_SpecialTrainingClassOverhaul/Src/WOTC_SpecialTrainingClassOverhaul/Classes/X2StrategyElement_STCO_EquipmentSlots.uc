@@ -48,7 +48,7 @@ static function bool CanAddItemToSlot(CHItemSlot Slot, XComGameState_Unit Unit, 
 		case eInvSlot_AugmentationLegs:
 			return X2WeaponTemplate(Template).WeaponCat == 'grenade_launcher';
 		default:
-			return X2WeaponTemplate(Template).WeaponCat == 'sword';
+			return false;
 	}
 }
 
@@ -57,7 +57,7 @@ static function bool HasSlot(CHItemSlot Slot, XComGameState_Unit UnitState, out 
 	local XComGameState_Unit_SpecialTraining TrainingState;
 	local array<name> AllowedSlots;
 
-	TrainingState = class'SpecialTrainingUtilities'.static.GetSpecialTrainingComponentOf(UnitState);
+	TrainingState = class'SpecialTrainingUtilities'.static.GetSpecialTrainingComponentOf(UnitState, CheckGameState);
 
 	if (TrainingState == none)
 		return false;
@@ -86,17 +86,24 @@ static function int GetPriority(CHItemSlot Slot, XComGameState_Unit UnitState, o
 
 static function bool ShowItemInLockerList(CHItemSlot Slot, XComGameState_Unit Unit, XComGameState_Item ItemState, X2ItemTemplate ItemTemplate, XComGameState CheckGameState)
 {
+	local X2WeaponTemplate WeaponTemplate;
+
+	WeaponTemplate = X2WeaponTemplate(ItemTemplate);
+
+	if (WeaponTemplate == none)
+		return false;
+
 	switch (Slot.InvSlot)
 	{
 		case eInvSlot_AugmentationHead:
-			return X2WeaponTemplate(ItemTemplate).WeaponCat == 'sword';
+			return WeaponTemplate.WeaponCat == 'sword';
 		case eInvSlot_AugmentationTorso:
-			return X2WeaponTemplate(ItemTemplate).WeaponCat == 'pistol';
+			return WeaponTemplate.WeaponCat == 'pistol';
 		case eInvSlot_AugmentationArms:
-			return X2WeaponTemplate(ItemTemplate).WeaponCat == 'gremlin';
+			return WeaponTemplate.WeaponCat == 'gremlin';
 		case eInvSlot_AugmentationLegs:
-			return X2WeaponTemplate(ItemTemplate).WeaponCat == 'grenade_launcher';
+			return WeaponTemplate.WeaponCat == 'grenade_launcher';
 		default:
-			return X2WeaponTemplate(ItemTemplate).WeaponCat == 'sword';
+			return false;
 	}
 }
