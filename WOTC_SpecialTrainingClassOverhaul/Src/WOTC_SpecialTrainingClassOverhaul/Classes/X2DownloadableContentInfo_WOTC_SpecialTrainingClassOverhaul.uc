@@ -16,6 +16,8 @@ static event InstallNewCampaign(XComGameState StartState)
 	class'XComGameState_DynamicClassTemplatePool'.static.CreateDynamicClassTemplatePool(StartState);
 	 
 	ModifyAllSoldiersInBarracks(StartState);
+
+	BuildGTS(StartState);
 }
 
 static event OnLoadedSavedGameToStrategy()
@@ -345,5 +347,56 @@ static function PatchAbilities()
 	foreach AbilityTemplates(AbilityTemplate)
 	{
 		X2AbilityCost_ActionPoints(AbilityTemplate.AbilityCosts[0]).DoNotConsumeAllSoldierAbilities.AddItem('STCO_Salvo');
+	}
+}
+
+static function BuildGTS(XComGameState UpdateState)
+{
+	local XComGameState_HeadquartersXCom XComHQ;
+	local XComGameState_HeadquartersRoom Room, NewRoomState;
+	local XComGameState_FacilityXCom Facility;
+	local X2FacilityTemplate FacilityTemplate;
+	local XComGameStateHistory History;
+	local StateObjectReference FacilityRef;
+	local int MapIndex;
+
+	History = `XCOMHISTORY;
+
+	XComHQ = XComGameState_HeadquartersXCom(History.GetSingleGameStateObjectForClass(class'XComGameState_HeadquartersXCom'));
+
+	MapIndex = 3;
+
+	Room = XComHQ.GetRoom(MapIndex);
+
+	if (!Room.ConstructionBlocked)
+	{
+		MapIndex = 5;
+		Room = XComHQ.GetRoom(MapIndex);
+	}
+	
+	NewRoomState = XComGameState_HeadquartersRoom(UpdateState.ModifyStateObject(class'XComGameState_HeadquartersRoom', Room.ObjectID));
+	FacilityTemplate = X2FacilityTemplate(class'X2StrategyElementTemplateManager'.static.GetStrategyElementTemplateManager().FindStrategyElementTemplate('OfficerTrainingSchool'));
+
+	if(FacilityTemplate != none)
+	{
+		Facility = FacilityTemplate.CreateInstanceFromTemplate(UpdateState);
+		FacilityRef = Facility.GetReference();
+		Facility.Room = NewRoomState.GetReference();
+		Facility.ConstructionDateTime = `STRATEGYRULES.GameTime;
+		NewRoomState.Facility = Facility.GetReference();
+		NewRoomState.ConstructionBlocked = false;
+		NewRoomState.SpecialFeature = '';
+
+		XComHQ.Facilities.AddItem(FacilityRef);
+
+		`GAME.GetGeoscape().m_kBase.RemoveRoom(MapIndex);
+		`GAME.GetGeoscape().m_kBase.StreamInRoom(MapIndex, true);
+
+		class'X2StrategyGameRulesetDataStructures'.static.CheckForPowerStateChange();
+
+		if(FacilityTemplate.OnFacilityBuiltFn != none)
+		{
+			FacilityTemplate.OnFacilityBuiltFn(FacilityRef);
+		}
 	}
 }
