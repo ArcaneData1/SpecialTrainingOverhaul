@@ -17,7 +17,7 @@ static event InstallNewCampaign(XComGameState StartState)
 	 
 	ModifyAllSoldiersInBarracks(StartState);
 
-	//BuildGTS(StartState);
+	BuildGTS(StartState);
 }
 
 static event OnLoadedSavedGameToStrategy()
@@ -363,7 +363,7 @@ static function BuildGTS(XComGameState UpdateState)
 	History = `XCOMHISTORY;
 
 	XComHQ = XComGameState_HeadquartersXCom(History.GetSingleGameStateObjectForClass(class'XComGameState_HeadquartersXCom'));
-
+		
 	MapIndex = 3;
 
 	Room = XComHQ.GetRoom(MapIndex);
@@ -382,21 +382,21 @@ static function BuildGTS(XComGameState UpdateState)
 		Facility = FacilityTemplate.CreateInstanceFromTemplate(UpdateState);
 		FacilityRef = Facility.GetReference();
 		Facility.Room = NewRoomState.GetReference();
-		Facility.ConstructionDateTime = `STRATEGYRULES.GameTime;
+		//Facility.ConstructionDateTime = `STRATEGYRULES.GameTime;
 		NewRoomState.Facility = Facility.GetReference();
 		NewRoomState.ConstructionBlocked = false;
 		NewRoomState.SpecialFeature = '';
 
 		XComHQ.Facilities.AddItem(FacilityRef);
 
-		`GAME.GetGeoscape().m_kBase.RemoveRoom(MapIndex);
-		`GAME.GetGeoscape().m_kBase.StreamInRoom(MapIndex, true);
+		//`GAME.GetGeoscape().m_kBase.RemoveRoom(MapIndex);
+		//`GAME.GetGeoscape().m_kBase.StreamInRoom(MapIndex, true);
 
-		class'X2StrategyGameRulesetDataStructures'.static.CheckForPowerStateChange();
+		//class'X2StrategyGameRulesetDataStructures'.static.CheckForPowerStateChange();
 
-		if(FacilityTemplate.OnFacilityBuiltFn != none)
-		{
-			FacilityTemplate.OnFacilityBuiltFn(FacilityRef);
-		}
+		//if(FacilityTemplate.OnFacilityBuiltFn != none)
+		//{
+		//	FacilityTemplate.OnFacilityBuiltFn(FacilityRef);
+		//}
 	}
 }
