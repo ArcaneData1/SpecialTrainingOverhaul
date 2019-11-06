@@ -97,6 +97,14 @@ function OnProjectCompleted()
 	}
 
 	TrainingState.AddSpecialization(NewSpecializationName, UpdateState);
+	
+	UpdateState.AddStateObject(UnitState);
+	UpdateState.AddStateObject(TrainingState);
+
+	class'SpecialTrainingUtilities'.static.ApplyBestGearForSlot(UnitState, eInvSlot_AugmentationHead, 'STCO_SwordSlot', 'sword', UpdateState);
+	class'SpecialTrainingUtilities'.static.ApplyBestGearForSlot(UnitState, eInvSlot_AugmentationTorso, 'STCO_PistolSlot', 'pistol', UpdateState);
+	class'SpecialTrainingUtilities'.static.ApplyBestGearForSlot(UnitState, eInvSlot_AugmentationArms, 'STCO_GremlinSlot', 'gremlin', UpdateState);
+	class'SpecialTrainingUtilities'.static.ApplyBestGearForSlot(UnitState, eInvSlot_AugmentationLegs, 'STCO_GrenadeLauncherSlot', 'grenade_launcher', UpdateState);
 
 	UnitState.SetStatus(eStatus_Active);
 
@@ -119,8 +127,8 @@ function OnProjectCompleted()
 			StaffSlotState.EmptySlot(UpdateState);
 		}
 	}
-	UpdateState.AddStateObject(UnitState);
-	UpdateState.AddStateObject(TrainingState);
+	//UpdateState.AddStateObject(UnitState);
+	//UpdateState.AddStateObject(TrainingState);
 	UpdateState.AddStateObject(ProjectState);
 	`GAMERULES.SubmitGameState(UpdateState);
 

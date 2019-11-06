@@ -31,6 +31,7 @@ static function X2DataTemplate CreateSpecialSlotTemplate(name slotName, EInvento
 	Template.UnitHasSlotFn = HasSlot;
 	Template.GetPriorityFn = GetPriority;	
 	Template.ShowItemInLockerListFn = ShowItemInLockerList;
+	Template.ValidateLoadoutFn = ValidateLoadout;
 
 	return Template;
 }
@@ -105,5 +106,26 @@ static function bool ShowItemInLockerList(CHItemSlot Slot, XComGameState_Unit Un
 			return WeaponTemplate.WeaponCat == 'grenade_launcher';
 		default:
 			return false;
+	}
+}
+
+static function ValidateLoadout(CHItemSlot Slot, XComGameState_Unit Unit, XComGameState_HeadquartersXCom XComHQ, XComGameState NewGameState)
+{
+	switch (Slot.InvSlot)
+	{
+		case eInvSlot_AugmentationHead:
+			class'SpecialTrainingUtilities'.static.ApplyBestGearForSlot(Unit, eInvSlot_AugmentationHead, 'STCO_SwordSlot', 'sword', NewGameState);
+			return;
+		case eInvSlot_AugmentationTorso:
+			class'SpecialTrainingUtilities'.static.ApplyBestGearForSlot(Unit, eInvSlot_AugmentationTorso, 'STCO_PistolSlot', 'pistol', NewGameState);
+			return;
+		case eInvSlot_AugmentationArms:
+			class'SpecialTrainingUtilities'.static.ApplyBestGearForSlot(Unit, eInvSlot_AugmentationArms, 'STCO_GremlinSlot', 'gremlin', NewGameState);
+			return;
+		case eInvSlot_AugmentationLegs:
+			class'SpecialTrainingUtilities'.static.ApplyBestGearForSlot(Unit, eInvSlot_AugmentationLegs, 'STCO_GrenadeLauncherSlot', 'grenade_launcher', NewGameState);
+			return;
+		default:
+			return;
 	}
 }

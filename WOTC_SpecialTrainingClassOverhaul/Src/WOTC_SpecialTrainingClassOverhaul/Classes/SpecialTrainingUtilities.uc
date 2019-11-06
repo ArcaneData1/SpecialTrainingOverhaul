@@ -56,16 +56,6 @@ static function XComGameState_Unit_SpecialTraining GetSpecialTrainingComponentOf
 	}
 
 	return none;
-/*
-	local XComGameState_Unit_SpecialTraining TrainingState;
-
-	foreach `XCOMHISTORY.IterateByClassType(class'XComGameState_Unit_SpecialTraining', TrainingState)
-	{
-		if (TrainingState.ParentUnitIs(UnitState))
-			return TrainingState;
-	}
-	return none;
-	*/
 }
 
 // runs checks to see if unit should have AddNewSpecialTrainingComponentTo called on it
@@ -118,4 +108,77 @@ static function float GetSpecialTrainingDays(XComGameState_Unit UnitState)
 static function bool IsRookieWaitingToTrain(XComGameState_Unit UnitState)
 {
 	return UnitState.IsSoldier() && UnitState.GetRank() == 0 && UnitState.GetTotalNumKills() >= class'X2ExperienceConfig'.static.GetRequiredKills(1);
+}
+
+static function ApplyBestGearForSlot(XComGameState_Unit Unit, EInventorySlot InvSlot, name SlotName, name Category, XComGameState UpdateState)
+{
+	local XComGameState_Item EquippedWeapon;
+	local array<X2WeaponTemplate> BestWeaponTemplates;
+	local XComGameState_Unit_SpecialTraining SpecialTraining;
+	local array<name> AllowedSlots;
+	
+	SpecialTraining = GetSpecialTrainingComponentOf(Unit, UpdateState);
+
+	if (SpecialTraining == none)
+	{
+		return;
+	}
+			
+	AllowedSlots = SpecialTraining.GetAllowedSlots();
+
+	if (AllowedSlots.Find(SlotName) == INDEX_NONE)
+	{
+		return;
+	}
+
+	EquippedWeapon = Unit.GetItemInSlot(InvSlot, UpdateState);
+	BestWeaponTemplates = GetBestWeaponTemplatesFor(Unit, SlotName, Category, UpdateState);
+	Unit.UpgradeEquipment(UpdateState, EquippedWeapon, BestWeaponTemplates, InvSlot);
+}
+
+static function array<X2WeaponTemplate> GetBestWeaponTemplatesFor(XComGameState_Unit Unit, name SlotName, name Category, XComGameState UpdateState)
+{
+	local XComGameStateHistory History;
+	local XComGameState_HeadquartersXCom XComHQ;
+	local X2WeaponTemplate WeaponTemplate, BestWeaponTemplate;
+	local array<X2WeaponTemplate> BestWeaponTemplates;
+	local XComGameState_Item ItemState;
+	local int idx, HighestTier;
+	local XComGameState_Unit_SpecialTraining SpecialTraining;
+	local array<name> AllowedSlots;
+
+	History = `XCOMHISTORY;
+	XComHQ = class'UIUtilities_Strategy'.static.GetXComHQ();
+
+	SpecialTraining = GetSpecialTrainingComponentOf(Unit, UpdateState);
+
+	if( XComHQ != none && SpecialTraining != none)
+	{
+		// Try to find a better secondary weapon as an infinite item in the inventory
+		for (idx = 0; idx < XComHQ.Inventory.Length; idx++)
+		{
+			ItemState = XComGameState_Item(History.GetGameStateForObjectID(XComHQ.Inventory[idx].ObjectID));
+			WeaponTemplate = X2WeaponTemplate(ItemState.GetMyTemplate());
+			AllowedSlots = SpecialTraining.GetAllowedSlots();
+
+			if(WeaponTemplate != none && WeaponTemplate.bInfiniteItem && (BestWeaponTemplate == none || (BestWeaponTemplates.Find(WeaponTemplate) == INDEX_NONE && WeaponTemplate.Tier >= BestWeaponTemplate.Tier)) &&
+				WeaponTemplate.WeaponCat == Category && AllowedSlots.Find(SlotName) != INDEX_NONE)
+			{
+				BestWeaponTemplate = WeaponTemplate;
+				BestWeaponTemplates.AddItem(BestWeaponTemplate);
+				HighestTier = BestWeaponTemplate.Tier;
+			}
+		}
+	}
+
+	for(idx = 0; idx < BestWeaponTemplates.Length; idx++)
+	{
+		if(BestWeaponTemplates[idx].Tier < HighestTier)
+		{
+			BestWeaponTemplates.Remove(idx, 1);
+			idx--;
+		}
+	}
+
+	return BestWeaponTemplates;
 }
