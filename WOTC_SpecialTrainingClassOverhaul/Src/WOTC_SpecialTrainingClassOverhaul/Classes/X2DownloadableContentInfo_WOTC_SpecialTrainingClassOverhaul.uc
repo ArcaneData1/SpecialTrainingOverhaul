@@ -17,7 +17,7 @@ static event InstallNewCampaign(XComGameState StartState)
 	 
 	ModifyAllSoldiersInBarracks(StartState);
 
-	BuildGTS(StartState);
+	//BuildGTS(StartState);
 }
 
 static event OnLoadedSavedGameToStrategy()
