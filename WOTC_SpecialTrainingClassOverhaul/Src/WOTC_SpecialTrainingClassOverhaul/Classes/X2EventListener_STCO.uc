@@ -54,9 +54,9 @@ static protected function EventListenerReturn RewardUnitGenerated(Object EventDa
 	local XComGameStateContext_ChangeContainer ChangeContainer;
 	local XComGameState UpdateState;
 
-	UnitState = XComGameState_Unit(EventData);
+	UnitState = XComGameState_Unit(EventData);	
 
-	if (UnitState != None && UnitState.GetRank() > 0)
+	if (UnitState != None && UnitState.GetSoldierClassTemplateName() == 'STCO_Soldier' && UnitState.GetRank() > 0)
 	{
 		ChangeContainer = class'XComGameStateContext_ChangeContainer'.static.CreateEmptyChangeContainer("Modify Reward Soldier");
 		UpdateState = `XCOMHISTORY.CreateNewGameState(true, ChangeContainer);
