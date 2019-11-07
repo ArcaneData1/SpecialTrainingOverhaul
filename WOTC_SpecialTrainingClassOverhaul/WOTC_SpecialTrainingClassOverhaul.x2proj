@@ -10,12 +10,21 @@
   </PropertyGroup>
   <ItemGroup>
     <Folder Include="Config\" />
+    <Folder Include="Config\NewPromotionScreenbyDefault" />
     <Folder Include="Localization\" />
     <Folder Include="Src\" />
+    <Folder Include="Src\NewPromotionScreenbyDefault" />
+    <Folder Include="Src\NewPromotionScreenbyDefault\Classes" />
     <Folder Include="Src\WOTC_SpecialTrainingClassOverhaul\" />
     <Folder Include="Src\WOTC_SpecialTrainingClassOverhaul\Classes\" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Config\NewPromotionScreenbyDefault\XComEngine.ini">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Config\NewPromotionScreenbyDefault\XComPromotionUIMod.ini">
+      <SubType>Content</SubType>
+    </Content>
     <Content Include="Config\XComClassData.ini">
       <SubType>Content</SubType>
     </Content>
@@ -37,6 +46,18 @@
     <Content Include="Config\XComEngine.ini" />
     <Content Include="Config\XComGame.ini" />
     <Content Include="Localization\XComGame.int" />
+    <Content Include="Src\NewPromotionScreenbyDefault\Classes\NewPromotionScreenByDefault_PromotionScreenListener.uc">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Src\NewPromotionScreenbyDefault\Classes\NPSBDP_UIArmory_PromotionHero.uc">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Src\NewPromotionScreenbyDefault\Classes\NPSBDP_UIArmory_PromotionHeroColumn.uc">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Src\NewPromotionScreenbyDefault\Classes\X2DownloadableContentInfo_NewPromotionScreenbyDefault.uc">
+      <SubType>Content</SubType>
+    </Content>
     <Content Include="Src\WOTC_SpecialTrainingClassOverhaul\Classes\SpecialTrainingUtilities.uc">
       <SubType>Content</SubType>
     </Content>
