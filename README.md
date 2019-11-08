@@ -1,3 +1,3 @@
 # SpecialTrainingOverhaul
 
-Repo for Special Training Overhaul.
+repo for Special Training Overhaul.
