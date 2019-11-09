@@ -95,6 +95,7 @@ static function XComGameState_HeadquartersProjectSpecialTraining GetSpecialTrain
 	}
 }
 
+// gets the length of time needed for special training
 static function float GetSpecialTrainingDays(XComGameState_Unit UnitState)
 {
 	if (UnitState.GetRank() > 0 || IsRookieWaitingToTrain(UnitState))

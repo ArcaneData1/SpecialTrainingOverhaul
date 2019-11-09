@@ -34,9 +34,6 @@
     <Content Include="Config\XComSpecialTrainingClassOverhaul.ini">
       <SubType>Content</SubType>
     </Content>
-    <Content Include="Config\XComStrategyTuning.ini">
-      <SubType>Content</SubType>
-    </Content>
     <Content Include="Localization\WOTC_SpecialTrainingClassOverhaul.int">
       <SubType>Content</SubType>
     </Content>

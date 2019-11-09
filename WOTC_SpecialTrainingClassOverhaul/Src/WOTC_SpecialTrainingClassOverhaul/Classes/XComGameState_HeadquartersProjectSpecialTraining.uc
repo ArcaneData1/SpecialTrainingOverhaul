@@ -127,8 +127,6 @@ function OnProjectCompleted()
 			StaffSlotState.EmptySlot(UpdateState);
 		}
 	}
-	//UpdateState.AddStateObject(UnitState);
-	//UpdateState.AddStateObject(TrainingState);
 	UpdateState.AddStateObject(ProjectState);
 	`GAMERULES.SubmitGameState(UpdateState);
 
