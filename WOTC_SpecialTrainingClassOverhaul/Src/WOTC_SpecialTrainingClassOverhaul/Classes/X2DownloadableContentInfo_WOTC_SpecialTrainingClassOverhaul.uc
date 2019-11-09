@@ -75,7 +75,6 @@ static event OnPostTemplatesCreated()
 {
 	class'XComGameState_DynamicClassTemplatePool'.static.CreateObjectsForPool();
 	DisableAllOtherClasses();
-	ModifyDefaultSoldierTemplate();
 	AddNewStaffSlots();
 	RemoveStaffSlots();
 	RemoveClassUpgradesFromGTS();
@@ -107,18 +106,6 @@ static function DisableAllOtherClasses()
 			Template.NumInDeck = 0;
 		}
 	}
-}
-
-static function ModifyDefaultSoldierTemplate()
-{
-	local X2CharacterTemplateManager CharacterManager;
-	local X2CharacterTemplate Template;
-
-	CharacterManager = class'X2CharacterTemplateManager'.static.GetCharacterTemplateManager();
-
-	Template = CharacterManager.FindCharacterTemplate('Soldier');
-
-	Template.bIsResistanceHero = true; // allows alternate style of ranking up
 }
 
 static function UpdateAllSoldiersInBarracks()

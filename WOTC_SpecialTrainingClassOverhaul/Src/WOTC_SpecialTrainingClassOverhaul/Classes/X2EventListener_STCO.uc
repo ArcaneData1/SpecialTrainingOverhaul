@@ -16,6 +16,7 @@ static function CHEventListenerTemplate CreateStrategyListeners()
 	`CREATE_X2TEMPLATE(class'CHEventListenerTemplate', Template, 'STCO_StrategyListeners');
 
 	Template.AddCHEvent('OverrideShowPromoteIcon', OverrideShowPromoteIcon, ELD_Immediate);
+	Template.AddCHEvent('OverrideImproveCombatIntelligenceAPAmount', OverrideImproveCombatIntelligenceAPAmount, ELD_Immediate);
 	Template.AddCHEvent('RewardUnitGenerated', RewardUnitGenerated);
 	Template.AddCHEvent('UnitRankUp', UnitRankUp);
 
@@ -41,6 +42,29 @@ static protected function EventListenerReturn OverrideShowPromoteIcon(Object Eve
 		Tuple.Data[0].b = true; //bOverrideShowPromoteIcon;
 		Tuple.Data[1].b = true; //bShowPromoteIcon;
 	}	
+
+	return ELR_NoInterrupt;
+}
+
+// override rewarded AP when soldier's combat intelligence is increased
+static protected function EventListenerReturn OverrideImproveCombatIntelligenceAPAmount(Object EventData, Object EventSource, XComGameState GameState, Name EventID, Object CallbackData)
+{
+	local XComGameState_Unit Unit;
+	local XComLWTuple Tuple;
+	local int iRank, APIncrease;
+
+	Unit = XComGameState_Unit(EventSource);
+	Tuple = XComLWTuple(EventData);
+
+	if (class'SpecialTrainingUtilities'.static.DoesUnitHaveSpecialTrainingComponent(Unit))
+	{
+		for (iRank = Unit.GetRank(); iRank >= 2; iRank--)
+		{
+			APIncrease += (GetSoldierAPAmount(iRank, Unit.ComInt) - GetSoldierAPAmount(iRank, ECombatIntelligence(Unit.ComInt - 1)));
+		}
+
+		Tuple.Data[0].i = Round(APIncrease);
+	}
 
 	return ELR_NoInterrupt;
 }
@@ -89,7 +113,7 @@ static protected function EventListenerReturn RewardUnitGenerated(Object EventDa
 	return ELR_NoInterrupt;
 }
 
-// notify special training component about ranking up
+// notify special training component about ranking up and provides AP points
 static protected function EventListenerReturn UnitRankUp(Object EventData, Object EventSource, XComGameState GameState, Name Event, Object CallbackData)
 {
     local XComGameState_Unit UnitState;
@@ -101,7 +125,36 @@ static protected function EventListenerReturn UnitRankUp(Object EventData, Objec
 	if (SpecialTraining != None)
 	{
 		SpecialTraining.UnitHasRankedUp(GameState);
+
+		if (UnitState.GetRank() >= 2)
+		{
+			`log("STCO " $ UnitState.GetFullName() $ " " $ UnitState.GetRank());
+			UnitState.AbilityPoints += Round(GetSoldierAPAmount(UnitState.GetRank(), UnitState.ComInt));
+			`XEVENTMGR.TriggerEvent('AbilityPointsChange', UnitState, , GameState);
+		}
 	}
 
 	return ELR_NoInterrupt;
+}
+
+static private function int GetSoldierAPAmount(int Rank, ECombatIntelligence eComInt)
+{
+	local XComGameState_HeadquartersResistance ResHQ;
+	local int APReward;
+
+	ResHQ = XComGameState_HeadquartersResistance(`XCOMHISTORY.GetSingleGameStateObjectForClass(class'XComGameState_HeadquartersResistance', true));
+
+	// get base earned AP at this rank from config
+	APReward = class'SpecialTrainingUtilities'.default.BaseAbilityPointsPerRank[Rank];
+
+	// apply bonus based on combat intelligence
+	APReward *= class'X2StrategyGameRulesetDataStructures'.default.ResistanceHeroComIntModifiers[eComInt];
+
+	// modify AP based on any resistance orders
+	if(ResHQ.AbilityPointScalar > 0)
+	{
+		APReward = Round(float(APReward) * ResHQ.AbilityPointScalar);
+	}
+
+	return APReward;
 }

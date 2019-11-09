@@ -5,6 +5,8 @@ var config int ExtraDaysForUnexperiencedRookies;
 var config name PerkForHackingBonus;
 var config int HackingBonusAmount;
 
+var config array<int> BaseAbilityPointsPerRank;
+
 // adds a new training component to a soldier and gives them the initial perks
 static function XComGameState_Unit_SpecialTraining AddNewSpecialTrainingComponentTo(XComGameState_Unit UnitState, optional XComGameState GameState = none)
 {
