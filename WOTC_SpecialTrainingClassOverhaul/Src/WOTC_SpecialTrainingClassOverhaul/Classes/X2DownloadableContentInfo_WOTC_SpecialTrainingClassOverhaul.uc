@@ -1,33 +1,20 @@
 class X2DownloadableContentInfo_WOTC_SpecialTrainingClassOverhaul extends X2DownloadableContentInfo;
 
-/// <summary>
-/// This method is run if the player loads a saved game that was created prior to this DLC / Mod being installed, and allows the 
-/// DLC / Mod to perform custom processing in response. This will only be called once the first time a player loads a save that was
-/// create without the content installed. Subsequent saves will record that the content was installed.
-/// </summary>
-static event OnLoadedSavedGame()
-{}
-
-/// <summary>
-/// Called when the player starts a new campaign while this DLC / Mod is installed
-/// </summary>
 static event InstallNewCampaign(XComGameState StartState)
 {	
 	class'XComGameState_DynamicClassTemplatePool'.static.CreateDynamicClassTemplatePool(StartState);
-	 
-	ModifyAllSoldiersInBarracks(StartState);
 
 	BuildGTS(StartState);
 }
 
 static event OnLoadedSavedGameToStrategy()
 {
-	UpdateAllSoldiersInBarracks();
+	UpdateDynamicClassTemplates();
 }
 
 static event OnLoadedSavedGameToTactical()
 {
-	UpdateAllSoldiersInBarracks();
+	UpdateDynamicClassTemplates();
 }
 
 static function FinalizeUnitAbilitiesForInit(XComGameState_Unit UnitState, out array<AbilitySetupData> SetupData, optional XComGameState StartState, optional XComGameState_Player PlayerState, optional bool bMultiplayerDisplay)
@@ -76,9 +63,11 @@ static function FinalizeUnitAbilitiesForInit(XComGameState_Unit UnitState, out a
 		SetupData.AddItem(Data);
 	}
 }
+
 static event OnPostTemplatesCreated()
 {
 	class'XComGameState_DynamicClassTemplatePool'.static.CreateObjectsForPool();
+
 	DisableAllOtherClasses();
 	AddNewStaffSlots();
 	RemoveStaffSlots();
@@ -87,6 +76,25 @@ static event OnPostTemplatesCreated()
 	PatchAbilities();
 
 	class'X2StrategyGameRulesetDataStructures'.default.PowerfulAbilities.Length = 0;
+}
+
+static function UpdateDynamicClassTemplates()
+{
+	local XComGameState_HeadquartersXCom XComHQ;
+	local array<XComGameState_Unit> Soldiers;
+	local XComGameState_Unit UnitState;
+
+	XComHQ = XComGameState_HeadquartersXCom(`XCOMHISTORY.GetSingleGameStateObjectForClass(class'XComGameState_HeadquartersXCom'));
+
+	Soldiers = XComHQ.GetSoldiers();
+
+	foreach Soldiers(UnitState)
+	{
+		if (class'SpecialTrainingUtilities'.static.HasSpecialTrainingComponent(UnitState))
+		{			
+			class'SpecialTrainingUtilities'.static.GetSpecialTrainingComponentOf(UnitState).UpdateClassTemplate();
+		}
+	}
 }
 
 static function DisableAllOtherClasses()
@@ -113,50 +121,6 @@ static function DisableAllOtherClasses()
 	}
 }
 
-static function UpdateAllSoldiersInBarracks()
-{
-	local XComGameStateHistory History;
-	local XComGameState_HeadquartersXCom XComHQ;
-	local array<XComGameState_Unit> Soldiers;
-	local XComGameState_Unit UnitState;
-
-	History = `XCOMHISTORY;
-
-	XComHQ = XComGameState_HeadquartersXCom(History.GetSingleGameStateObjectForClass(class'XComGameState_HeadquartersXCom'));
-
-	Soldiers = XComHQ.GetSoldiers();
-
-	foreach Soldiers(UnitState)
-	{
-		if (class'SpecialTrainingUtilities'.static.DoesUnitHaveSpecialTrainingComponent(UnitState))
-		{			
-			class'SpecialTrainingUtilities'.static.GetSpecialTrainingComponentOf(UnitState).UpdateClassTemplate();
-		}
-	}
-}
-
-static function ModifyAllSoldiersInBarracks(XComGameState StartState)
-{
-	local XComGameStateHistory History;
-	local XComGameState_HeadquartersXCom XComHQ;
-	local array<XComGameState_Unit> Soldiers;
-	local XComGameState_Unit UnitState;
-
-	History = `XCOMHISTORY;
-
-	XComHQ = XComGameState_HeadquartersXCom(History.GetSingleGameStateObjectForClass(class'XComGameState_HeadquartersXCom'));
-
-	Soldiers = XComHQ.GetSoldiers();
-
-	foreach Soldiers(UnitState)
-	{
-		if (class'SpecialTrainingUtilities'.static.UnitRequiresSpecialTrainingComponent(UnitState))
-		{
-			class'SpecialTrainingUtilities'.static.AddNewSpecialTrainingComponentTo(UnitState, StartState);
-		}
-	}
-}
-
 static function AddNewStaffSlots()
 {
 	local X2FacilityTemplate FacilityTemplate;
@@ -168,28 +132,6 @@ static function AddNewStaffSlots()
 	foreach FacilityTemplates(FacilityTemplate)
 	{
 		FacilityTemplate.StaffSlotDefs.AddItem(StaffSlotDef);
-	}
-}
-
-//retrieves all difficulty variants of a given facility template
-static function FindFacilityTemplateAllDifficulties(name DataName, out array<X2FacilityTemplate> FacilityTemplates, optional X2StrategyElementTemplateManager StrategyTemplateMgr)
-{
-	local array<X2DataTemplate> DataTemplates;
-	local X2DataTemplate DataTemplate;
-	local X2FacilityTemplate FacilityTemplate;
-
-	if(StrategyTemplateMgr == none)
-		StrategyTemplateMgr = class'X2StrategyElementTemplateManager'.static.GetStrategyElementTemplateManager();
-
-	StrategyTemplateMgr.FindDataTemplateAllDifficulties(DataName, DataTemplates);
-	FacilityTemplates.Length = 0;
-	foreach DataTemplates(DataTemplate)
-	{
-		FacilityTemplate = X2FacilityTemplate(DataTemplate);
-		if( FacilityTemplate != none )
-		{
-			FacilityTemplates.AddItem(FacilityTemplate);
-		}
 	}
 }
 
@@ -360,6 +302,7 @@ static function BuildGTS(XComGameState UpdateState)
 
 	Room = XComHQ.GetRoom(MapIndex);
 
+	// if map index 3 is the starting open space, then build the GTS somewhere else
 	if (!Room.ConstructionBlocked)
 	{
 		MapIndex = 5;
@@ -374,21 +317,32 @@ static function BuildGTS(XComGameState UpdateState)
 		Facility = FacilityTemplate.CreateInstanceFromTemplate(UpdateState);
 		FacilityRef = Facility.GetReference();
 		Facility.Room = NewRoomState.GetReference();
-		//Facility.ConstructionDateTime = `STRATEGYRULES.GameTime;
 		NewRoomState.Facility = Facility.GetReference();
 		NewRoomState.ConstructionBlocked = false;
 		NewRoomState.SpecialFeature = '';
 
 		XComHQ.Facilities.AddItem(FacilityRef);
+	}
+}
 
-		//`GAME.GetGeoscape().m_kBase.RemoveRoom(MapIndex);
-		//`GAME.GetGeoscape().m_kBase.StreamInRoom(MapIndex, true);
+//retrieves all difficulty variants of a given facility template
+static function FindFacilityTemplateAllDifficulties(name DataName, out array<X2FacilityTemplate> FacilityTemplates, optional X2StrategyElementTemplateManager StrategyTemplateMgr)
+{
+	local array<X2DataTemplate> DataTemplates;
+	local X2DataTemplate DataTemplate;
+	local X2FacilityTemplate FacilityTemplate;
 
-		//class'X2StrategyGameRulesetDataStructures'.static.CheckForPowerStateChange();
+	if(StrategyTemplateMgr == none)
+		StrategyTemplateMgr = class'X2StrategyElementTemplateManager'.static.GetStrategyElementTemplateManager();
 
-		//if(FacilityTemplate.OnFacilityBuiltFn != none)
-		//{
-		//	FacilityTemplate.OnFacilityBuiltFn(FacilityRef);
-		//}
+	StrategyTemplateMgr.FindDataTemplateAllDifficulties(DataName, DataTemplates);
+	FacilityTemplates.Length = 0;
+	foreach DataTemplates(DataTemplate)
+	{
+		FacilityTemplate = X2FacilityTemplate(DataTemplate);
+		if( FacilityTemplate != none )
+		{
+			FacilityTemplates.AddItem(FacilityTemplate);
+		}
 	}
 }

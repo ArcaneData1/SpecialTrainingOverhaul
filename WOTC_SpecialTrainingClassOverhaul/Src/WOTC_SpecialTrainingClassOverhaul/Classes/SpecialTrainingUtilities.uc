@@ -2,33 +2,21 @@ class SpecialTrainingUtilities extends Object config (SpecialTrainingClassOverha
 
 var config array<int> DefaultSpecialTrainingDays;
 var config int ExtraDaysForUnexperiencedRookies;
+
 var config name PerkForHackingBonus;
 var config int HackingBonusAmount;
 
 var config array<int> BaseAbilityPointsPerRank;
 
-// adds a new training component to a soldier and gives them the initial perks
-static function XComGameState_Unit_SpecialTraining AddNewSpecialTrainingComponentTo(XComGameState_Unit UnitState, optional XComGameState GameState = none)
+// adds a new training component to a soldier
+static function XComGameState_Unit_SpecialTraining AddNewSpecialTrainingComponentTo(XComGameState_Unit UnitState, XComGameState GameState)
 {
-	local XComGameStateContext_ChangeContainer ChangeContainer;
 	local XComGameState_Unit_SpecialTraining TrainingState;
-	local bool ShouldAddStateToHistory;
-
-	ShouldAddStateToHistory = (GameState == none);
-
-	if (GameState == none)
-	{
-		ChangeContainer = class'XComGameStateContext_ChangeContainer'.static.CreateEmptyChangeContainer("Add Special Training Component");
-		GameState = `XCOMHISTORY.CreateNewGameState(true, ChangeContainer);
-	}
 	
 	TrainingState = XComGameState_Unit_SpecialTraining(GameState.CreateStateObject(class'XComGameState_Unit_SpecialTraining'));
 	TrainingState.Initialize(GameState, UnitState);
 	
 	GameState.AddStateObject(TrainingState);
-
-	if (ShouldAddStateToHistory)
-		`GAMERULES.SubmitGameState(GameState);
 
 	`log("STCO: Created special training component for " $ UnitState.GetFullName() $ ".");
 
@@ -60,14 +48,14 @@ static function XComGameState_Unit_SpecialTraining GetSpecialTrainingComponentOf
 	return none;
 }
 
-// runs checks to see if unit should have AddNewSpecialTrainingComponentTo called on it
-static function bool UnitRequiresSpecialTrainingComponent(XComGameState_Unit UnitState)
+// checks if unit should have AddNewSpecialTrainingComponentTo called on it
+static function bool RequiresSpecialTrainingComponent(XComGameState_Unit UnitState)
 {
-	return !DoesUnitHaveSpecialTrainingComponent(UnitState) && UnitState.GetSoldierClassTemplateName() == 'STCO_Soldier';
+	return UnitState.GetSoldierClassTemplateName() == 'STCO_Soldier';
 }
 
-// checks if a soldier already has a training component attached
-static function bool DoesUnitHaveSpecialTrainingComponent(XComGameState_Unit UnitState)
+// checks if a soldier has a special training component attached
+static function bool HasSpecialTrainingComponent(XComGameState_Unit UnitState)
 {
 	return GetSpecialTrainingComponentOf(UnitState) != none;
 }
@@ -108,11 +96,13 @@ static function float GetSpecialTrainingDays(XComGameState_Unit UnitState)
 	}
 }
 
+// returns if the unit is a rookie with experience
 static function bool IsRookieWaitingToTrain(XComGameState_Unit UnitState)
 {
 	return UnitState.IsSoldier() && UnitState.GetRank() == 0 && UnitState.GetTotalNumKills() >= class'X2ExperienceConfig'.static.GetRequiredKills(1);
 }
 
+// applies best gear for a custom secondary weapon slot
 static function ApplyBestGearForSlot(XComGameState_Unit Unit, EInventorySlot InvSlot, name SlotName, name Category, XComGameState UpdateState)
 {
 	local XComGameState_Item EquippedWeapon;

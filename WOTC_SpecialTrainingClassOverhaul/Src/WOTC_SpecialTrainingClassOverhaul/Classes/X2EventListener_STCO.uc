@@ -56,7 +56,7 @@ static protected function EventListenerReturn OverrideImproveCombatIntelligenceA
 	Unit = XComGameState_Unit(EventSource);
 	Tuple = XComLWTuple(EventData);
 
-	if (class'SpecialTrainingUtilities'.static.DoesUnitHaveSpecialTrainingComponent(Unit))
+	if (class'SpecialTrainingUtilities'.static.HasSpecialTrainingComponent(Unit))
 	{
 		for (iRank = Unit.GetRank(); iRank >= 2; iRank--)
 		{
@@ -80,21 +80,13 @@ static protected function EventListenerReturn RewardUnitGenerated(Object EventDa
 
 	UnitState = XComGameState_Unit(EventData);	
 
-	if (UnitState != None && UnitState.GetSoldierClassTemplateName() == 'STCO_Soldier' && UnitState.GetRank() > 0)
+	if (UnitState != None && class'SpecialTrainingUtilities'.static.RequiresSpecialTrainingComponent(UnitState))
 	{
 		ChangeContainer = class'XComGameStateContext_ChangeContainer'.static.CreateEmptyChangeContainer("Modify Reward Soldier");
 		UpdateState = `XCOMHISTORY.CreateNewGameState(true, ChangeContainer);
 		UnitState = XComGameState_Unit(UpdateState.CreateStateObject(class'XComGameState_Unit', UnitState.ObjectID));
 
-		if (class'SpecialTrainingUtilities'.static.UnitRequiresSpecialTrainingComponent(UnitState))
-		{
-			TrainingState = class'SpecialTrainingUtilities'.static.AddNewSpecialTrainingComponentTo(UnitState, UpdateState);
-		}
-		else
-		{
-			TrainingState = class'SpecialTrainingUtilities'.static.GetSpecialTrainingComponentOf(UnitState);
-			TrainingState = XComGameState_Unit_SpecialTraining(UpdateState.CreateStateObject(class'XComGameState_Unit_SpecialTraining', TrainingState.ObjectID));
-		}
+		TrainingState = class'SpecialTrainingUtilities'.static.AddNewSpecialTrainingComponentTo(UnitState, UpdateState);
 
 		TrainingState.TrainRandomSpecializations(UpdateState);
 
