@@ -25,6 +25,11 @@ static event OnLoadedSavedGameToStrategy()
 	UpdateAllSoldiersInBarracks();
 }
 
+static event OnLoadedSavedGameToTactical()
+{
+	UpdateAllSoldiersInBarracks();
+}
+
 static function FinalizeUnitAbilitiesForInit(XComGameState_Unit UnitState, out array<AbilitySetupData> SetupData, optional XComGameState StartState, optional XComGameState_Player PlayerState, optional bool bMultiplayerDisplay)
 {
 	local int Index;
